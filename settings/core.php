@@ -80,6 +80,6 @@ function requireAdmin($accessDeniedPath = "../Error/access_denied.php") {
 }
 
 // Automatically redirect if not logged in (you can remove this if you want manual control)
-requireLogin();
+//requireLogin();
 
 ?>

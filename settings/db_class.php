@@ -40,6 +40,75 @@ class db_connection {
     }
     
     /**
+     * Get database connection - THIS IS THE METHOD YOUR CATEGORY CLASS NEEDS
+     * @return mysqli The database connection object
+     */
+    public function db_conn() {
+        return $this->db;
+    }
+    
+    /**
+     * Alternative method name for getting connection
+     * @return mysqli The database connection object
+     */
+    public function getConnection() {
+        return $this->db;
+    }
+    
+    /**
+     * Execute a query
+     * @param string $query SQL query
+     * @return mysqli_result|bool Query result
+     */
+    public function query($query) {
+        try {
+            return $this->db->query($query);
+        } catch (Exception $e) {
+            error_log("Query error: " . $e->getMessage());
+            return false;
+        }
+    }
+    
+    /**
+     * Prepare a statement
+     * @param string $query SQL query with placeholders
+     * @return mysqli_stmt|false Prepared statement
+     */
+    public function prepare($query) {
+        try {
+            return $this->db->prepare($query);
+        } catch (Exception $e) {
+            error_log("Prepare error: " . $e->getMessage());
+            return false;
+        }
+    }
+    
+    /**
+     * Get last insert ID
+     * @return int Last inserted ID
+     */
+    public function getLastInsertId() {
+        return $this->db->insert_id;
+    }
+    
+    /**
+     * Get affected rows
+     * @return int Number of affected rows
+     */
+    public function getAffectedRows() {
+        return $this->db->affected_rows;
+    }
+    
+    /**
+     * Escape string for safe queries
+     * @param string $string String to escape
+     * @return string Escaped string
+     */
+    public function escapeString($string) {
+        return $this->db->real_escape_string($string);
+    }
+    
+    /**
      * Close database connection
      */
     public function db_close() {
