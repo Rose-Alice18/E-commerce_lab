@@ -77,7 +77,7 @@ $(document).ready(function() {
                         if (result.isConfirmed) {
                             // Clear form and direct user to login page on successful registration
                             $('#register-form')[0].reset();
-                            window.location.href = 'login/login.php';
+                            window.location.href = '../login/login.php';
                         }
                     });
                 } else {
@@ -275,3 +275,5 @@ $(document).ready(function() {
         });
     }
 });
+
+console.log("test");
