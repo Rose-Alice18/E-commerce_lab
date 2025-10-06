@@ -53,7 +53,7 @@ $(document).ready(function() {
 
         // Asynchronously invoke register_user_action script
         $.ajax({
-            url: 'actions/register_user_action.php',
+            url: '../actions/register_user_action.php',
             type: 'POST',
             dataType: 'json',
             data: {
@@ -230,7 +230,7 @@ $(document).ready(function() {
      */
     function checkEmailAvailability(email) {
         $.ajax({
-            url: 'actions/check_email_action.php',
+            url: '../actions/check_email_action.php',
             type: 'POST',
             dataType: 'json',
             data: { email: email },
