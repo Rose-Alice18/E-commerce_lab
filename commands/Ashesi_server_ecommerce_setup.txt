@@ -1,0 +1,142 @@
+🌐 E-Commerce Lab Server Setup – Full Command Guide
+
+This guide documents all the commands run on the server, why they were used, and also includes MySQL setup steps.
+
+============================================================
+
+🔹 Server & Git Setup
+
+1. Check for MySQL instructions file
+cat ~/mysql_instructions.txt
+Reason: Opens and displays any setup instructions already given by the hosting/server admin for database configuration.
+
+2. List files in current directory
+ls
+Reason: Quickly see what files and folders are inside the current directory.
+
+3. Navigate to the web root
+cd public_html
+Reason: The public_html directory is where your website files must be placed so they can be served on the internet.
+
+4. Clone your GitHub repository
+git clone https://github.com/Rose-Alice18/E-commerce_lab
+
+Reason: Downloads your project files from GitHub into the server.
+
+5. Initialize Git (optional if not already set)
+git init
+Reason: Creates a new local Git repository in case it wasn’t already initialized.
+
+6. Add the remote GitHub repository
+git remote add origin https://github.com/Rose-Alice18/E-commerce_lab.git
+
+Reason: Links your local Git repo to your GitHub project so you can fetch, pull, and push code.
+
+7. Fetch files from GitHub
+git fetch origin
+Reason: Downloads the latest information about branches and commits from GitHub without modifying local files yet.
+
+8. Checkout the main branch and track remote
+git checkout -b main --track origin/main
+Reason: Creates a new local branch main that follows the remote origin/main. This way, updates from GitHub can sync properly.
+
+9. List files
+ls
+Reason: Confirm that the project files are present in public_html.
+
+10. View the index file
+cat index.php
+Reason: Shows the content of the index.php file, usually the entry point of your website.
+
+11. Remove old index.php
+rm index.php
+Reason: Deletes the old index.php so it doesn’t conflict with the cloned repository’s index file.
+
+12. Confirm deletion
+ls
+Reason: Ensure index.php has been removed successfully.
+
+13. Checkout branch again
+git checkout -b main --track origin/main
+Reason: Re-ran to fix errors with branch tracking.
+
+14. List files
+ls
+Reason: Confirm project files are in place after switching branches.
+
+============================================================
+
+🔹 Configurations (Settings Folder)
+
+15. Navigate to settings folder
+cd settings
+Reason: The settings folder usually contains configuration files like database credentials.
+
+16. List files in settings
+ls
+Reason: Verify what configuration files exist.
+
+17. Edit database credentials file
+nano db_cred.php
+Reason: Update the database connection details (database name, username, password, and host) so your PHP app can connect to MySQL.
+
+18. Return to project root
+cd public_html
+ls
+Reason: Go back to check overall project structure.
+
+19. Re-enter settings
+cd settings
+Reason: Move back to edit configs again if necessary.
+
+20. Edit credentials again
+nano db_cred.php
+Reason: Double-check or fix mistakes in database connection details.
+
+21. View command history
+history
+Reason: Review all commands previously run in the terminal.
+
+============================================================
+
+🗄️ MySQL Setup Commands
+
+1. Log into MySQL
+mysql -u your_username -p
+Reason: Connect to MySQL using your username. You’ll be asked for the password.
+
+2. Create a database
+CREATE DATABASE ecom_db;
+Reason: Create a new database for your e-commerce application. Replace ecom_db with your project’s database name.
+
+3. Create a user and give permissions
+CREATE USER 'ecom_user'@'localhost' IDENTIFIED BY 'your_password';
+GRANT ALL PRIVILEGES ON ecom_db.* TO 'ecom_user'@'localhost';
+FLUSH PRIVILEGES;
+Reason: Create a dedicated MySQL user with a password and give it access to your database.
+
+4. Import your SQL file
+mysql -u ecom_user -p ecom_db < /home/roseline.tsatsu/public_html/database.sql
+Reason: Load your pre-written database structure and sample data from a .sql file into the database.
+
+5. Exit MySQL
+EXIT;
+Reason: Safely log out of MySQL once setup is complete.
+
+============================================================
+
+✅ Next Steps
+
+Ensure db_cred.php matches your database credentials:
+
+define("DATABASE", "ecom_db");
+define("USERNAME", "ecom_user");
+define("PASSWD", "your_password");
+define("SERVER", "localhost");
+
+Test your site in the browser.
+
+If errors appear, check logs with:
+tail -f /var/log/apache2/error.log
+
+============================================================
