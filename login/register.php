@@ -197,7 +197,7 @@
                                     </div>
                                     <div class="form-check custom-radio">
                                         <input class="form-check-input" type="radio" name="role" id="admin" value="1">
-                                        <label class="form-check-label" for="admin">Administrator</label>
+                                        <label class="form-check-label" for="admin">Pharmacy Administrator</label>
                                     </div>
                                 </div>
                             </div>
@@ -216,6 +216,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="../js/register.js"></script>
+    
     
 </body>
 
