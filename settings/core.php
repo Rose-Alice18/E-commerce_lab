@@ -10,7 +10,10 @@ ob_start();
  * @return bool True if user is logged in, false otherwise
  */
 function isLoggedIn() {
-    return isset($_SESSION['id']) && !empty($_SESSION['id']);
+    // Check for any of these session variables indicating a logged-in user
+    return (isset($_SESSION['id']) && !empty($_SESSION['id'])) || 
+           (isset($_SESSION['user_id']) && !empty($_SESSION['user_id'])) ||
+           (isset($_SESSION['customer_id']) && !empty($_SESSION['customer_id']));
 }
 
 /**
@@ -18,7 +21,14 @@ function isLoggedIn() {
  * @return int|null User ID if logged in, null otherwise
  */
 function getUserId() {
-    return isLoggedIn() ? $_SESSION['id'] : null;
+    if (isset($_SESSION['id']) && !empty($_SESSION['id'])) {
+        return $_SESSION['id'];
+    } elseif (isset($_SESSION['user_id']) && !empty($_SESSION['user_id'])) {
+        return $_SESSION['user_id'];
+    } elseif (isset($_SESSION['customer_id']) && !empty($_SESSION['customer_id'])) {
+        return $_SESSION['customer_id'];
+    }
+    return null;
 }
 
 /**
@@ -30,13 +40,21 @@ function hasAdminPrivileges() {
         return false;
     }
     
-    // Check if role is set in session and equals 'admin'
-    return isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
+    // Check if role is set in session and equals 'admin' OR equals 1 (numeric admin role)
+    if (isset($_SESSION['role'])) {
+        return $_SESSION['role'] === 'admin' || $_SESSION['role'] == 1;
+    }
+    
+    if (isset($_SESSION['user_role'])) {
+        return $_SESSION['user_role'] === 'admin' || $_SESSION['user_role'] == 1;
+    }
+    
+    return false;
 }
 
 /**
  * Check if user has a specific role
- * @param string $role The role to check for
+ * @param string|int $role The role to check for
  * @return bool True if user has the specified role, false otherwise
  */
 function hasRole($role) {
@@ -44,22 +62,63 @@ function hasRole($role) {
         return false;
     }
     
-    return isset($_SESSION['role']) && $_SESSION['role'] === $role;
+    // Check both possible session keys
+    if (isset($_SESSION['role'])) {
+        return $_SESSION['role'] === $role || $_SESSION['role'] == $role;
+    }
+    
+    if (isset($_SESSION['user_role'])) {
+        return $_SESSION['user_role'] === $role || $_SESSION['user_role'] == $role;
+    }
+    
+    return false;
 }
 
 /**
  * Get the current user's role
- * @return string|null User role if logged in, null otherwise
+ * @return string|int|null User role if logged in, null otherwise
  */
 function getUserRole() {
-    return isLoggedIn() && isset($_SESSION['role']) ? $_SESSION['role'] : null;
+    if (!isLoggedIn()) {
+        return null;
+    }
+    
+    if (isset($_SESSION['role'])) {
+        return $_SESSION['role'];
+    }
+    
+    if (isset($_SESSION['user_role'])) {
+        return $_SESSION['user_role'];
+    }
+    
+    return null;
+}
+
+/**
+ * Get the current user's name
+ * @return string|null User name if logged in, null otherwise
+ */
+function getUserName() {
+    if (!isLoggedIn()) {
+        return null;
+    }
+    
+    if (isset($_SESSION['user_name'])) {
+        return $_SESSION['user_name'];
+    }
+    
+    if (isset($_SESSION['customer_name'])) {
+        return $_SESSION['customer_name'];
+    }
+    
+    return null;
 }
 
 /**
  * Redirect to login page if user is not logged in
- * @param string $loginPath Path to login page (default: ../Login/login_register.php)
+ * @param string $loginPath Path to login page (default: ../login/login.php)
  */
-function requireLogin($loginPath = "../Login/login_register.php") {
+function requireLogin($loginPath = "../login/login.php") {
     if (!isLoggedIn()) {
         header("Location: $loginPath");
         exit;
@@ -70,7 +129,7 @@ function requireLogin($loginPath = "../Login/login_register.php") {
  * Redirect to access denied page if user doesn't have admin privileges
  * @param string $accessDeniedPath Path to access denied page
  */
-function requireAdmin($accessDeniedPath = "../Error/access_denied.php") {
+function requireAdmin($accessDeniedPath = "../login/login.php") {
     requireLogin(); // First ensure user is logged in
     
     if (!hasAdminPrivileges()) {
@@ -78,8 +137,5 @@ function requireAdmin($accessDeniedPath = "../Error/access_denied.php") {
         exit;
     }
 }
-
-// Automatically redirect if not logged in (you can remove this if you want manual control)
-//requireLogin();
 
 ?>
