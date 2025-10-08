@@ -35,8 +35,8 @@ try {
         exit();
     }
     
-    // Get user ID from session
-    $user_id = $_SESSION['id'];
+    // Get user ID from session using helper function
+    $user_id = getUserId();
     
     // Validate user ID
     if (!$user_id || $user_id <= 0) {
