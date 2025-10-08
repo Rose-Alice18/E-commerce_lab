@@ -219,5 +219,30 @@ $user_id = getUserId();
             loadCategories();
         });
     </script-->
+
+    
+    <script>
+        console.log("Testing JavaScript...");
+        
+        // Test if loadCategories exists
+        if (typeof loadCategories === 'function') {
+            console.log("✓ loadCategories function found");
+        } else {
+            console.log("✗ loadCategories function NOT found");
+        }
+        
+        // Test if form handler is attached
+        const form = document.getElementById('addCategoryForm');
+        console.log("Form element:", form);
+        
+        if (form) {
+            // Manually attach handler for testing
+            form.addEventListener('submit', function(e) {
+                console.log("Form submitted!");
+                e.preventDefault();
+                alert("Form submission intercepted - JavaScript is working!");
+            });
+        }
+    </script>
 </body>
 </html>

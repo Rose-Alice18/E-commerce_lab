@@ -4,8 +4,9 @@
  * Handles the creation of new categories
  */
 
-// Start session
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 // Set JSON header
 header('Content-Type: application/json');
