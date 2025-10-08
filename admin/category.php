@@ -3,10 +3,8 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// Start session
-session_start();
 
-// Include core functions
+// Include core functions (this will start the session)
 require_once(dirname(__FILE__) . '/../settings/core.php');
 
 // Check if user is logged in
@@ -215,11 +213,11 @@ $user_id = getUserId();
     <!-- Category JS -->
     <script src="../js/category.js"></script>
     
-    <script>
+    <!--script>
         // Load categories when page loads
         document.addEventListener('DOMContentLoaded', function() {
             loadCategories();
         });
-    </script>
+    </script-->
 </body>
 </html>

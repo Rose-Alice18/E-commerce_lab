@@ -4,8 +4,14 @@
  * Retrieves all categories for the logged-in user
  */
 
-// Start session
-session_start();
+// Enable error display for debugging
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+// Start session only if not already started
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 // Set JSON header
 header('Content-Type: application/json');
@@ -55,13 +61,13 @@ try {
     echo json_encode($result);
     
 } catch (Exception $e) {
-    // Log error (in production, use proper logging)
-    error_log("Fetch categories error: " . $e->getMessage());
-    
-    // Return error response
+    // Return detailed error for debugging
     echo json_encode([
         'success' => false,
-        'message' => 'An error occurred while fetching categories',
+        'message' => 'Error: ' . $e->getMessage(),
+        'file' => $e->getFile(),
+        'line' => $e->getLine(),
+        'trace' => $e->getTraceAsString(),
         'data' => []
     ]);
 }
