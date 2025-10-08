@@ -1,4 +1,4 @@
-<?php
+<!-- <!?php
 // Start session
 session_start();
 
@@ -6,15 +6,15 @@ session_start();
 require_once(dirname(__FILE__) . '/settings/core.php');
 
 // TEMPORARY DEBUG - Remove this after testing
-echo "<pre>";
-echo "Session Debug:\n";
-echo "Logged In: " . (isLoggedIn() ? 'YES' : 'NO') . "\n";
-echo "Is Admin: " . (hasAdminPrivileges() ? 'YES' : 'NO') . "\n";
-echo "Session Data:\n";
-print_r($_SESSION);
-echo "</pre>";
+// echo "<pre>";
+// echo "Session Debug:\n";
+// echo "Logged In: " . (isLoggedIn() ? 'YES' : 'NO') . "\n";
+// echo "Is Admin: " . (hasAdminPrivileges() ? 'YES' : 'NO') . "\n";
+// echo "Session Data:\n";
+// print_r($_SESSION);
+// echo "</pre>";
 // END DEBUG
-?>
+?> -->
 
 <?php
 // Start session

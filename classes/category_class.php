@@ -1,6 +1,6 @@
 <?php
 // Include the database connection
-require_once(dirname(__FILE__) . '/../db/db_class.php');
+require_once(dirname(__FILE__) . '/../settings/db_class.php');
 
 /**
  * Category class for managing pharmacy service categories
