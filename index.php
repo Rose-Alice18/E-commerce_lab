@@ -579,7 +579,7 @@ $stats = get_formatted_stats_ctr();
     </section>
 
     <!-- Stats Section - Fetched from Database -->
-    <section class="stats-section">
+    <!--section class="stats-section">
         <div class="container">
             <div class="row">
                 <div class="col-md-3 col-6">
@@ -608,7 +608,7 @@ $stats = get_formatted_stats_ctr();
                 </div>
             </div>
         </div>
-    </section>
+    </section-->
 
     <!-- Features Section -->
     <section id="features" class="features-section">
