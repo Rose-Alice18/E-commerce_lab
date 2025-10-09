@@ -74,10 +74,20 @@ function initializeCountrySelection() {
         showCountrySuggestions('');
     });
 
-    // Filter countries as user types
+    // Filter countries as user types AND auto-select if exact match
     $('#country').on('input', function() {
         const searchTerm = $(this).val().toLowerCase();
         showCountrySuggestions(searchTerm);
+        
+        // ✅ NEW: Auto-detect and select country as user types
+        const matchedCountry = countries.find(country => 
+            country.name.toLowerCase() === searchTerm
+        );
+        
+        if (matchedCountry) {
+            selectedCountry = matchedCountry;
+            updatePhoneCode(matchedCountry);
+        }
     });
 
     // Hide dropdown when clicking outside
@@ -180,18 +190,36 @@ function showCountrySuggestions(searchTerm) {
             <div class="country-suggestion-item" data-country="${country.name}" data-code="${country.code}">
                 <span style="margin-right: 8px;">${country.flag}</span>
                 <span style="font-weight: 500;">${country.name}</span>
-                <span style="color: #999; margin-left: 8px; font-size: 0.9rem;">${country.code}</span>
+                <span style="color: #667eea; margin-left: auto; font-size: 0.9rem; font-weight: 600;">${country.code}</span>
             </div>
         `);
 
         $item.on('click', function() {
             selectCountry(country);
+            $('#country').focus(); // Show selection feedback
+            setTimeout(() => $('#phone_number').focus(), 100); // Move to phone field
         });
 
         $suggestions.append($item);
     });
 
     $suggestions.addClass('show');
+}
+
+/**
+ * ✅ NEW: Update phone code helper function
+ */
+function updatePhoneCode(country) {
+    const $phoneInput = $('#phone_number');
+    const currentPhone = $phoneInput.val().trim();
+    
+    // Remove OLD country code (any code starting with +)
+    const phoneWithoutCode = currentPhone.replace(/^\+\d+\s*/, '').trim();
+    
+    // Add NEW country code
+    $phoneInput.val(country.code + ' ' + phoneWithoutCode);
+    
+    console.log('✓ Phone code updated:', country.code);
 }
 
 /**
@@ -205,17 +233,8 @@ function selectCountry(country) {
     // Set country name
     $('#country').val(country.name);
     
-    // ✅ FIXED: Update phone with NEW country code
-    const $phoneInput = $('#phone_number');
-    const currentPhone = $phoneInput.val().trim();
-    
-    // Remove OLD country code (any code starting with +)
-    const phoneWithoutCode = currentPhone.replace(/^\+\d+\s*/, '').trim();
-    
-    // Add NEW country code
-    $phoneInput.val(country.code + ' ' + phoneWithoutCode);
-    
-    console.log('✓ Phone updated:', country.code + ' ' + phoneWithoutCode);
+    // Update phone code
+    updatePhoneCode(country);
     
     // Hide suggestions
     $('#country-suggestions').removeClass('show');
