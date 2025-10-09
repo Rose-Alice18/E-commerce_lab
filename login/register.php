@@ -26,9 +26,83 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding: 100px 20px 20px 20px;
             position: relative;
             overflow-x: hidden;
+        }
+
+        /* Modern Navbar */
+        .modern-navbar {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+            padding: 1rem 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1001;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-brand-custom {
+            font-weight: 800;
+            font-size: 1.5rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .navbar-brand-custom:hover {
+            opacity: 0.8;
+        }
+
+        .btn-home {
+            background: var(--primary-gradient);
+            border: none;
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-home:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+            color: white;
+        }
+
+        .btn-login-nav {
+            border: 2px solid #667eea;
+            color: #667eea;
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            background: transparent;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-login-nav:hover {
+            background: var(--primary-gradient);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+            border-color: transparent;
         }
 
         body::before {
@@ -183,8 +257,6 @@
         .feature-item:nth-child(4) { animation-delay: 0.5s; }
         .feature-item:nth-child(5) { animation-delay: 0.6s; }
         .feature-item:nth-child(6) { animation-delay: 0.7s; }
-        .feature-item:nth-child(7) { animation-delay: 0.8s; }
-        .feature-item:nth-child(8) { animation-delay: 0.9s; }
 
         .feature-icon {
             width: 50px;
@@ -466,7 +538,20 @@
 
         @media (max-width: 768px) {
             body {
-                padding: 10px;
+                padding: 80px 10px 10px 10px;
+            }
+
+            .modern-navbar {
+                padding: 0.75rem 0;
+            }
+
+            .navbar-brand-custom {
+                font-size: 1.2rem;
+            }
+
+            .btn-home, .btn-login-nav {
+                padding: 0.4rem 1rem;
+                font-size: 0.9rem;
             }
 
             .register-left {
@@ -484,6 +569,29 @@
     </style>
 </head>
 <body>
+    <!-- Modern Navigation -->
+    <nav class="modern-navbar">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <a href="../index.php" class="navbar-brand-custom">
+                    <i class="fas fa-pills"></i>
+                    <span>PharmaVault</span>
+                </a>
+                
+                <div class="d-flex gap-2 align-items-center">
+                    <a href="../index.php" class="btn-home">
+                        <i class="fas fa-home"></i>
+                        Home
+                    </a>
+                    <a href="login.php" class="btn-login-nav">
+                        <i class="fas fa-sign-in-alt"></i>
+                        Login
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
     <div class="register-container">
         <div class="register-card">
             <div class="row g-0">
@@ -495,7 +603,7 @@
                                 <i class="fas fa-pills"></i>
                                 <span>PharmaVault</span>
                             </div>
-                            <p style="font-size: 1.1rem; opacity: 0.95;">Join Ghana's most trusted healthcare marketplace</p>
+                            <p style="font-size: 1.1rem; opacity: 0.95;">Join Ghana's trusted healthcare marketplace</p>
                         </div>
 
                         <ul class="feature-list">
@@ -514,7 +622,7 @@
                                 </div>
                                 <div class="feature-text">
                                     <h5>Fast Delivery</h5>
-                                    <p>Same-day delivery in major and close-by cities</p>
+                                    <p>Same-day delivery in major areas</p>
                                 </div>
                             </li>
                             <li class="feature-item">
@@ -562,7 +670,7 @@
                                     <p>Access PharmaVault on any device</p>
                                 </div>
                             </li>
-                            <li class="feature-item">
+                            <!--li class="feature-item">
                                 <div class="feature-icon">
                                     <i class="fas fa-heart"></i>
                                 </div>
@@ -579,7 +687,7 @@
                                     <h5>Health First</h5>
                                     <p>Your wellbeing is our top priority, always</p>
                                 </div>
-                            </li>
+                            </li-->
                         </ul>
                     </div>
                 </div>
@@ -698,7 +806,7 @@
         </div>
     </div>
 
-    <!-- Scripts -->
+    <!-- Scripts - MVC Approach: All logic in register.js -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

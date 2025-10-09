@@ -62,6 +62,7 @@ $(document).ready(function() {
     initializeCountrySelection();
     initializeFormValidation();
     initializeFormSubmission();
+    initializePhoneProtection(); // ✅ NEW: Protect phone code from deletion
 });
 
 /**
@@ -86,7 +87,7 @@ function initializeCountrySelection() {
         }
     });
 
-    // Validate country on blur
+    // ✅ FIXED: Validate country on blur AND update phone code
     $('#country').on('blur', function() {
         setTimeout(() => {
             const enteredCountry = $(this).val().trim();
@@ -106,7 +107,7 @@ function initializeCountrySelection() {
                         country.name.toLowerCase() === enteredCountry.toLowerCase()
                     );
                     if (matchedCountry) {
-                        selectCountry(matchedCountry);
+                        selectCountry(matchedCountry); // ✅ This now updates phone code
                     }
                 }
             }
@@ -117,6 +118,42 @@ function initializeCountrySelection() {
     $('#phone_number').on('focus', function() {
         if (selectedCountry && !$(this).val().startsWith(selectedCountry.code)) {
             $(this).val(selectedCountry.code + ' ');
+        }
+    });
+}
+
+/**
+ * ✅ NEW: Protect phone code from being deleted
+ */
+function initializePhoneProtection() {
+    const $phoneInput = $('#phone_number');
+    
+    // Prevent deleting country code
+    $phoneInput.on('keydown', function(e) {
+        if (!selectedCountry) return;
+        
+        const value = $(this).val();
+        const cursorPosition = this.selectionStart;
+        const codeLength = selectedCountry.code.length;
+        
+        // Prevent backspace/delete if cursor is within country code area
+        if ((e.key === 'Backspace' || e.key === 'Delete') && cursorPosition <= codeLength + 1) {
+            e.preventDefault();
+            return false;
+        }
+    });
+    
+    // Ensure country code stays at the beginning
+    $phoneInput.on('input', function() {
+        if (!selectedCountry) return;
+        
+        const value = $(this).val();
+        const code = selectedCountry.code;
+        
+        // If country code is missing, add it back
+        if (!value.startsWith(code)) {
+            const numberPart = value.replace(/[^\d\s]/g, '').trim();
+            $(this).val(code + ' ' + numberPart);
         }
     });
 }
@@ -158,20 +195,27 @@ function showCountrySuggestions(searchTerm) {
 }
 
 /**
- * Select country and update phone code
+ * ✅ ENHANCED: Select country and update phone code
  */
 function selectCountry(country) {
+    console.log('→ Country selected:', country.name, country.code);
+    
     selectedCountry = country;
     
     // Set country name
     $('#country').val(country.name);
     
-    // Update phone with country code
+    // ✅ FIXED: Update phone with NEW country code
     const $phoneInput = $('#phone_number');
     const currentPhone = $phoneInput.val().trim();
-    const phoneWithoutCode = currentPhone.replace(/^\+\d+\s*/, '');
     
+    // Remove OLD country code (any code starting with +)
+    const phoneWithoutCode = currentPhone.replace(/^\+\d+\s*/, '').trim();
+    
+    // Add NEW country code
     $phoneInput.val(country.code + ' ' + phoneWithoutCode);
+    
+    console.log('✓ Phone updated:', country.code + ' ' + phoneWithoutCode);
     
     // Hide suggestions
     $('#country-suggestions').removeClass('show');
