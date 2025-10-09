@@ -13,7 +13,7 @@ require_once(dirname(__FILE__) . '/settings/core.php');
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PharmaHub - Your Trusted Healthcare Marketplace in Ghana</title>
+    <title>PharmaVault - Your Trusted Healthcare Marketplace in Ghana</title>
     <meta name="description" content="Connect with verified pharmacies across Ghana. Find prescription medications, health supplements, medical supplies, and professional healthcare services.">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -459,7 +459,7 @@ require_once(dirname(__FILE__) . '/settings/core.php');
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="index.php">
                 <i class="fas fa-pills me-2"></i>
-                <span>PharmaHub</span>
+                <span>PharmaVault</span>
             </a>
             
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -481,7 +481,7 @@ require_once(dirname(__FILE__) . '/settings/core.php');
                     <?php if (isLoggedIn() && hasAdminPrivileges()): ?>
                         <li class="nav-item">
                             <a class="nav-link" href="admin/category.php">
-                                <i class="fas fa-cog me-1"></i>Manage
+                                <i class="fas fa-cog me-1"></i>Manage Categories
                             </a>
                         </li>
                     <?php endif; ?>
@@ -502,7 +502,7 @@ require_once(dirname(__FILE__) . '/settings/core.php');
                                 <?php echo isset($_SESSION['user_name']) ? htmlspecialchars($_SESSION['user_name']) : 'Account'; ?>
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item" href="profile.php">
+                                <li><a class="dropdown-item" href="#profile.php">
                                     <i class="fas fa-user me-2"></i>My Profile
                                 </a></li>
                                 <li><hr class="dropdown-divider"></li>
@@ -575,26 +575,26 @@ require_once(dirname(__FILE__) . '/settings/core.php');
         </div>
     </section>
 
-    <!-- Stats Section -->
+    <!-- Stats Section - Fetched from Database -->
     <section class="stats-section">
         <div class="container">
             <div class="row">
                 <div class="col-md-3 col-6">
                     <div class="stat-item">
-                        <div class="stat-number">500+</div>
-                        <div class="stat-label">Verified Pharmacies</div>
+                        <div class="stat-number"><?php echo htmlspecialchars($stats['pharmacies']['formatted']); ?>+</div>
+                        <div class="stat-label"><?php echo htmlspecialchars($stats['pharmacies']['label']); ?></div>
                     </div>
                 </div>
                 <div class="col-md-3 col-6">
                     <div class="stat-item">
-                        <div class="stat-number">10K+</div>
-                        <div class="stat-label">Happy Customers</div>
+                        <div class="stat-number"><?php echo htmlspecialchars($stats['customers']['formatted']); ?>+</div>
+                        <div class="stat-label"><?php echo htmlspecialchars($stats['customers']['label']); ?></div>
                     </div>
                 </div>
                 <div class="col-md-3 col-6">
                     <div class="stat-item">
-                        <div class="stat-number">50K+</div>
-                        <div class="stat-label">Products Available</div>
+                        <div class="stat-number"><?php echo htmlspecialchars($stats['categories']['formatted']); ?>+</div>
+                        <div class="stat-label"><?php echo htmlspecialchars($stats['categories']['label']); ?></div>
                     </div>
                 </div>
                 <div class="col-md-3 col-6">
