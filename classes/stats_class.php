@@ -19,9 +19,10 @@ class Stats extends db_connection {
             $stmt = $this->db_conn()->prepare($sql);
             $stmt->execute();
             
-            $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+            // FIXED: Use PDO::FETCH_ASSOC without backslash (no namespace needed)
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
             return $result['total'] ?? 0;
-        } catch (\PDOException $e) {
+        } catch (PDOException $e) {
             error_log("Error getting total pharmacies: " . $e->getMessage());
             return 0;
         }
@@ -37,9 +38,10 @@ class Stats extends db_connection {
             $stmt = $this->db_conn()->prepare($sql);
             $stmt->execute();
             
-            $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+            // FIXED: Removed backslash before PDO
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
             return $result['total'] ?? 0;
-        } catch (\PDOException $e) {
+        } catch (PDOException $e) {
             error_log("Error getting total customers: " . $e->getMessage());
             return 0;
         }
@@ -55,9 +57,10 @@ class Stats extends db_connection {
             $stmt = $this->db_conn()->prepare($sql);
             $stmt->execute();
             
-            $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+            // FIXED: Removed backslash before PDO
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
             return $result['total'] ?? 0;
-        } catch (\PDOException $e) {
+        } catch (PDOException $e) {
             error_log("Error getting total categories: " . $e->getMessage());
             return 0;
         }
@@ -73,9 +76,10 @@ class Stats extends db_connection {
             $stmt = $this->db_conn()->prepare($sql);
             $stmt->execute();
             
-            $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+            // FIXED: Removed backslash before PDO
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
             return $result['total'] ?? 0;
-        } catch (\PDOException $e) {
+        } catch (PDOException $e) {
             error_log("Error getting total users: " . $e->getMessage());
             return 0;
         }
@@ -103,13 +107,14 @@ class Stats extends db_connection {
         try {
             // Adjust column name if your table has a different timestamp column
             $sql = "SELECT COUNT(*) as total FROM customer 
-                    WHERE DATE(created_at) >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)";
+                    WHERE DATE(customer_date) >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)";
             $stmt = $this->db_conn()->prepare($sql);
             $stmt->execute();
             
-            $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+            // FIXED: Removed backslash before PDO
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
             return $result['total'] ?? 0;
-        } catch (\PDOException $e) {
+        } catch (PDOException $e) {
             error_log("Error getting recent registrations: " . $e->getMessage());
             return 0;
         }
