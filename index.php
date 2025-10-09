@@ -6,6 +6,9 @@ if (session_status() === PHP_SESSION_NONE) {
 
 // Include core functions
 require_once(dirname(__FILE__) . '/settings/core.php');
+
+require_once(dirname(__FILE__) . '/controllers/stats_controller.php');
+$stats = get_formatted_stats_ctr();
 ?>
 
 <!DOCTYPE html>
@@ -472,7 +475,7 @@ require_once(dirname(__FILE__) . '/settings/core.php');
                         <a class="nav-link" href="#features">Features</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#about">About</a>
+                        <a class="nav-link" href="about.php">About</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#contact">Contact</a>
@@ -611,7 +614,7 @@ require_once(dirname(__FILE__) . '/settings/core.php');
     <section id="features" class="features-section">
         <div class="container">
             <div class="text-center mb-5">
-                <h2 class="section-title">Why Choose PharmaHub?</h2>
+                <h2 class="section-title">Why Choose PharmaVault?</h2>
                 <p class="section-subtitle">Your health is our priority. Here's what makes us different.</p>
             </div>
             
@@ -662,7 +665,7 @@ require_once(dirname(__FILE__) . '/settings/core.php');
                             <i class="fas fa-mobile-alt"></i>
                         </div>
                         <h5>Mobile Friendly</h5>
-                        <p>Access PharmaHub on any device. Our responsive platform works seamlessly on desktop, tablet, and mobile.</p>
+                        <p>Access PharmaVault on any device. Our responsive platform works seamlessly on desktop, tablet, and mobile.</p>
                     </div>
                 </div>
                 
@@ -708,7 +711,7 @@ require_once(dirname(__FILE__) . '/settings/core.php');
             <div class="row">
                 <div class="col-lg-4 mb-4">
                     <div class="footer-brand">
-                        <i class="fas fa-pills me-2"></i>PharmaHub
+                        <i class="fas fa-pills me-2"></i>PharmaVault
                     </div>
                     <p class="footer-description">
                         Your trusted healthcare marketplace connecting customers with verified pharmacies across Ghana.
@@ -725,7 +728,7 @@ require_once(dirname(__FILE__) . '/settings/core.php');
                     <h5 class="footer-title">Quick Links</h5>
                     <ul class="footer-links">
                         <li><a href="#features">Features</a></li>
-                        <li><a href="#about">About Us</a></li>
+                        <li><a href="about.php">About Us</a></li>
                         <li><a href="#contact">Contact</a></li>
                         <li><a href="#">FAQs</a></li>
                     </ul>
@@ -753,7 +756,7 @@ require_once(dirname(__FILE__) . '/settings/core.php');
             </div>
             
             <div class="footer-bottom">
-                <p class="mb-0">&copy; 2025 PharmaHub. All rights reserved. Built with <i class="fas fa-heart text-danger"></i> in Ghana</p>
+                <p class="mb-0">&copy; 2025 PharmaVault. All rights reserved. Built with <i class="fas fa-heart text-danger"></i> in Ghana</p>
             </div>
         </div>
     </footer>
