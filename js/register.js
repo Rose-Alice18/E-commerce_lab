@@ -1,6 +1,7 @@
 /**
  * Registration Form - Complete Client-Side Logic
- * Handles validation, country selection, and AJAX submission
+ * Handles validation, country selection with auto phone codes, and AJAX submission
+ * Following MVC Approach - All logic in this file
  */
 
 // Country data with phone codes (46 countries)
@@ -60,9 +61,9 @@ $(document).ready(function() {
     
     // Initialize all functionality
     initializeCountrySelection();
+    initializePhoneProtection();
     initializeFormValidation();
     initializeFormSubmission();
-    initializePhoneProtection(); // ✅ NEW: Protect phone code from deletion
 });
 
 /**
@@ -79,7 +80,7 @@ function initializeCountrySelection() {
         const searchTerm = $(this).val().toLowerCase();
         showCountrySuggestions(searchTerm);
         
-        // ✅ NEW: Auto-detect and select country as user types
+        // Auto-detect and select country as user types
         const matchedCountry = countries.find(country => 
             country.name.toLowerCase() === searchTerm
         );
@@ -97,7 +98,7 @@ function initializeCountrySelection() {
         }
     });
 
-    // ✅ FIXED: Validate country on blur AND update phone code
+    // Validate country on blur
     $('#country').on('blur', function() {
         setTimeout(() => {
             const enteredCountry = $(this).val().trim();
@@ -117,7 +118,7 @@ function initializeCountrySelection() {
                         country.name.toLowerCase() === enteredCountry.toLowerCase()
                     );
                     if (matchedCountry) {
-                        selectCountry(matchedCountry); // ✅ This now updates phone code
+                        selectCountry(matchedCountry);
                     }
                 }
             }
@@ -133,7 +134,7 @@ function initializeCountrySelection() {
 }
 
 /**
- * ✅ NEW: Protect phone code from being deleted
+ * Protect phone code from being deleted
  */
 function initializePhoneProtection() {
     const $phoneInput = $('#phone_number');
@@ -196,8 +197,8 @@ function showCountrySuggestions(searchTerm) {
 
         $item.on('click', function() {
             selectCountry(country);
-            $('#country').focus(); // Show selection feedback
-            setTimeout(() => $('#phone_number').focus(), 100); // Move to phone field
+            $('#country').focus();
+            setTimeout(() => $('#phone_number').focus(), 100);
         });
 
         $suggestions.append($item);
@@ -207,7 +208,7 @@ function showCountrySuggestions(searchTerm) {
 }
 
 /**
- * ✅ NEW: Update phone code helper function
+ * Update phone code helper function
  */
 function updatePhoneCode(country) {
     const $phoneInput = $('#phone_number');
@@ -223,7 +224,7 @@ function updatePhoneCode(country) {
 }
 
 /**
- * ✅ ENHANCED: Select country and update phone code
+ * Select country and update phone code
  */
 function selectCountry(country) {
     console.log('→ Country selected:', country.name, country.code);
