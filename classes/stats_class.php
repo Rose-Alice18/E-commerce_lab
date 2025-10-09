@@ -5,7 +5,7 @@
  */
 
 // Include the database connection class
-require_once(dirname(__FILE__) . '/../db/db_class.php');
+require_once(dirname(__FILE__) . '/../settings/db_class.php');
 
 class Stats extends db_connection {
     
