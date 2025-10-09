@@ -31,7 +31,6 @@
             overflow-x: hidden;
         }
 
-        /* Animated Background Circles */
         body::before {
             content: '';
             position: absolute;
@@ -83,6 +82,27 @@
             }
         }
 
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
         .register-container {
             width: 100%;
             max-width: 1000px;
@@ -105,9 +125,10 @@
             padding: 60px 40px;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: flex-start;
             position: relative;
             overflow: hidden;
+            min-height: 100%;
         }
 
         .register-left::before {
@@ -160,6 +181,10 @@
         .feature-item:nth-child(2) { animation-delay: 0.3s; }
         .feature-item:nth-child(3) { animation-delay: 0.4s; }
         .feature-item:nth-child(4) { animation-delay: 0.5s; }
+        .feature-item:nth-child(5) { animation-delay: 0.6s; }
+        .feature-item:nth-child(6) { animation-delay: 0.7s; }
+        .feature-item:nth-child(7) { animation-delay: 0.8s; }
+        .feature-item:nth-child(8) { animation-delay: 0.9s; }
 
         .feature-icon {
             width: 50px;
@@ -235,12 +260,6 @@
         .form-control.error {
             border-color: #f56565;
             animation: shake 0.3s ease;
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
         }
 
         .field-error {
@@ -331,6 +350,23 @@
             transform: translateY(0);
         }
 
+        .btn-register.loading {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        .btn-register.loading::after {
+            content: '';
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid white;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            margin-left: 10px;
+        }
+
         .login-link {
             text-align: center;
             margin-top: 1.5rem;
@@ -348,7 +384,6 @@
             color: #764ba2;
         }
 
-        /* Country Dropdown Styles */
         .country-dropdown {
             position: relative;
         }
@@ -375,17 +410,6 @@
             animation: slideDown 0.2s ease-out;
         }
 
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
         .country-suggestion-item {
             padding: 12px 16px;
             cursor: pointer;
@@ -404,7 +428,6 @@
             padding-left: 20px;
         }
 
-        /* Custom scrollbar for country dropdown */
         .country-suggestions::-webkit-scrollbar {
             width: 8px;
         }
@@ -423,7 +446,6 @@
             background: #764ba2;
         }
 
-        /* Responsive Design */
         @media (max-width: 992px) {
             .register-left {
                 padding: 40px 30px;
@@ -459,28 +481,6 @@
                 flex-direction: column;
             }
         }
-
-        /* Loading State */
-        .btn-register.loading {
-            pointer-events: none;
-            opacity: 0.7;
-        }
-
-        .btn-register.loading::after {
-            content: '';
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 2px solid white;
-            border-top-color: transparent;
-            border-radius: 50%;
-            animation: spin 0.6s linear infinite;
-            margin-left: 10px;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
     </style>
 </head>
 <body>
@@ -514,7 +514,25 @@
                                 </div>
                                 <div class="feature-text">
                                     <h5>Fast Delivery</h5>
-                                    <p>Get your medications quickly</p>
+                                    <p>Same-day delivery in major and close-by cities</p>
+                                </div>
+                            </li>
+                            <li class="feature-item">
+                                <div class="feature-icon">
+                                    <i class="fas fa-pills"></i>
+                                </div>
+                                <div class="feature-text">
+                                    <h5>Authentic Products</h5>
+                                    <p>100% genuine medications only</p>
+                                </div>
+                            </li>
+                            <li class="feature-item">
+                                <div class="feature-icon">
+                                    <i class="fas fa-tags"></i>
+                                </div>
+                                <div class="feature-text">
+                                    <h5>Best Prices</h5>
+                                    <p>Compare prices and get the best deals</p>
                                 </div>
                             </li>
                             <li class="feature-item">
@@ -523,7 +541,7 @@
                                 </div>
                                 <div class="feature-text">
                                     <h5>24/7 Support</h5>
-                                    <p>We're always here to help</p>
+                                    <p>Expert help anytime you need</p>
                                 </div>
                             </li>
                             <li class="feature-item">
@@ -532,7 +550,34 @@
                                 </div>
                                 <div class="feature-text">
                                     <h5>Data Privacy</h5>
-                                    <p>Your information is safe with us</p>
+                                    <p>Your information stays secure</p>
+                                </div>
+                            </li>
+                            <li class="feature-item">
+                                <div class="feature-icon">
+                                    <i class="fas fa-mobile-alt"></i>
+                                </div>
+                                <div class="feature-text">
+                                    <h5>Mobile Friendly</h5>
+                                    <p>Access PharmaVault on any device</p>
+                                </div>
+                            </li>
+                            <li class="feature-item">
+                                <div class="feature-icon">
+                                    <i class="fas fa-heart"></i>
+                                </div>
+                                <div class="feature-text">
+                                    <h5>Smart Search</h5>
+                                    <p>Find what you need with our intelligent search system</p>
+                                </div>
+                            </li>
+                            <li class="feature-item">
+                                <div class="feature-icon">
+                                    <i class="fas fa-heart"></i>
+                                </div>
+                                <div class="feature-text">
+                                    <h5>Health First</h5>
+                                    <p>Your wellbeing is our top priority, always</p>
                                 </div>
                             </li>
                         </ul>
@@ -547,9 +592,8 @@
                             <p>Get started with your free account</p>
                         </div>
 
-                        <!-- Registration Form - Same logic as original -->
                         <form method="POST" id="register-form">
-                            <!-- Full Name Field -->
+                            <!-- Full Name -->
                             <div class="mb-3">
                                 <label for="name" class="form-label">
                                     <i class="fas fa-user"></i>
@@ -559,7 +603,7 @@
                                        placeholder="Enter your full name" required maxlength="100">
                             </div>
 
-                            <!-- Email Field -->
+                            <!-- Email -->
                             <div class="mb-3">
                                 <label for="email" class="form-label">
                                     <i class="fas fa-envelope"></i>
@@ -569,7 +613,7 @@
                                        placeholder="your.email@example.com" required maxlength="50">
                             </div>
 
-                            <!-- Password Field -->
+                            <!-- Password -->
                             <div class="mb-3">
                                 <label for="password" class="form-label">
                                     <i class="fas fa-lock"></i>
@@ -579,30 +623,7 @@
                                        placeholder="Minimum 6 characters" required minlength="6">
                             </div>
 
-                            <div class="row">
-                                <!-- Contact Number Field -->
-                                <div class="col-md-6 mb-3">
-                                    <label for="phone_number" class="form-label">
-                                        <i class="fas fa-phone"></i>
-                                        Contact Number
-                                    </label>
-                                    <input type="text" class="form-control" id="phone_number" name="phone_number" 
-                                           placeholder="+233 XX XXX XXXX" required maxlength="15">
-                                    <div class="field-error" id="phone-error" style="display: none;"></div>
-                                </div>
-
-                                <!-- City Field -->
-                                <div class="col-md-6 mb-3">
-                                    <label for="city" class="form-label">
-                                        <i class="fas fa-map-marker-alt"></i>
-                                        City
-                                    </label>
-                                    <input type="text" class="form-control" id="city" name="city" 
-                                           placeholder="e.g. Accra" required maxlength="30">
-                                </div>
-                            </div>
-
-                            <!-- Country Field -->
+                            <!-- Country -->
                             <div class="mb-3">
                                 <label for="country" class="form-label">
                                     <i class="fas fa-globe"></i>
@@ -615,7 +636,29 @@
                                 </div>
                             </div>
 
-                            <!-- User Role Selection -->
+                            <div class="row">
+                                <!-- Contact Number -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="phone_number" class="form-label">
+                                        <i class="fas fa-phone"></i>
+                                        Contact Number
+                                    </label>
+                                    <input type="text" class="form-control" id="phone_number" name="phone_number" 
+                                           placeholder="+233 XX XXX XXXX" required maxlength="15">
+                                </div>
+
+                                <!-- City -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="city" class="form-label">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        City
+                                    </label>
+                                    <input type="text" class="form-control" id="city" name="city" 
+                                           placeholder="e.g. Accra" required maxlength="30">
+                                </div>
+                            </div>
+
+                            <!-- User Role -->
                             <div class="mb-3">
                                 <label class="form-label">
                                     <i class="fas fa-user-tag"></i>
@@ -655,178 +698,10 @@
         </div>
     </div>
 
-    <!-- Scripts - Keep original functionality -->
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
-    <!-- Country Selection with Phone Codes -->
-    <script>
-    // Real countries with phone codes (focused on African countries + major ones)
-    const countries = [
-        { name: "Ghana", code: "+233", flag: "🇬🇭" },
-        { name: "Nigeria", code: "+234", flag: "🇳🇬" },
-        { name: "Kenya", code: "+254", flag: "🇰🇪" },
-        { name: "South Africa", code: "+27", flag: "🇿🇦" },
-        { name: "Egypt", code: "+20", flag: "🇪🇬" },
-        { name: "Tanzania", code: "+255", flag: "🇹🇿" },
-        { name: "Uganda", code: "+256", flag: "🇺🇬" },
-        { name: "Ethiopia", code: "+251", flag: "🇪🇹" },
-        { name: "Ivory Coast", code: "+225", flag: "🇨🇮" },
-        { name: "Senegal", code: "+221", flag: "🇸🇳" },
-        { name: "Cameroon", code: "+237", flag: "🇨🇲" },
-        { name: "Zimbabwe", code: "+263", flag: "🇿🇼" },
-        { name: "Rwanda", code: "+250", flag: "🇷🇼" },
-        { name: "Botswana", code: "+267", flag: "🇧🇼" },
-        { name: "Namibia", code: "+264", flag: "🇳🇦" },
-        { name: "Mozambique", code: "+258", flag: "🇲🇿" },
-        { name: "Zambia", code: "+260", flag: "🇿🇲" },
-        { name: "Malawi", code: "+265", flag: "🇲🇼" },
-        { name: "Benin", code: "+229", flag: "🇧🇯" },
-        { name: "Togo", code: "+228", flag: "🇹🇬" },
-        { name: "Burkina Faso", code: "+226", flag: "🇧🇫" },
-        { name: "Mali", code: "+223", flag: "🇲🇱" },
-        { name: "Niger", code: "+227", flag: "🇳🇪" },
-        { name: "Guinea", code: "+224", flag: "🇬🇳" },
-        { name: "Sierra Leone", code: "+232", flag: "🇸🇱" },
-        { name: "Liberia", code: "+231", flag: "🇱🇷" },
-        { name: "Mauritius", code: "+230", flag: "🇲🇺" },
-        { name: "Angola", code: "+244", flag: "🇦🇴" },
-        { name: "Congo", code: "+242", flag: "🇨🇬" },
-        { name: "Democratic Republic of Congo", code: "+243", flag: "🇨🇩" },
-        { name: "Algeria", code: "+213", flag: "🇩🇿" },
-        { name: "Morocco", code: "+212", flag: "🇲🇦" },
-        { name: "Tunisia", code: "+216", flag: "🇹🇳" },
-        { name: "Libya", code: "+218", flag: "🇱🇾" },
-        { name: "Sudan", code: "+249", flag: "🇸🇩" },
-        { name: "Somalia", code: "+252", flag: "🇸🇴" },
-        { name: "United States", code: "+1", flag: "🇺🇸" },
-        { name: "United Kingdom", code: "+44", flag: "🇬🇧" },
-        { name: "Canada", code: "+1", flag: "🇨🇦" },
-        { name: "Germany", code: "+49", flag: "🇩🇪" },
-        { name: "France", code: "+33", flag: "🇫🇷" },
-        { name: "China", code: "+86", flag: "🇨🇳" },
-        { name: "India", code: "+91", flag: "🇮🇳" },
-        { name: "Brazil", code: "+55", flag: "🇧🇷" },
-        { name: "Australia", code: "+61", flag: "🇦🇺" },
-        { name: "Japan", code: "+81", flag: "🇯🇵" }
-    ];
-
-    $(document).ready(function() {
-        let selectedCountry = null;
-
-        // Country input focus - show all countries
-        $('#country').on('focus', function() {
-            showCountrySuggestions('');
-        });
-
-        // Country search
-        $('#country').on('input', function() {
-            const searchTerm = $(this).val().toLowerCase();
-            showCountrySuggestions(searchTerm);
-        });
-
-        // Hide dropdown when clicking outside
-        $(document).on('click', function(e) {
-            if (!$(e.target).closest('.country-dropdown').length) {
-                $('#country-suggestions').removeClass('show');
-            }
-        });
-
-        // Show country suggestions based on search
-        function showCountrySuggestions(searchTerm) {
-            const $suggestions = $('#country-suggestions');
-            $suggestions.empty();
-
-            const filteredCountries = countries.filter(country => 
-                country.name.toLowerCase().includes(searchTerm)
-            );
-
-            if (filteredCountries.length === 0) {
-                $suggestions.html('<div class="country-suggestion-item" style="color: #999;">No countries found</div>');
-                $suggestions.addClass('show');
-                return;
-            }
-
-            filteredCountries.forEach(country => {
-                const $item = $(`
-                    <div class="country-suggestion-item" data-country="${country.name}" data-code="${country.code}">
-                        <span style="margin-right: 8px;">${country.flag}</span>
-                        <span style="font-weight: 500;">${country.name}</span>
-                        <span style="color: #999; margin-left: 8px; font-size: 0.9rem;">${country.code}</span>
-                    </div>
-                `);
-
-                $item.on('click', function() {
-                    selectCountry(country);
-                });
-
-                $suggestions.append($item);
-            });
-
-            $suggestions.addClass('show');
-        }
-
-        // Select country and update phone code
-        function selectCountry(country) {
-            selectedCountry = country;
-            
-            // Set country name
-            $('#country').val(country.name);
-            
-            // Update phone number field with country code
-            const $phoneInput = $('#phone_number');
-            const currentPhone = $phoneInput.val().trim();
-            
-            // Remove any existing country code
-            const phoneWithoutCode = currentPhone.replace(/^\+\d+\s*/, '');
-            
-            // Set new phone number with country code
-            $phoneInput.val(country.code + ' ' + phoneWithoutCode);
-            
-            // Hide suggestions
-            $('#country-suggestions').removeClass('show');
-            
-            // Visual feedback
-            $('#country').removeClass('error');
-            $('#country').siblings('.field-error').remove();
-        }
-
-        // Validate that selected country is from the list
-        $('#country').on('blur', function() {
-            const enteredCountry = $(this).val().trim();
-            
-            if (enteredCountry) {
-                const isValidCountry = countries.some(country => 
-                    country.name.toLowerCase() === enteredCountry.toLowerCase()
-                );
-
-                if (!isValidCountry) {
-                    $(this).addClass('error');
-                    $(this).siblings('.field-error').remove();
-                    $(this).after('<div class="field-error"><i class="fas fa-exclamation-circle"></i> Please select a valid country from the list</div>');
-                    selectedCountry = null;
-                } else {
-                    // Find and set the country if user typed it correctly
-                    const matchedCountry = countries.find(country => 
-                        country.name.toLowerCase() === enteredCountry.toLowerCase()
-                    );
-                    if (matchedCountry) {
-                        selectCountry(matchedCountry);
-                    }
-                }
-            }
-        });
-
-        // Prevent manual phone code editing (optional - keeps it clean)
-        $('#phone_number').on('focus', function() {
-            if (selectedCountry && !$(this).val().startsWith(selectedCountry.code)) {
-                $(this).val(selectedCountry.code + ' ');
-            }
-        });
-    });
-    </script>
-    
     <script src="../js/register.js"></script>
 </body>
 </html>
