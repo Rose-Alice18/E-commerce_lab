@@ -72,7 +72,7 @@ function format_stat_number($number) {
  */
 function get_formatted_stats_ctr() {
     $stats = get_all_platform_stats_ctr();
-    
+
     return [
         'pharmacies' => [
             'value' => $stats['total_pharmacies'],
@@ -95,5 +95,74 @@ function get_formatted_stats_ctr() {
             'label' => 'Total Users'
         ]
     ];
+}
+
+/**
+ * Get super admin dashboard statistics
+ * @return array - ['success' => bool, 'data' => array, 'message' => string]
+ */
+function get_dashboard_stats_ctr() {
+    try {
+        $stats = new Stats();
+        $data = $stats->get_super_admin_dashboard();
+
+        return [
+            'success' => true,
+            'message' => 'Dashboard statistics retrieved successfully',
+            'data' => $data
+        ];
+    } catch (Exception $e) {
+        return [
+            'success' => false,
+            'message' => 'Failed to retrieve dashboard statistics',
+            'data' => []
+        ];
+    }
+}
+
+/**
+ * Get pharmacy statistics list
+ * @return array - ['success' => bool, 'data' => array, 'message' => string]
+ */
+function get_pharmacy_stats_ctr() {
+    try {
+        $stats = new Stats();
+        $pharmacies = $stats->get_pharmacy_stats();
+
+        return [
+            'success' => true,
+            'message' => 'Pharmacy statistics retrieved successfully',
+            'data' => $pharmacies
+        ];
+    } catch (Exception $e) {
+        return [
+            'success' => false,
+            'message' => 'Failed to retrieve pharmacy statistics',
+            'data' => []
+        ];
+    }
+}
+
+/**
+ * Get category distribution
+ * @return array - ['success' => bool, 'data' => array, 'message' => string]
+ */
+function get_category_distribution_ctr() {
+    try {
+        $stats = new Stats();
+        $categories = $stats->get_category_distribution();
+
+        return [
+            'success' => true,
+            'message' => 'Category distribution retrieved successfully',
+            'data' => $categories
+        ];
+    } catch (Exception $e) {
+        return [
+            'success' => false,
+            'message' => 'Failed to retrieve category distribution',
+            'data' => []
+        ];
+    }
 }
 ?>

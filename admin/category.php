@@ -1,4 +1,4 @@
-<!--?php
+<?php
 // Enable error reporting for debugging
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -20,35 +20,71 @@ if (!hasAdminPrivileges()) {
 
 // Get user ID from session
 $user_id = getUserId();
-?-->
+?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Category Management - PharmaHub</title>
+    <title>Category Management - PharmaVault</title>
+
+    <!-- Bootstrap CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Sidebar CSS -->
+    <link rel="stylesheet" href="../css/sidebar.css">
     <style>
         :root {
+            <?php if (isSuperAdmin()): ?>
+            /* Super Admin - Purple/Blue Theme */
             --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --secondary-gradient: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+            --success-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            --danger-gradient: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            --warning-gradient: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            --info-gradient: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
             --dark-bg: #1a1a2e;
             --light-bg: #f8f9fa;
+            --primary-color: #667eea;
+            --primary-hover: #764ba2;
+            --sidebar-width: 280px;
+            <?php else: ?>
+            /* Pharmacy Admin - Green Theme */
+            --primary-gradient: linear-gradient(135deg, #059669 0%, #047857 100%);
+            --secondary-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            --success-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            --danger-gradient: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            --warning-gradient: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            --info-gradient: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            --dark-bg: #1a1a2e;
+            --light-bg: #f8f9fa;
+            --primary-color: #059669;
+            --primary-hover: #047857;
+            --sidebar-width: 280px;
+            <?php endif; ?>
         }
-        
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             overflow-x: hidden;
             background: var(--light-bg);
+        }
+
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 2rem;
+            min-height: 100vh;
+            transition: margin-left 0.3s ease;
         }
         
         /* Modern Navbar */
@@ -81,10 +117,10 @@ $user_id = getUserId();
         }
         
         .nav-link:hover {
-            background: rgba(102, 126, 234, 0.1);
+            background: rgba(5, 150, 105, 0.1);
             transform: translateY(-2px);
         }
-        
+
         .btn-gradient-primary {
             background: var(--primary-gradient);
             border: none;
@@ -93,25 +129,25 @@ $user_id = getUserId();
             border-radius: 50px;
             font-weight: 600;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 4px 15px rgba(5, 150, 105, 0.3);
         }
-        
+
         .btn-gradient-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 6px 20px rgba(5, 150, 105, 0.4);
             color: white;
         }
-        
+
         .btn-outline-gradient {
-            border: 2px solid #667eea;
-            color: #667eea;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
             padding: 0.6rem 1.5rem;
             border-radius: 50px;
             font-weight: 600;
             background: transparent;
             transition: all 0.3s ease;
         }
-        
+
         .btn-outline-gradient:hover {
             background: var(--primary-gradient);
             color: white;
@@ -204,8 +240,8 @@ $user_id = getUserId();
         }
         
         .form-control:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
         }
         
         .form-text {
@@ -221,7 +257,7 @@ $user_id = getUserId();
         /* Example Categories */
         .example-item {
             padding: 0.75rem 1rem;
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+            background: linear-gradient(135deg, rgba(5, 150, 105, 0.05) 0%, rgba(4, 120, 87, 0.05) 100%);
             border-radius: 12px;
             margin-bottom: 0.75rem;
             transition: all 0.3s ease;
@@ -230,10 +266,10 @@ $user_id = getUserId();
             align-items: center;
             gap: 1rem;
         }
-        
+
         .example-item:hover {
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
-            border-left-color: #667eea;
+            background: linear-gradient(135deg, rgba(5, 150, 105, 0.1) 0%, rgba(4, 120, 87, 0.1) 100%);
+            border-left-color: var(--primary-color);
             transform: translateX(5px);
         }
         
@@ -260,7 +296,7 @@ $user_id = getUserId();
         .category-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-            border-color: #667eea;
+            border-color: var(--primary-color);
         }
         
         .category-icon {
@@ -304,8 +340,8 @@ $user_id = getUserId();
         }
         
         .btn-edit {
-            background: rgba(102, 126, 234, 0.1);
-            color: #667eea;
+            background: rgba(5, 150, 105, 0.1);
+            color: var(--primary-color);
             border: none;
         }
         
@@ -385,15 +421,95 @@ $user_id = getUserId();
             border-top: 1px solid #e2e8f0;
             padding: 1.5rem;
         }
-        
-        /* Responsive */
+
+        /* Category Grid Layout */
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        /* Modern Card Styles */
+        .modern-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
+
+        .card-header-gradient {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 1.25rem 1.5rem;
+        }
+
+        .card-header-gradient h5 {
+            margin: 0;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .card-body-modern {
+            padding: 1.5rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .main-content {
+                margin-left: 70px !important; /* Collapsed sidebar on tablet */
+            }
+        }
+
         @media (max-width: 768px) {
             .page-title {
-                font-size: 2rem;
+                font-size: 1.75rem !important;
             }
-            
+
+            .page-header {
+                padding: 60px 0 40px !important;
+            }
+
             .category-actions {
                 flex-direction: column;
+            }
+
+            .btn-action {
+                font-size: 0.8rem;
+            }
+
+            .category-grid {
+                grid-template-columns: 1fr !important;
+                gap: 1rem !important;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr !important;
+            }
+
+            .main-content {
+                margin-left: 0 !important;
+                padding: 1rem !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .page-title {
+                font-size: 1.5rem !important;
+            }
+
+            .stat-value {
+                font-size: 1.75rem !important;
+            }
+
+            .category-card {
+                padding: 1rem !important;
+            }
+
+            .btn-gradient-primary,
+            .btn-outline-gradient {
+                padding: 0.5rem 1rem !important;
+                font-size: 0.875rem !important;
             }
         }
         
@@ -415,71 +531,35 @@ $user_id = getUserId();
     </style>
 </head>
 <body>
-    <!-- Modern Navigation -->
-    <nav class="modern-navbar navbar navbar-expand-lg">
-        <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="../index.php">
-                <i class="fas fa-pills me-2"></i>
-                <span>PharmaHub</span>
-            </a>
-            
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav mx-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="../index.php">
-                            <i class="fas fa-home me-1"></i>Home
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="category.php">
-                            <i class="fas fa-tags me-1"></i>Categories
-                        </a>
-                    </li>
-                </ul>
-                
-                <div class="d-flex gap-2">
-                    <span class="navbar-text me-3">
-                        <i class="fas fa-user-circle me-1"></i>
-                        <?php echo htmlspecialchars($_SESSION['user_name'] ?? 'Admin'); ?>
-                    </span>
-                    <a href="../login/logout.php" class="btn btn-outline-gradient btn-sm">
-                        <i class="fas fa-sign-out-alt me-1"></i>Logout
-                    </a>
-                </div>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Page Header -->
-    <section class="page-header">
-        <div class="container">
-            <div class="page-header-content">
-                <div class="row align-items-center">
-                    <div class="col-lg-8">
-                        <h1 class="page-title">
-                            <i class="fas fa-tags me-3"></i>Category Management
-                        </h1>
-                        <p class="page-subtitle">
-                            Organize your pharmaceutical products into categories for better customer experience
-                        </p>
-                    </div>
-                    <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
-                        <a href="../index.php" class="btn btn-light btn-lg">
-                            <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+    <!-- Include Sidebar (role-based) -->
+    <?php
+    if (isSuperAdmin()) {
+        include('../view/components/sidebar_super_admin.php');
+    } elseif (isPharmacyAdmin()) {
+        include('../view/components/sidebar_pharmacy_admin.php');
+    }
+    ?>
 
     <!-- Main Content -->
-    <div class="content-section">
-        <div class="container">
+    <div class="main-content">
+        <!-- Page Header -->
+        <div style="background: white; border-radius: 15px; padding: 2rem; margin-bottom: 2rem; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <h1 style="background: var(--primary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin: 0; font-size: 2rem; font-weight: 700;">
+                        <i class="fas fa-tags" style="margin-right: 0.75rem;"></i>Category Management
+                    </h1>
+                    <p style="color: #64748b; margin: 0.5rem 0 0 0;">Organize your pharmaceutical products into categories for better customer experience</p>
+                </div>
+                <div style="text-align: right;">
+                    <p style="margin: 0; color: #64748b;">Welcome,</p>
+                    <p style="margin: 0.25rem 0 0 0; font-weight: 700; color: #1e293b;"><?php echo htmlspecialchars($_SESSION['user_name'] ?? 'Admin'); ?></p>
+                    <small style="color: #3b82f6; font-weight: 600;">Platform Administrator</small>
+                </div>
+            </div>
+        </div>
+
+        <div style="max-width: 1400px; margin: 0 auto;">
             <!-- Add Category Section -->
             <div class="row g-4 mb-4">
                 <!-- Add Category Form -->
@@ -527,7 +607,7 @@ $user_id = getUserId();
                         </div>
                         <div class="card-body-modern" style="max-height: 450px; overflow-y: auto;">
                             <div class="example-item">
-                                <span class="example-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                <span class="example-icon" style="background: var(--primary-gradient);">
                                     <i class="fas fa-pills text-white"></i>
                                 </span>
                                 <div>
@@ -537,7 +617,7 @@ $user_id = getUserId();
                             </div>
                             
                             <div class="example-item">
-                                <span class="example-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                                <span class="example-icon" style="background: var(--secondary-gradient);">
                                     <i class="fas fa-capsules text-white"></i>
                                 </span>
                                 <div>
@@ -547,7 +627,7 @@ $user_id = getUserId();
                             </div>
                             
                             <div class="example-item">
-                                <span class="example-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                                <span class="example-icon" style="background: var(--success-gradient);">
                                     <i class="fas fa-heartbeat text-white"></i>
                                 </span>
                                 <div>
@@ -557,7 +637,7 @@ $user_id = getUserId();
                             </div>
                             
                             <div class="example-item">
-                                <span class="example-icon" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+                                <span class="example-icon" style="background: var(--primary-gradient);">
                                     <i class="fas fa-baby text-white"></i>
                                 </span>
                                 <div>
@@ -567,7 +647,7 @@ $user_id = getUserId();
                             </div>
                             
                             <div class="example-item">
-                                <span class="example-icon" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">
+                                <span class="example-icon" style="background: var(--secondary-gradient);">
                                     <i class="fas fa-spa text-dark"></i>
                                 </span>
                                 <div>
@@ -577,7 +657,7 @@ $user_id = getUserId();
                             </div>
                             
                             <div class="example-item">
-                                <span class="example-icon" style="background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);">
+                                <span class="example-icon" style="background: var(--success-gradient);">
                                     <i class="fas fa-first-aid text-white"></i>
                                 </span>
                                 <div>
@@ -587,7 +667,7 @@ $user_id = getUserId();
                             </div>
                             
                             <div class="example-item">
-                                <span class="example-icon" style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);">
+                                <span class="example-icon" style="background: var(--primary-gradient);">
                                     <i class="fas fa-laptop-medical text-white"></i>
                                 </span>
                                 <div>
@@ -597,7 +677,7 @@ $user_id = getUserId();
                             </div>
                             
                             <div class="example-item">
-                                <span class="example-icon" style="background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);">
+                                <span class="example-icon" style="background: var(--secondary-gradient);">
                                     <i class="fas fa-leaf text-success"></i>
                                 </span>
                                 <div>
@@ -706,9 +786,11 @@ $user_id = getUserId();
             </div>
         </div>
     </div>
+    </div>
+    </div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <!-- Sidebar JS -->
+    <script src="../js/sidebar.js"></script>
     <!-- Category JS -->
     <script src="../js/category.js"></script>
 </body>

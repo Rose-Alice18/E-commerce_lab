@@ -1,0 +1,116 @@
+# =====================================================
+# PharmaVault - Git Ignore File
+# =====================================================
+# This file tells Git which files/folders to ignore
+# =====================================================
+
+# =====================================
+# Sensitive Configuration Files
+# =====================================
+settings/db_cred.php
+settings/db_cred_server.php
+.env
+.env.local
+.env.production
+*.key
+*.pem
+*.p12
+
+# =====================================
+# User Uploaded Files
+# =====================================
+uploads/*
+uploads/products/*
+!uploads/.htaccess
+!uploads/products/.htaccess
+
+# =====================================
+# Log Files
+# =====================================
+logs/
+*.log
+error_log
+php_errors.log
+
+# =====================================
+# Temporary Files
+# =====================================
+tmp/
+temp/
+cache/
+*.tmp
+*.temp
+*.cache
+
+# =====================================
+# IDE & Editor Files
+# =====================================
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+.DS_Store
+Thumbs.db
+.vs/
+
+# =====================================
+# Backup Files
+# =====================================
+*.bak
+*.backup
+*.old
+*.orig
+*~
+
+# =====================================
+# Composer (if used)
+# =====================================
+/vendor/
+composer.lock
+
+# =====================================
+# Node Modules (if using npm)
+# =====================================
+node_modules/
+package-lock.json
+
+# =====================================
+# Database Dumps
+# =====================================
+*.sql.gz
+*.sql.zip
+backup_*.sql
+
+# =====================================
+# OS Generated Files
+# =====================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# =====================================
+# Testing & Development
+# =====================================
+test.php
+debug.php
+phpunit.xml
+.phpunit.result.cache
+
+# =====================================
+# Documentation (optional)
+# =====================================
+# Uncomment if you don't want to commit docs
+# DEPLOYMENT_GUIDE.md
+# README.md
+
+# =====================================
+# Keep These Files
+# =====================================
+# The following ensures important files ARE tracked
+!.htaccess
+!.gitignore
+!uploads/.htaccess

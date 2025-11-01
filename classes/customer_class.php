@@ -182,5 +182,132 @@ class Customer extends db_connection {
         
         return $customers;
     }
+
+    /**
+     * Update customer profile
+     * @param array $data - Profile data to update
+     * @return bool True on success, false on failure
+     */
+    public function update_profile($data) {
+        try {
+            $customer_id = $data['customer_id'];
+
+            // Build the update query dynamically based on provided fields
+            $update_parts = [];
+            $params = [];
+            $types = '';
+
+            if (isset($data['customer_name'])) {
+                $update_parts[] = "customer_name = ?";
+                $params[] = $data['customer_name'];
+                $types .= 's';
+            }
+
+            if (isset($data['customer_email'])) {
+                // Check if email is already taken by another user
+                $stmt = $this->db->prepare("SELECT customer_id FROM customer WHERE customer_email = ? AND customer_id != ?");
+                $stmt->bind_param("si", $data['customer_email'], $customer_id);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                if ($result->num_rows > 0) {
+                    return false; // Email already taken
+                }
+
+                $update_parts[] = "customer_email = ?";
+                $params[] = $data['customer_email'];
+                $types .= 's';
+            }
+
+            if (isset($data['customer_contact'])) {
+                $update_parts[] = "customer_contact = ?";
+                $params[] = $data['customer_contact'];
+                $types .= 's';
+            }
+
+            if (isset($data['customer_country'])) {
+                $update_parts[] = "customer_country = ?";
+                $params[] = $data['customer_country'];
+                $types .= 's';
+            }
+
+            if (isset($data['customer_city'])) {
+                $update_parts[] = "customer_city = ?";
+                $params[] = $data['customer_city'];
+                $types .= 's';
+            }
+
+            if (isset($data['customer_image'])) {
+                $update_parts[] = "customer_image = ?";
+                $params[] = $data['customer_image'];
+                $types .= 's';
+            }
+
+            if (empty($update_parts)) {
+                return false; // Nothing to update
+            }
+
+            // Add customer_id to params for WHERE clause
+            $params[] = $customer_id;
+            $types .= 'i';
+
+            $sql = "UPDATE customer SET " . implode(", ", $update_parts) . " WHERE customer_id = ?";
+            $stmt = $this->db->prepare($sql);
+
+            // Bind parameters dynamically
+            $stmt->bind_param($types, ...$params);
+
+            return $stmt->execute() && $stmt->affected_rows > 0;
+
+        } catch (Exception $e) {
+            error_log("Update profile error: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Update customer password
+     * @param int $customer_id - Customer ID
+     * @param string $new_password - New password (will be hashed)
+     * @return bool True on success, false on failure
+     */
+    public function update_password($customer_id, $new_password) {
+        try {
+            $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
+
+            $stmt = $this->db->prepare("UPDATE customer SET customer_pass = ? WHERE customer_id = ?");
+            $stmt->bind_param("si", $hashed_password, $customer_id);
+
+            return $stmt->execute() && $stmt->affected_rows > 0;
+
+        } catch (Exception $e) {
+            error_log("Update password error: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Verify customer password
+     * @param int $customer_id - Customer ID
+     * @param string $password - Password to verify
+     * @return bool True if password matches, false otherwise
+     */
+    public function verify_password($customer_id, $password) {
+        try {
+            $stmt = $this->db->prepare("SELECT customer_pass FROM customer WHERE customer_id = ?");
+            $stmt->bind_param("i", $customer_id);
+            $stmt->execute();
+            $result = $stmt->get_result();
+
+            if ($result->num_rows > 0) {
+                $row = $result->fetch_assoc();
+                return password_verify($password, $row['customer_pass']);
+            }
+
+            return false;
+
+        } catch (Exception $e) {
+            error_log("Verify password error: " . $e->getMessage());
+            return false;
+        }
+    }
 }
-?>

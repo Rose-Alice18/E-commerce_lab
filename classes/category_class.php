@@ -124,8 +124,30 @@ class Category extends db_connection {
         $stmt->execute();
         $result = $stmt->get_result();
         $row = $result->fetch_assoc();
-        
+
         return $row['total'];
+    }
+
+    /**
+     * Get all categories (platform-wide, not filtered by user)
+     * Used for product dropdowns where pharmacies select from all available categories
+     * @return array - Array of all categories
+     */
+    public function fetch_all_categories() {
+        $sql = "SELECT DISTINCT cat_id, cat_name FROM categories ORDER BY cat_name ASC";
+        $stmt = $this->db_conn()->prepare($sql);
+
+        if (!$stmt) {
+            return [];
+        }
+
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows > 0) {
+            return $result->fetch_all(MYSQLI_ASSOC);
+        }
+        return [];
     }
 }
 ?>

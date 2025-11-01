@@ -88,6 +88,21 @@ function fetch_categories_ctr($user_id) {
 }
 
 /**
+ * Get ALL categories platform-wide (for super admin)
+ * @return array - Result array with all categories data
+ */
+function fetch_all_categories_ctr() {
+    $category = new Category();
+    $categories = $category->fetch_all_categories();
+
+    return [
+        'success' => true,
+        'message' => 'All categories retrieved successfully',
+        'data' => $categories
+    ];
+}
+
+/**
  * Get a single category
  * @param int $cat_id - The category ID
  * @param int $user_id - The user ID

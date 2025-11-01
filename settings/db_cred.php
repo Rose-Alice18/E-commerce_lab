@@ -16,7 +16,8 @@ if (!defined("PASSWD")) {
 }
 
 if (!defined("DATABASE")) {
-    // Changed from "shoppn" to "dbforlab" to match your SQL file
-    define("DATABASE", "dbforlab");
+    // Local: pharmavault_db
+    // Production Server: ecommerce_2025A_roseline_tsatsu
+    define("DATABASE", "pharmavault_db");
 }
 ?>

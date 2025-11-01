@@ -56,7 +56,19 @@ try {
         
         $response['status'] = 'success';
         $response['message'] = $result['message'];
-        $response['redirect'] = '../index.php'; // Direct user to landing page on successful login
+
+        // Route to appropriate dashboard based on user role
+        $user_role = $result['user_data']['user_role'];
+        if ($user_role == 0) {
+            // Super Admin
+            $response['redirect'] = '../admin/dashboard.php';
+        } elseif ($user_role == 1) {
+            // Pharmacy Admin
+            $response['redirect'] = '../admin/pharmacy_dashboard.php';
+        } else {
+            // Customer (role 2) or default
+            $response['redirect'] = '../admin/customer_dashboard.php';
+        }
     } else {
         $response['status'] = 'error';
         $response['message'] = $result['message'];

@@ -486,11 +486,20 @@ $stats = get_formatted_stats_ctr();
                     <li class="nav-item">
                         <a class="nav-link" href="#contact">Contact</a>
                     </li>
-                    
-                    <?php if (isLoggedIn() && hasAdminPrivileges()): ?>
+
+                    <?php if (isLoggedIn()): ?>
                         <li class="nav-item">
-                            <a class="nav-link" href="admin/category.php">
-                                <i class="fas fa-cog me-1"></i>Manage Categories
+                            <a class="nav-link" href="<?php
+                                // Route to appropriate dashboard based on role
+                                if (isSuperAdmin()) {
+                                    echo 'admin/dashboard.php';
+                                } elseif (isPharmacyAdmin()) {
+                                    echo 'admin/pharmacy_dashboard.php';
+                                } else {
+                                    echo 'admin/customer_dashboard.php';
+                                }
+                            ?>">
+                                <i class="fas fa-tachometer-alt me-1"></i>Dashboard
                             </a>
                         </li>
                     <?php endif; ?>
@@ -511,6 +520,20 @@ $stats = get_formatted_stats_ctr();
                                 <?php echo isset($_SESSION['user_name']) ? htmlspecialchars($_SESSION['user_name']) : 'Account'; ?>
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end">
+                                <li>
+                                    <a class="dropdown-item" href="<?php
+                                        // Route to appropriate dashboard based on role
+                                        if (isSuperAdmin()) {
+                                            echo 'admin/dashboard.php';
+                                        } elseif (isPharmacyAdmin()) {
+                                            echo 'admin/pharmacy_dashboard.php';
+                                        } else {
+                                            echo 'admin/customer_dashboard.php';
+                                        }
+                                    ?>">
+                                        <i class="fas fa-tachometer-alt me-2"></i>My Dashboard
+                                    </a>
+                                </li>
                                 <li><a class="dropdown-item" href="#profile.php">
                                     <i class="fas fa-user me-2"></i>My Profile
                                 </a></li>

@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(php -l actions/update_product_action.php)",
+      "Bash(php -l \"c:/xampp/htdocs/register_sample/admin/category.php\")",
+      "Bash(C:/xampp/php/php.exe -l \"c:/xampp/htdocs/register_sample/admin/category.php\")",
+      "Bash(C:/xampp/php/php.exe:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

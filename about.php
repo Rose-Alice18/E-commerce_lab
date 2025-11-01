@@ -349,10 +349,10 @@ require_once(dirname(__FILE__) . '/settings/core.php');
                     </li>
                     <li class="nav-item">
                         <a class="nav-link active" href="about.php">About</a>
-                    </li>
+                    <!--/li>
                     <li class="nav-item">
                         <a class="nav-link" href="index.php#features">Features</a>
-                    </li>
+                    </li-->
                     
                     <?php if (isLoggedIn() && hasAdminPrivileges()): ?>
                         <li class="nav-item">

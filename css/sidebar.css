@@ -1,0 +1,694 @@
+/**
+ * Modern Sidebar Styles
+ * PharmaVault Dashboard Sidebar Component
+ */
+
+:root {
+    --sidebar-width: 280px;
+    --sidebar-collapsed-width: 70px;
+    --transition-speed: 0.3s;
+
+    /* Super Admin Theme - Deep Purple & Red */
+    --super-admin-bg-start: #1e1b4b;
+    --super-admin-bg-end: #0f0a2e;
+    --super-admin-accent: #dc2626;
+    --super-admin-hover: #2d2560;
+    --super-admin-text: #e0e7ff;
+
+    /* Pharmacy Admin Theme - Green & Teal */
+    --pharmacy-bg-start: #064e3b;
+    --pharmacy-bg-end: #022c22;
+    --pharmacy-accent: #10b981;
+    --pharmacy-hover: #065f46;
+    --pharmacy-text: #d1fae5;
+
+    /* Customer Theme - Dark Purple (Pleasant & Professional) */
+    --customer-bg-start: #4c1d95;
+    --customer-bg-end: #2e1065;
+    --customer-accent: #8b5cf6;
+    --customer-hover: #6d28d9;
+    --customer-text: #e9d5ff;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8fafc;
+}
+
+/* Sidebar Container */
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    width: var(--sidebar-width);
+    transition: all var(--transition-speed) ease;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.3);
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* Role-Specific Sidebar Themes */
+.sidebar.super-admin-theme {
+    background: linear-gradient(180deg, var(--super-admin-bg-start) 0%, var(--super-admin-bg-end) 100%);
+    color: var(--super-admin-text);
+}
+
+.sidebar.pharmacy-admin-theme {
+    background: linear-gradient(180deg, var(--pharmacy-bg-start) 0%, var(--pharmacy-bg-end) 100%);
+    color: var(--pharmacy-text);
+}
+
+.sidebar.customer-theme {
+    background: linear-gradient(180deg, var(--customer-bg-start) 0%, var(--customer-bg-end) 100%);
+    color: var(--customer-text);
+}
+
+.sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Collapsed Sidebar State */
+.sidebar.collapsed {
+    width: var(--sidebar-collapsed-width);
+}
+
+.sidebar.collapsed .logo-container h4,
+.sidebar.collapsed .role-badge,
+.sidebar.collapsed .user-details,
+.sidebar.collapsed .nav-item a span,
+.sidebar.collapsed .nav-section-title,
+.sidebar.collapsed .logout-btn span {
+    opacity: 0;
+    visibility: hidden;
+    width: 0;
+    overflow: hidden;
+}
+
+.sidebar.collapsed .logo-container {
+    justify-content: center;
+    margin-bottom: 1rem;
+    padding: 0;
+}
+
+.sidebar.collapsed .logo-container i {
+    font-size: 1.5rem;
+}
+
+.sidebar.collapsed .user-info {
+    justify-content: center;
+    padding: 1rem 0.5rem;
+}
+
+.sidebar.collapsed .user-avatar {
+    width: 42px;
+    height: 42px;
+    font-size: 1rem;
+}
+
+.sidebar.collapsed .nav-item {
+    margin: 0.35rem 0.5rem;
+}
+
+.sidebar.collapsed .nav-item a {
+    justify-content: center;
+    padding: 0.875rem;
+    border-radius: 12px;
+}
+
+.sidebar.collapsed .nav-item a i {
+    font-size: 1.25rem;
+    margin: 0;
+}
+
+.sidebar.collapsed .logout-btn {
+    justify-content: center;
+    padding: 0.875rem;
+    margin: 0 0.5rem;
+}
+
+.sidebar.collapsed .logout-btn i {
+    font-size: 1.25rem;
+}
+
+.sidebar.collapsed .sidebar-header {
+    padding: 1.25rem 0.5rem;
+}
+
+.sidebar.collapsed .sidebar-footer {
+    padding: 1rem 0.5rem;
+}
+
+/* Badge in collapsed state */
+.sidebar.collapsed .badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0.1rem 0.35rem;
+    font-size: 0.65rem;
+}
+
+/* Tooltip for collapsed sidebar */
+.sidebar.collapsed .nav-item a,
+.sidebar.collapsed .logout-btn {
+    position: relative;
+}
+
+.sidebar.collapsed .nav-item a::after,
+.sidebar.collapsed .logout-btn::after {
+    content: attr(title);
+    position: absolute;
+    left: calc(100% + 15px);
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease;
+    pointer-events: none;
+    z-index: 10000;
+}
+
+.sidebar.collapsed .nav-item a::before {
+    content: '';
+    position: absolute;
+    left: calc(100% + 8px);
+    top: 50%;
+    transform: translateY(-50%);
+    border: 7px solid transparent;
+    border-right-color: rgba(0, 0, 0, 0.9);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease;
+    z-index: 10000;
+}
+
+.sidebar.collapsed .nav-item a:hover::after,
+.sidebar.collapsed .nav-item a:hover::before,
+.sidebar.collapsed .logout-btn:hover::after {
+    opacity: 1;
+    visibility: visible;
+}
+
+.sidebar.collapsed .nav-item.active a::before {
+    content: '';
+    position: static;
+    border: none;
+    opacity: 1;
+}
+
+/* Sidebar Toggle Button */
+.sidebar-collapse-toggle {
+    position: absolute;
+    top: 1.5rem;
+    right: -15px;
+    width: 30px;
+    height: 30px;
+    border: 3px solid #1e293b;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1001;
+    transition: all var(--transition-speed) ease;
+}
+
+.sidebar.super-admin-theme .sidebar-collapse-toggle {
+    background: var(--super-admin-accent);
+    box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
+}
+
+.sidebar.super-admin-theme .sidebar-collapse-toggle:hover {
+    background: #b91c1c;
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.5);
+}
+
+.sidebar.pharmacy-admin-theme .sidebar-collapse-toggle {
+    background: var(--pharmacy-accent);
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+.sidebar.pharmacy-admin-theme .sidebar-collapse-toggle:hover {
+    background: #059669;
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.5);
+}
+
+.sidebar.customer-theme .sidebar-collapse-toggle {
+    background: var(--customer-accent);
+    box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
+}
+
+.sidebar.customer-theme .sidebar-collapse-toggle:hover {
+    background: #7c3aed;
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.5);
+}
+
+.sidebar-collapse-toggle i {
+    color: white;
+    font-size: 0.875rem;
+    transition: transform var(--transition-speed) ease;
+}
+
+.sidebar.collapsed .sidebar-collapse-toggle i {
+    transform: rotate(180deg);
+}
+
+/* Sidebar Header */
+.sidebar-header {
+    padding: 1.5rem 1.25rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.logo-container i {
+    font-size: 1.75rem;
+}
+
+.sidebar.super-admin-theme .logo-container i {
+    color: var(--super-admin-accent);
+}
+
+.sidebar.pharmacy-admin-theme .logo-container i {
+    color: var(--pharmacy-accent);
+}
+
+.sidebar.customer-theme .logo-container i {
+    color: var(--customer-accent);
+}
+
+.logo-container h4 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--sidebar-text-active);
+    margin: 0;
+}
+
+/* Role Badge */
+.role-badge {
+    display: inline-block;
+    padding: 0.35rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.role-badge.super-admin {
+    background: linear-gradient(135deg, #dc2626, #991b1b);
+    color: white;
+}
+
+.role-badge.pharmacy-admin {
+    background: linear-gradient(135deg, #059669, #047857);
+    color: white;
+}
+
+.role-badge.customer {
+    background: linear-gradient(135deg, #7c3aed, #6d28d9);
+    color: white;
+}
+
+/* User Info */
+.user-info {
+    padding: 1.25rem 1.25rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.user-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    color: white;
+    flex-shrink: 0;
+}
+
+.sidebar.super-admin-theme .user-avatar {
+    background: linear-gradient(135deg, #dc2626, #991b1b);
+}
+
+.sidebar.pharmacy-admin-theme .user-avatar {
+    background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.sidebar.customer-theme .user-avatar {
+    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+}
+
+.user-details h6 {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--sidebar-text-active);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.user-details p {
+    margin: 0.25rem 0 0 0;
+    font-size: 0.75rem;
+    color: var(--sidebar-text);
+    opacity: 0.7;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Sidebar Navigation */
+.sidebar-nav {
+    flex: 1;
+    padding: 1rem 0;
+}
+
+.nav-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.nav-section-title {
+    padding: 1.25rem 1.25rem 0.5rem 1.25rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--sidebar-text);
+    opacity: 0.5;
+}
+
+.nav-item {
+    margin: 0.25rem 0.75rem;
+}
+
+.nav-item a {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    padding: 0.75rem 1rem;
+    color: var(--sidebar-text);
+    text-decoration: none;
+    border-radius: 10px;
+    transition: all var(--transition-speed) ease;
+    position: relative;
+    font-size: 0.9rem;
+}
+
+.nav-item a i {
+    font-size: 1.15rem;
+    width: 24px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.nav-item a span:first-of-type {
+    flex: 1;
+}
+
+.nav-item a:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    transform: translateX(4px);
+}
+
+.sidebar.super-admin-theme .nav-item a:hover {
+    background: var(--super-admin-hover);
+}
+
+.sidebar.pharmacy-admin-theme .nav-item a:hover {
+    background: var(--pharmacy-hover);
+}
+
+.sidebar.customer-theme .nav-item a:hover {
+    background: var(--customer-hover);
+}
+
+.nav-item.active a {
+    color: #ffffff !important;
+}
+
+.sidebar.super-admin-theme .nav-item.active a {
+    background: var(--super-admin-accent);
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
+}
+
+.sidebar.pharmacy-admin-theme .nav-item.active a {
+    background: var(--pharmacy-accent);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+}
+
+.sidebar.customer-theme .nav-item.active a {
+    background: var(--customer-accent);
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+}
+
+.nav-item.active a::before {
+    content: '';
+    position: absolute;
+    left: -0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 24px;
+    border-radius: 0 4px 4px 0;
+}
+
+.sidebar.super-admin-theme .nav-item.active a::before {
+    background: var(--super-admin-accent);
+}
+
+.sidebar.pharmacy-admin-theme .nav-item.active a::before {
+    background: var(--pharmacy-accent);
+}
+
+.sidebar.customer-theme .nav-item.active a::before {
+    background: var(--customer-accent);
+}
+
+/* Badge for notifications */
+.badge {
+    background: #ef4444;
+    color: white;
+    padding: 0.15rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    min-width: 20px;
+    text-align: center;
+}
+
+/* Sidebar Footer */
+.sidebar-footer {
+    padding: 1rem 1.25rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.logout-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    padding: 0.75rem 1rem;
+    color: #fca5a5;
+    text-decoration: none;
+    border-radius: 10px;
+    transition: all var(--transition-speed) ease;
+    background: rgba(239, 68, 68, 0.1);
+    font-size: 0.9rem;
+}
+
+.logout-btn i {
+    font-size: 1.15rem;
+}
+
+.logout-btn:hover {
+    background: rgba(239, 68, 68, 0.2);
+    color: #fecaca;
+    transform: translateX(4px);
+}
+
+/* Main Content Area */
+.main-content {
+    margin-left: var(--sidebar-width);
+    padding: 2rem;
+    min-height: 100vh;
+    transition: margin-left var(--transition-speed) ease;
+}
+
+.sidebar.collapsed ~ .main-content {
+    margin-left: var(--sidebar-collapsed-width);
+}
+
+/* Sidebar Toggle Button */
+.sidebar-toggle {
+    position: fixed;
+    top: 1rem;
+    left: calc(var(--sidebar-width) + 1rem);
+    background: white;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    z-index: 999;
+    transition: all var(--transition-speed) ease;
+}
+
+.sidebar-toggle i {
+    font-size: 1.25rem;
+    color: #1e293b;
+}
+
+.sidebar-toggle:hover {
+    background: #f1f5f9;
+    transform: scale(1.05);
+}
+
+/* Sidebar Overlay for Mobile */
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    opacity: 0;
+    transition: opacity var(--transition-speed) ease;
+}
+
+.sidebar-overlay.active {
+    opacity: 1;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .sidebar-toggle {
+        display: flex;
+        left: 1rem;
+    }
+
+    .sidebar {
+        transform: translateX(-100%);
+    }
+
+    .sidebar.active {
+        transform: translateX(0);
+    }
+
+    .main-content {
+        margin-left: 0;
+        padding: 5rem 1.5rem 1.5rem;
+    }
+
+    .sidebar-overlay {
+        display: block;
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 280px;
+    }
+
+    .main-content {
+        padding: 5rem 1rem 1rem;
+    }
+
+    .user-details h6 {
+        font-size: 0.875rem;
+    }
+
+    .user-details p {
+        font-size: 0.7rem;
+    }
+}
+
+/* Animations */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.nav-item {
+    animation: slideIn 0.3s ease forwards;
+}
+
+.nav-item:nth-child(1) { animation-delay: 0.05s; }
+.nav-item:nth-child(2) { animation-delay: 0.1s; }
+.nav-item:nth-child(3) { animation-delay: 0.15s; }
+.nav-item:nth-child(4) { animation-delay: 0.2s; }
+.nav-item:nth-child(5) { animation-delay: 0.25s; }
+.nav-item:nth-child(6) { animation-delay: 0.3s; }
+
+/* Utility Classes */
+.hidden {
+    display: none !important;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.mt-1 { margin-top: 0.5rem; }
+.mt-2 { margin-top: 1rem; }
+.mt-3 { margin-top: 1.5rem; }
+.mb-1 { margin-bottom: 0.5rem; }
+.mb-2 { margin-bottom: 1rem; }
+.mb-3 { margin-bottom: 1.5rem; }

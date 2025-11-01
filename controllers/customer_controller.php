@@ -125,6 +125,36 @@ function delete_customer_ctr($customer_id) {
 }
 
 /**
+ * Get customer by ID controller function
+ * @param int $customer_id
+ * @return array Response with success status and customer data
+ */
+function get_customer_by_id_ctr($customer_id) {
+    try {
+        $customer = new Customer();
+        $data = $customer->getCustomerById($customer_id);
+
+        if ($data) {
+            return [
+                'success' => true,
+                'data' => $data
+            ];
+        } else {
+            return [
+                'success' => false,
+                'message' => 'Customer not found'
+            ];
+        }
+    } catch (Exception $e) {
+        error_log("Get customer by ID controller error: " . $e->getMessage());
+        return [
+            'success' => false,
+            'message' => 'Error retrieving customer data'
+        ];
+    }
+}
+
+/**
  * Get customer by email controller function
  * @param string $email
  * @return array|null
@@ -165,6 +195,36 @@ function get_all_customers_ctr() {
     } catch (Exception $e) {
         error_log("Get all customers controller error: " . $e->getMessage());
         return [];
+    }
+}
+
+/**
+ * Update customer profile controller function
+ * @param array $data - Profile data to update
+ * @return array Response with success status
+ */
+function update_customer_profile_ctr($data) {
+    try {
+        $customer = new Customer();
+        $result = $customer->update_profile($data);
+
+        if ($result) {
+            return [
+                'success' => true,
+                'message' => 'Profile updated successfully'
+            ];
+        } else {
+            return [
+                'success' => false,
+                'message' => 'Failed to update profile'
+            ];
+        }
+    } catch (Exception $e) {
+        error_log("Update profile controller error: " . $e->getMessage());
+        return [
+            'success' => false,
+            'message' => 'An error occurred: ' . $e->getMessage()
+        ];
     }
 }
 ?>

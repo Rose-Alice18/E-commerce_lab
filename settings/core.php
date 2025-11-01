@@ -33,23 +33,86 @@ function getUserId() {
 }
 
 /**
- * Check if the current user has administrative privileges
- * @return bool True if user has admin privileges, false otherwise
+ * Check if the current user has administrative privileges (Super Admin OR Pharmacy Admin)
+ * @return bool True if user has admin privileges (role 0 or 1), false otherwise
  */
 function hasAdminPrivileges() {
     if (!isLoggedIn()) {
         return false;
     }
-    
-    // Check if role is set in session and equals 'admin' OR equals 1 (numeric admin role)
+
+    // Check if role is set in session and equals 'admin' OR equals 0 or 1 (numeric admin roles)
     if (isset($_SESSION['role'])) {
-        return $_SESSION['role'] === 'admin' || $_SESSION['role'] == 1;
+        return $_SESSION['role'] === 'admin' || $_SESSION['role'] == 0 || $_SESSION['role'] == 1;
     }
-    
+
     if (isset($_SESSION['user_role'])) {
-        return $_SESSION['user_role'] === 'admin' || $_SESSION['user_role'] == 1;
+        return $_SESSION['user_role'] === 'admin' || $_SESSION['user_role'] == 0 || $_SESSION['user_role'] == 1;
     }
-    
+
+    return false;
+}
+
+/**
+ * Check if the current user is a Super Admin (role 0)
+ * Super admins can manage platform-wide settings
+ * @return bool True if user is super admin, false otherwise
+ */
+function isSuperAdmin() {
+    if (!isLoggedIn()) {
+        return false;
+    }
+
+    if (isset($_SESSION['role'])) {
+        return $_SESSION['role'] == 0;
+    }
+
+    if (isset($_SESSION['user_role'])) {
+        return $_SESSION['user_role'] == 0;
+    }
+
+    return false;
+}
+
+/**
+ * Check if the current user is a Pharmacy Owner/Admin (role 1)
+ * Pharmacy admins can manage their own inventory
+ * @return bool True if user is pharmacy admin, false otherwise
+ */
+function isPharmacyAdmin() {
+    if (!isLoggedIn()) {
+        return false;
+    }
+
+    if (isset($_SESSION['role'])) {
+        return $_SESSION['role'] == 1;
+    }
+
+    if (isset($_SESSION['user_role'])) {
+        return $_SESSION['user_role'] == 1;
+    }
+
+    return false;
+}
+
+/**
+ * Check if the current user is a Regular Customer (role 2)
+ * Regular customers can browse and purchase products
+ * @return bool True if user is regular customer, false otherwise
+ */
+function isRegularCustomer() {
+    if (!isLoggedIn()) {
+        return false;
+    }
+
+    if (isset($_SESSION['role'])) {
+        return $_SESSION['role'] == 2;
+    }
+
+    if (isset($_SESSION['user_role'])) {
+        return $_SESSION['user_role'] == 2;
+    }
+
     return false;
 }
 
@@ -132,10 +195,46 @@ function requireLogin($loginPath = "../login/login.php") {
  */
 function requireAdmin($accessDeniedPath = "../login/login.php") {
     requireLogin(); // First ensure user is logged in
-    
+
     if (!hasAdminPrivileges()) {
         header("Location: $accessDeniedPath");
         exit;
+    }
+}
+
+/**
+ * Redirect to access denied page if user is not a Super Admin
+ * @param string $accessDeniedPath Path to access denied page
+ */
+function requireSuperAdmin($accessDeniedPath = "../login/login.php") {
+    requireLogin(); // First ensure user is logged in
+
+    if (!isSuperAdmin()) {
+        header("Location: $accessDeniedPath");
+        exit;
+    }
+}
+
+/**
+ * Get user role name as string
+ * @return string Role name (Super Admin, Pharmacy Admin, Customer, or Guest)
+ */
+function getUserRoleName() {
+    if (!isLoggedIn()) {
+        return 'Guest';
+    }
+
+    $role = getUserRole();
+
+    switch ($role) {
+        case 0:
+            return 'Super Admin';
+        case 1:
+            return 'Pharmacy Admin';
+        case 2:
+            return 'Customer';
+        default:
+            return 'Unknown';
     }
 }
 

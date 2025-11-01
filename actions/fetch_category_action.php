@@ -43,7 +43,7 @@ try {
     
     // Get user ID from session using helper function
     $user_id = getUserId();
-    
+
     // Validate user ID
     if (!$user_id || $user_id <= 0) {
         echo json_encode([
@@ -53,9 +53,13 @@ try {
         ]);
         exit();
     }
-    
-    // Call controller function to fetch categories
-    $result = fetch_categories_ctr($user_id);
+
+    // Super admins see ALL categories platform-wide, pharmacy admins see only their own
+    if (isSuperAdmin()) {
+        $result = fetch_all_categories_ctr(); // Fetch all categories
+    } else {
+        $result = fetch_categories_ctr($user_id); // Fetch user-specific categories
+    }
     
     // Return the result
     echo json_encode($result);
