@@ -55,8 +55,8 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 <span>SHOPPING</span>
             </li>
 
-            <li class="nav-item <?php echo $current_page == 'browse_products.php' ? 'active' : ''; ?>">
-                <a href="browse_products.php" title="Browse Products">
+            <li class="nav-item <?php echo $current_page == 'product.php' ? 'active' : ''; ?>">
+                <a href="../view/product.php" title="Browse Products">
                     <i class="fas fa-pills"></i>
                     <span>Browse Products</span>
                 </a>
