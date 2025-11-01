@@ -551,7 +551,7 @@ if ($current_hour < 12) {
         <!-- Featured Products -->
         <div class="section-header">
             <h3><i class="fas fa-star"></i> Featured Products</h3>
-            <a href="browse_products.php" class="view-all-link">
+            <a href="../view/product.php" class="view-all-link">
                 View All <i class="fas fa-arrow-right"></i>
             </a>
         </div>
