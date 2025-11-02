@@ -72,6 +72,9 @@ if (!empty($search_query)) {
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
+    <!-- Sidebar CSS -->
+    <link rel="stylesheet" href="../css/sidebar.css?v=2.2">
+
     <style>
         :root {
             --primary-color: #667eea;
@@ -80,11 +83,22 @@ if (!empty($search_query)) {
             --danger-color: #ef4444;
             --warning-color: #f59e0b;
             --info-color: #3b82f6;
+            --sidebar-width: 280px;
         }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Main content container with sidebar spacing */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            transition: margin-left 0.3s ease;
+            padding: 0;
         }
 
         .navbar {
@@ -304,64 +318,67 @@ if (!empty($search_query)) {
         .btn-clear:hover {
             background: #e2e8f0;
         }
+
+        /* Responsive design for sidebar */
+        @media (max-width: 1024px) {
+            .main-content {
+                margin-left: 70px !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                margin-left: 0 !important;
+            }
+
+            .page-header {
+                padding: 2rem 0;
+            }
+
+            .product-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 1rem;
+            }
+
+            .filter-section .row {
+                row-gap: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .product-grid {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg">
-        <div class="container">
-            <a class="navbar-brand" href="../index.php">
-                <i class="fas fa-capsules"></i> PharmaVault
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="../index.php">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="product.php">Products</a>
-                    </li>
-                    <?php if (isLoggedIn()): ?>
-                        <li class="nav-item">
-                            <a class="nav-link" href="<?php
-                                if (isSuperAdmin()) {
-                                    echo '../admin/dashboard.php';
-                                } elseif (isPharmacyAdmin()) {
-                                    echo '../admin/pharmacy_dashboard.php';
-                                } else {
-                                    echo '../admin/customer_dashboard.php';
-                                }
-                            ?>">Dashboard</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="../login/logout.php">Logout</a>
-                        </li>
-                    <?php else: ?>
-                        <li class="nav-item">
-                            <a class="nav-link" href="../login/login.php">Login</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="../login/register.php">Sign Up</a>
-                        </li>
-                    <?php endif; ?>
-                </ul>
+    <!-- Include Sidebar (only if user is logged in as customer) -->
+    <?php if (isLoggedIn() && isRegularCustomer()): ?>
+        <?php include('components/sidebar_customer.php'); ?>
+    <?php endif; ?>
+
+    <!-- Main Content Wrapper -->
+    <div class="main-content">
+        <!-- Back to Dashboard Link (for logged in customers) -->
+        <?php if (isLoggedIn() && isRegularCustomer()): ?>
+            <div style="padding: 1rem 2rem;">
+                <a href="../admin/customer_dashboard.php" style="color: #667eea; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 0.5rem; transition: all 0.3s ease;">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </a>
+            </div>
+        <?php endif; ?>
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="container">
+                <h1><i class="fas fa-store"></i> Browse Products</h1>
+                <p class="mb-0">Discover healthcare products from verified pharmacies across Ghana</p>
             </div>
         </div>
-    </nav>
 
-    <!-- Page Header -->
-    <div class="page-header">
+        <!-- Main Content -->
         <div class="container">
-            <h1><i class="fas fa-store"></i> Browse Products</h1>
-            <p class="mb-0">Discover healthcare products from verified pharmacies across Ghana</p>
-        </div>
-    </div>
-
-    <!-- Main Content -->
-    <div class="container">
         <!-- Filter Section -->
         <div class="filter-section">
             <form method="GET" action="product.php" class="row g-3 align-items-end">
@@ -489,10 +506,16 @@ if (!empty($search_query)) {
                 <?php endif; ?>
             </div>
         <?php endif; ?>
+        </div>
+
+        <!-- Footer Spacing -->
+        <div style="height: 3rem;"></div>
     </div>
 
-    <!-- Footer Spacing -->
-    <div style="height: 3rem;"></div>
+    <!-- Sidebar JS (only if user is logged in as customer) -->
+    <?php if (isLoggedIn() && isRegularCustomer()): ?>
+        <script src="../js/sidebar.js"></script>
+    <?php endif; ?>
 
     <!-- Bootstrap JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>

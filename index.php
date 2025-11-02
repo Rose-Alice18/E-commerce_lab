@@ -480,6 +480,12 @@ $stats = get_formatted_stats_ctr();
                     <li class="nav-item">
                         <a class="nav-link" href="#features">Features</a>
                     </li>
+                    <!-- PDF Requirement: All Products Link -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="view/all_product.php">
+                            <i class="fas fa-pills me-1"></i>All Products
+                        </a>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="about.php">About</a>
                     </li>
@@ -504,14 +510,25 @@ $stats = get_formatted_stats_ctr();
                         </li>
                     <?php endif; ?>
                 </ul>
-                
+
+                <!-- PDF Requirement: Search Box -->
+                <form action="view/all_product.php" method="GET" class="d-flex me-3" style="min-width: 300px;">
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="search" placeholder="Search products..." aria-label="Search">
+                        <button class="btn btn-gradient-primary" type="submit">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </form>
+
                 <div class="d-flex gap-2">
                     <?php if (!isLoggedIn()): ?>
                         <a href="login/login.php" class="btn btn-outline-gradient">
                             <i class="fas fa-sign-in-alt me-1"></i>Login
                         </a>
+                        <!-- PDF Requirement: Register Link -->
                         <a href="login/register.php" class="btn btn-gradient-primary">
-                            <i class="fas fa-user-plus me-1"></i>Sign Up
+                            <i class="fas fa-user-plus me-1"></i>Register
                         </a>
                     <?php else: ?>
                         <div class="dropdown">

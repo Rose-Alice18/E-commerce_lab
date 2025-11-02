@@ -630,4 +630,44 @@ class Product extends db_connection {
             return false;
         }
     }
+
+    // ============================================================
+    // WEEK 7 PDF REQUIREMENT: Method Aliases
+    // ============================================================
+
+    /**
+     * View all products (PDF requirement - alias for get_all_products)
+     * @param int $limit - Optional limit
+     * @return array - Array of products
+     */
+    public function view_all_products($limit = null) {
+        return $this->get_all_products($limit);
+    }
+
+    /**
+     * View single product (PDF requirement - alias for get_product)
+     * @param int $id - Product ID
+     * @return array|false - Product data or false
+     */
+    public function view_single_product($id) {
+        return $this->get_product($id);
+    }
+
+    /**
+     * Filter products by category (PDF requirement - alias for get_products_by_category)
+     * @param int $cat_id - Category ID
+     * @return array - Filtered products
+     */
+    public function filter_products_by_category($cat_id) {
+        return $this->get_products_by_category($cat_id);
+    }
+
+    /**
+     * Filter products by brand (PDF requirement - alias for get_products_by_brand)
+     * @param int $brand_id - Brand ID
+     * @return array - Filtered products
+     */
+    public function filter_products_by_brand($brand_id) {
+        return $this->get_products_by_brand($brand_id);
+    }
 }

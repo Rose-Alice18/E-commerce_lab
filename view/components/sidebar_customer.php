@@ -15,6 +15,26 @@ if (!isRegularCustomer()) {
 }
 
 $current_page = basename($_SERVER['PHP_SELF']);
+
+// Determine the base path based on current directory
+$current_dir = dirname($_SERVER['PHP_SELF']);
+$is_in_admin = (strpos($current_dir, '/admin') !== false);
+$is_in_view = (strpos($current_dir, '/view') !== false);
+
+// Set base path for links
+if ($is_in_admin) {
+    $base_path = '../admin/';
+    $view_path = '../view/';
+    $login_path = '../login/';
+} elseif ($is_in_view) {
+    $base_path = '../admin/';
+    $view_path = './';
+    $login_path = '../login/';
+} else {
+    $base_path = './admin/';
+    $view_path = './view/';
+    $login_path = './login/';
+}
 ?>
 
 <!-- Modern Sidebar for Customer -->
@@ -45,7 +65,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
     <nav class="sidebar-nav">
         <ul class="nav-list">
             <li class="nav-item <?php echo $current_page == 'customer_dashboard.php' ? 'active' : ''; ?>">
-                <a href="customer_dashboard.php" title="Home">
+                <a href="<?php echo $base_path; ?>customer_dashboard.php" title="Home">
                     <i class="fas fa-home"></i>
                     <span>Home</span>
                 </a>
@@ -56,14 +76,14 @@ $current_page = basename($_SERVER['PHP_SELF']);
             </li>
 
             <li class="nav-item <?php echo $current_page == 'product.php' ? 'active' : ''; ?>">
-                <a href="../view/product.php" title="Browse Products">
+                <a href="<?php echo $view_path; ?>product.php" title="Browse Products">
                     <i class="fas fa-pills"></i>
                     <span>Browse Products</span>
                 </a>
             </li>
 
             <li class="nav-item <?php echo $current_page == 'cart.php' ? 'active' : ''; ?>">
-                <a href="cart.php" title="My Cart">
+                <a href="<?php echo $base_path; ?>cart.php" title="My Cart">
                     <i class="fas fa-shopping-cart"></i>
                     <span>My Cart</span>
                     <span class="badge" id="cartCount">0</span>
@@ -71,7 +91,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
             </li>
 
             <li class="nav-item <?php echo $current_page == 'wishlist.php' ? 'active' : ''; ?>">
-                <a href="wishlist.php" title="Wishlist">
+                <a href="<?php echo $base_path; ?>wishlist.php" title="Wishlist">
                     <i class="fas fa-heart"></i>
                     <span>Wishlist</span>
                 </a>
@@ -82,14 +102,14 @@ $current_page = basename($_SERVER['PHP_SELF']);
             </li>
 
             <li class="nav-item <?php echo $current_page == 'my_orders.php' ? 'active' : ''; ?>">
-                <a href="my_orders.php" title="My Orders">
+                <a href="<?php echo $base_path; ?>my_orders.php" title="My Orders">
                     <i class="fas fa-box"></i>
                     <span>My Orders</span>
                 </a>
             </li>
 
             <li class="nav-item <?php echo $current_page == 'track_order.php' ? 'active' : ''; ?>">
-                <a href="track_order.php" title="Track Order">
+                <a href="<?php echo $base_path; ?>track_order.php" title="Track Order">
                     <i class="fas fa-shipping-fast"></i>
                     <span>Track Order</span>
                 </a>
@@ -100,7 +120,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
             </li>
 
             <li class="nav-item <?php echo ($current_page == 'profile.php' || $current_page == 'edit_profile.php' || $current_page == 'change_password.php') ? 'active' : ''; ?>">
-                <a href="profile.php" title="My Profile">
+                <a href="<?php echo $base_path; ?>profile.php" title="My Profile">
                     <i class="fas fa-user-circle"></i>
                     <span>My Profile</span>
                 </a>
@@ -111,7 +131,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
             </li>
 
             <li class="nav-item <?php echo $current_page == 'help.php' ? 'active' : ''; ?>">
-                <a href="help.php" title="Help Center">
+                <a href="<?php echo $base_path; ?>help.php" title="Help Center">
                     <i class="fas fa-question-circle"></i>
                     <span>Help Center</span>
                 </a>
@@ -120,7 +140,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
     </nav>
 
     <div class="sidebar-footer">
-        <a href="../login/logout.php" class="logout-btn" title="Logout">
+        <a href="<?php echo $login_path; ?>logout.php" class="logout-btn" title="Logout">
             <i class="fas fa-sign-out-alt"></i>
             <span>Logout</span>
         </a>
