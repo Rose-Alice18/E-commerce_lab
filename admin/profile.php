@@ -29,7 +29,8 @@ if (!$user) {
 $sidebar_file = '';
 $page_title = 'My Profile';
 
-if ($user_role == 0) {
+// Handle both role 0 and role 7 as Super Admin
+if ($user_role == 0 || $user_role == 7) {
     $sidebar_file = 'sidebar_super_admin.php';
     $page_title = 'Admin Profile';
 } elseif ($user_role == 1) {
@@ -82,7 +83,7 @@ $categories = $category_obj->fetch_all_categories();
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 
     <!-- Sidebar CSS -->
-    <link rel="stylesheet" href="../css/sidebar.css">
+    <link rel="stylesheet" href="../css/sidebar.css?v=2.5">
 
     <!-- Profile CSS -->
     <link rel="stylesheet" href="../css/profile.css">
@@ -133,7 +134,7 @@ $categories = $category_obj->fetch_all_categories();
                             </span>
                             <span class="member-badge">
                                 <i class="fas fa-calendar-check"></i>
-                                Member since <?php echo date('M Y', strtotime($user['created_at'])); ?>
+                                Member since <?php echo isset($user['created_at']) ? date('M Y', strtotime($user['created_at'])) : 'N/A'; ?>
                             </span>
                         </div>
                     </div>
@@ -261,11 +262,11 @@ $categories = $category_obj->fetch_all_categories();
                             <div class="card-body">
                                 <div class="info-row">
                                     <span class="info-label">Member Since</span>
-                                    <span class="info-value"><?php echo date('F d, Y', strtotime($user['created_at'])); ?></span>
+                                    <span class="info-value"><?php echo isset($user['created_at']) ? date('F d, Y', strtotime($user['created_at'])) : 'N/A'; ?></span>
                                 </div>
                                 <div class="info-row">
                                     <span class="info-label">Last Updated</span>
-                                    <span class="info-value"><?php echo date('F d, Y', strtotime($user['updated_at'])); ?></span>
+                                    <span class="info-value"><?php echo isset($user['updated_at']) ? date('F d, Y', strtotime($user['updated_at'])) : 'N/A'; ?></span>
                                 </div>
                                 <div class="info-row">
                                     <span class="info-label">Account Status</span>
@@ -473,6 +474,9 @@ $categories = $category_obj->fetch_all_categories();
 
     <!-- Sidebar JS -->
     <script src="../js/sidebar.js"></script>
+
+    <!-- Cart and Wishlist JS -->
+    <script src="../js/cart-wishlist.js"></script>
 
     <!-- Profile JS -->
     <script src="../js/profile.js"></script>

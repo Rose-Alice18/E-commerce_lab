@@ -6,6 +6,7 @@
 :root {
     --sidebar-width: 280px;
     --sidebar-collapsed-width: 70px;
+    --hamburger-width: 60px;
     --transition-speed: 0.3s;
 
     /* Super Admin Theme - Deep Purple & Red */
@@ -52,9 +53,17 @@ body {
     z-index: 1000;
     display: flex;
     flex-direction: column;
-    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.3);
+    box-shadow: 2px 0 15px rgba(0, 0, 0, 0.15);
     overflow-y: auto;
     overflow-x: hidden;
+}
+
+/* Prevent transitions on page load to avoid flash */
+.sidebar.no-transition,
+.sidebar.no-transition *,
+.sidebar.no-transition *::before,
+.sidebar.no-transition *::after {
+    transition: none !important;
 }
 
 /* Role-Specific Sidebar Themes */
@@ -90,206 +99,148 @@ body {
     background: rgba(255, 255, 255, 0.2);
 }
 
-/* Collapsed Sidebar State */
+/* Collapsed Sidebar State - Icon Only View */
 .sidebar.collapsed {
     width: var(--sidebar-collapsed-width);
 }
 
-.sidebar.collapsed .logo-container h4,
+.sidebar.collapsed .sidebar-header h4,
 .sidebar.collapsed .role-badge,
 .sidebar.collapsed .user-details,
 .sidebar.collapsed .nav-item a span,
-.sidebar.collapsed .nav-section-title,
-.sidebar.collapsed .logout-btn span {
+.sidebar.collapsed .logout-btn span,
+.sidebar.collapsed .nav-section-title {
     opacity: 0;
     visibility: hidden;
     width: 0;
     overflow: hidden;
+    transition: none !important;
 }
 
-.sidebar.collapsed .logo-container {
+/* Collapsed sidebar - Center icons */
+.sidebar.collapsed .logo-container,
+.sidebar.collapsed .nav-item a,
+.sidebar.collapsed .logout-btn {
     justify-content: center;
-    margin-bottom: 1rem;
-    padding: 0;
-}
-
-.sidebar.collapsed .logo-container i {
-    font-size: 1.5rem;
-}
-
-.sidebar.collapsed .user-info {
-    justify-content: center;
-    padding: 1rem 0.5rem;
-}
-
-.sidebar.collapsed .user-avatar {
-    width: 42px;
-    height: 42px;
-    font-size: 1rem;
 }
 
 .sidebar.collapsed .nav-item {
-    margin: 0.35rem 0.5rem;
+    margin: 0.25rem 0.5rem;
 }
 
-.sidebar.collapsed .nav-item a {
-    justify-content: center;
-    padding: 0.875rem;
-    border-radius: 12px;
-}
-
-.sidebar.collapsed .nav-item a i {
-    font-size: 1.25rem;
-    margin: 0;
-}
-
+.sidebar.collapsed .nav-item a,
 .sidebar.collapsed .logout-btn {
-    justify-content: center;
-    padding: 0.875rem;
-    margin: 0 0.5rem;
+    padding: 0.75rem;
 }
 
-.sidebar.collapsed .logout-btn i {
-    font-size: 1.25rem;
-}
-
-.sidebar.collapsed .sidebar-header {
-    padding: 1.25rem 0.5rem;
-}
-
-.sidebar.collapsed .sidebar-footer {
-    padding: 1rem 0.5rem;
-}
-
-/* Badge in collapsed state */
+/* Badge positioning in collapsed state */
 .sidebar.collapsed .badge {
     position: absolute;
-    top: -5px;
-    right: -5px;
+    top: 5px;
+    right: 5px;
     min-width: 18px;
     height: 18px;
-    padding: 0.1rem 0.35rem;
+    padding: 0.1rem 0.3rem;
     font-size: 0.65rem;
 }
 
-/* Tooltip for collapsed sidebar */
-.sidebar.collapsed .nav-item a,
-.sidebar.collapsed .logout-btn {
-    position: relative;
+/* Collapsed sidebar - hide user avatar section */
+.sidebar.collapsed .user-info {
+    padding: 0.75rem;
+    justify-content: center;
 }
 
-.sidebar.collapsed .nav-item a::after,
-.sidebar.collapsed .logout-btn::after {
-    content: attr(title);
-    position: absolute;
-    left: calc(100% + 15px);
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(0, 0, 0, 0.9);
-    color: white;
-    padding: 0.5rem 0.75rem;
-    border-radius: 8px;
-    font-size: 0.85rem;
-    white-space: nowrap;
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.2s ease;
-    pointer-events: none;
-    z-index: 10000;
+.sidebar.collapsed .user-avatar {
+    width: 38px;
+    height: 38px;
+    font-size: 1rem;
 }
 
-.sidebar.collapsed .nav-item a::before {
-    content: '';
-    position: absolute;
-    left: calc(100% + 8px);
-    top: 50%;
-    transform: translateY(-50%);
-    border: 7px solid transparent;
-    border-right-color: rgba(0, 0, 0, 0.9);
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.2s ease;
-    z-index: 10000;
+/* Collapsed sidebar - header adjustments */
+.sidebar.collapsed .sidebar-header {
+    padding: 1rem 0.5rem;
 }
 
-.sidebar.collapsed .nav-item a:hover::after,
-.sidebar.collapsed .nav-item a:hover::before,
-.sidebar.collapsed .logout-btn:hover::after {
+/* Hamburger Menu Button - Positioned Outside Sidebar */
+.hamburger-menu {
+    position: fixed;
+    top: 1.25rem;
+    left: calc(var(--sidebar-collapsed-width) + 0.75rem);
+    width: 46px;
+    height: 46px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 10px;
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    cursor: pointer;
+    z-index: 1002;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
     opacity: 1;
     visibility: visible;
 }
 
-.sidebar.collapsed .nav-item.active a::before {
-    content: '';
-    position: static;
-    border: none;
-    opacity: 1;
+.hamburger-menu:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-/* Sidebar Toggle Button */
-.sidebar-collapse-toggle {
-    position: absolute;
-    top: 1.5rem;
-    right: -15px;
-    width: 30px;
-    height: 30px;
-    border: 3px solid #1e293b;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    z-index: 1001;
-    transition: all var(--transition-speed) ease;
+.hamburger-menu.active {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
 }
 
-.sidebar.super-admin-theme .sidebar-collapse-toggle {
-    background: var(--super-admin-accent);
-    box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
+.hamburger-menu .bar {
+    width: 22px;
+    height: 2.5px;
+    background: white;
+    border-radius: 2px;
+    transition: all 0.3s ease;
 }
 
-.sidebar.super-admin-theme .sidebar-collapse-toggle:hover {
-    background: #b91c1c;
-    transform: scale(1.1);
-    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.5);
+.hamburger-menu.active .bar:nth-child(1) {
+    transform: rotate(45deg) translateY(9px);
 }
 
-.sidebar.pharmacy-admin-theme .sidebar-collapse-toggle {
-    background: var(--pharmacy-accent);
-    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+.hamburger-menu.active .bar:nth-child(2) {
+    opacity: 0;
+    transform: translateX(-20px);
 }
 
-.sidebar.pharmacy-admin-theme .sidebar-collapse-toggle:hover {
-    background: #059669;
-    transform: scale(1.1);
-    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.5);
+.hamburger-menu.active .bar:nth-child(3) {
+    transform: rotate(-45deg) translateY(-9px);
 }
 
-.sidebar.customer-theme .sidebar-collapse-toggle {
-    background: var(--customer-accent);
-    box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
+/* Role-specific hamburger colors */
+.hamburger-menu.super-admin {
+    background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
 }
 
-.sidebar.customer-theme .sidebar-collapse-toggle:hover {
-    background: #7c3aed;
-    transform: scale(1.1);
-    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.5);
+.hamburger-menu.pharmacy {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
 }
 
-.sidebar-collapse-toggle i {
-    color: white;
-    font-size: 0.875rem;
-    transition: transform var(--transition-speed) ease;
+.hamburger-menu.customer {
+    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
 }
 
-.sidebar.collapsed .sidebar-collapse-toggle i {
-    transform: rotate(180deg);
+.hamburger-menu.active.super-admin,
+.hamburger-menu.active.pharmacy,
+.hamburger-menu.active.customer {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+}
+
+/* Sidebar Backdrop - Not needed for icon-only view */
+.sidebar-backdrop {
+    display: none;
 }
 
 /* Sidebar Header */
 .sidebar-header {
-    padding: 1.5rem 1.25rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1.25rem 1.25rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .logo-container {
@@ -316,21 +267,23 @@ body {
 }
 
 .logo-container h4 {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: var(--sidebar-text-active);
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: white;
     margin: 0;
+    letter-spacing: 0.3px;
 }
 
 /* Role Badge */
 .role-badge {
     display: inline-block;
-    padding: 0.35rem 0.75rem;
-    border-radius: 20px;
-    font-size: 0.7rem;
+    padding: 0.3rem 0.7rem;
+    border-radius: 16px;
+    font-size: 0.65rem;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.8px;
+    backdrop-filter: blur(10px);
 }
 
 .role-badge.super-admin {
@@ -350,23 +303,24 @@ body {
 
 /* User Info */
 .user-info {
-    padding: 1.25rem 1.25rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 0.875rem;
 }
 
 .user-avatar {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.25rem;
+    font-size: 1.15rem;
     color: white;
     flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .sidebar.super-admin-theme .user-avatar {
@@ -383,19 +337,18 @@ body {
 
 .user-details h6 {
     margin: 0;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     font-weight: 600;
-    color: var(--sidebar-text-active);
+    color: white;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
 .user-details p {
-    margin: 0.25rem 0 0 0;
-    font-size: 0.75rem;
-    color: var(--sidebar-text);
-    opacity: 0.7;
+    margin: 0.2rem 0 0 0;
+    font-size: 0.72rem;
+    color: rgba(255, 255, 255, 0.65);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -405,6 +358,8 @@ body {
 .sidebar-nav {
     flex: 1;
     padding: 1rem 0;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .nav-list {
@@ -414,37 +369,39 @@ body {
 }
 
 .nav-section-title {
-    padding: 1.25rem 1.25rem 0.5rem 1.25rem;
-    font-size: 0.7rem;
+    padding: 1rem 1.25rem 0.4rem 1.25rem;
+    font-size: 0.65rem;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 1px;
-    color: var(--sidebar-text);
-    opacity: 0.5;
+    letter-spacing: 1.2px;
+    color: rgba(255, 255, 255, 0.4);
 }
 
 .nav-item {
     margin: 0.25rem 0.75rem;
+    position: relative;
 }
 
 .nav-item a {
     display: flex;
     align-items: center;
     gap: 0.875rem;
-    padding: 0.75rem 1rem;
-    color: var(--sidebar-text);
+    padding: 0.7rem 1rem;
+    color: rgba(255, 255, 255, 0.8);
     text-decoration: none;
-    border-radius: 10px;
-    transition: all var(--transition-speed) ease;
+    border-radius: 8px;
+    transition: all 0.2s ease;
     position: relative;
-    font-size: 0.9rem;
+    font-size: 0.875rem;
+    font-weight: 500;
 }
 
 .nav-item a i {
-    font-size: 1.15rem;
-    width: 24px;
+    font-size: 1.1rem;
+    width: 22px;
     text-align: center;
     flex-shrink: 0;
+    opacity: 0.9;
 }
 
 .nav-item a span:first-of-type {
@@ -452,9 +409,9 @@ body {
 }
 
 .nav-item a:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.08);
     color: #ffffff;
-    transform: translateX(4px);
+    transform: translateX(2px);
 }
 
 .sidebar.super-admin-theme .nav-item a:hover {
@@ -475,17 +432,17 @@ body {
 
 .sidebar.super-admin-theme .nav-item.active a {
     background: var(--super-admin-accent);
-    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
+    box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
 }
 
 .sidebar.pharmacy-admin-theme .nav-item.active a {
     background: var(--pharmacy-accent);
-    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
 }
 
 .sidebar.customer-theme .nav-item.active a {
     background: var(--customer-accent);
-    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+    box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
 }
 
 .nav-item.active a::before {
@@ -494,9 +451,9 @@ body {
     left: -0.75rem;
     top: 50%;
     transform: translateY(-50%);
-    width: 4px;
-    height: 24px;
-    border-radius: 0 4px 4px 0;
+    width: 3px;
+    height: 20px;
+    border-radius: 0 3px 3px 0;
 }
 
 .sidebar.super-admin-theme .nav-item.active a::before {
@@ -515,41 +472,44 @@ body {
 .badge {
     background: #ef4444;
     color: white;
-    padding: 0.15rem 0.5rem;
-    border-radius: 12px;
-    font-size: 0.7rem;
+    padding: 0.12rem 0.45rem;
+    border-radius: 10px;
+    font-size: 0.65rem;
     font-weight: 600;
-    min-width: 20px;
+    min-width: 18px;
     text-align: center;
+    box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
 }
 
 /* Sidebar Footer */
 .sidebar-footer {
-    padding: 1rem 1.25rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 0.875rem 1.25rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .logout-btn {
     display: flex;
     align-items: center;
     gap: 0.875rem;
-    padding: 0.75rem 1rem;
+    padding: 0.7rem 1rem;
     color: #fca5a5;
     text-decoration: none;
-    border-radius: 10px;
-    transition: all var(--transition-speed) ease;
+    border-radius: 8px;
+    transition: all 0.2s ease;
     background: rgba(239, 68, 68, 0.1);
-    font-size: 0.9rem;
+    font-size: 0.875rem;
+    font-weight: 500;
 }
 
 .logout-btn i {
-    font-size: 1.15rem;
+    font-size: 1.1rem;
+    opacity: 0.9;
 }
 
 .logout-btn:hover {
-    background: rgba(239, 68, 68, 0.2);
+    background: rgba(239, 68, 68, 0.15);
     color: #fecaca;
-    transform: translateX(4px);
+    transform: translateX(2px);
 }
 
 /* Main Content Area */
@@ -654,7 +614,7 @@ body {
     }
 }
 
-/* Animations */
+/* Animations - Disabled to prevent menu items sliding in on page load */
 @keyframes slideIn {
     from {
         opacity: 0;
@@ -666,7 +626,8 @@ body {
     }
 }
 
-.nav-item {
+/* Animation removed - causes disruptive sliding effect on navigation */
+/* .nav-item {
     animation: slideIn 0.3s ease forwards;
 }
 
@@ -675,7 +636,7 @@ body {
 .nav-item:nth-child(3) { animation-delay: 0.15s; }
 .nav-item:nth-child(4) { animation-delay: 0.2s; }
 .nav-item:nth-child(5) { animation-delay: 0.25s; }
-.nav-item:nth-child(6) { animation-delay: 0.3s; }
+.nav-item:nth-child(6) { animation-delay: 0.3s; } */
 
 /* Utility Classes */
 .hidden {

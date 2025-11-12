@@ -486,29 +486,34 @@ $stats = get_formatted_stats_ctr();
                             <i class="fas fa-pills me-1"></i>All Products
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="about.php">About</a>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="otherDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Other
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="otherDropdown">
+                            <li>
+                                <a class="dropdown-item" href="#services">
+                                    <i class="fas fa-concierge-bell me-2"></i>Services
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="about.php">
+                                    <i class="fas fa-info-circle me-2"></i>About
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="#contact">
+                                    <i class="fas fa-envelope me-2"></i>Contact Us
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item" href="#developer">
+                                    <i class="fas fa-code me-2"></i>About The App Developer
+                                </a>
+                            </li>
+                        </ul>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#contact">Contact</a>
-                    </li>
-
-                    <?php if (isLoggedIn()): ?>
-                        <li class="nav-item">
-                            <a class="nav-link" href="<?php
-                                // Route to appropriate dashboard based on role
-                                if (isSuperAdmin()) {
-                                    echo 'admin/dashboard.php';
-                                } elseif (isPharmacyAdmin()) {
-                                    echo 'admin/pharmacy_dashboard.php';
-                                } else {
-                                    echo 'admin/customer_dashboard.php';
-                                }
-                            ?>">
-                                <i class="fas fa-tachometer-alt me-1"></i>Dashboard
-                            </a>
-                        </li>
-                    <?php endif; ?>
                 </ul>
 
                 <!-- PDF Requirement: Search Box -->
@@ -531,33 +536,28 @@ $stats = get_formatted_stats_ctr();
                             <i class="fas fa-user-plus me-1"></i>Register
                         </a>
                     <?php else: ?>
+                        <a href="<?php
+                            // Route to appropriate dashboard based on role
+                            if (isSuperAdmin()) {
+                                echo 'admin/dashboard.php';
+                            } elseif (isPharmacyAdmin()) {
+                                echo 'admin/pharmacy_dashboard.php';
+                            } else {
+                                echo 'admin/customer_dashboard.php';
+                            }
+                        ?>" class="btn btn-gradient-primary">
+                            <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                        </a>
                         <div class="dropdown">
-                            <button class="btn btn-gradient-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                                <i class="fas fa-user-circle me-1"></i>
-                                <?php echo isset($_SESSION['user_name']) ? htmlspecialchars($_SESSION['user_name']) : 'Account'; ?>
+                            <button class="btn btn-gradient-primary dropdown-toggle dropdown-toggle-split" type="button" data-bs-toggle="dropdown">
+                                <span class="visually-hidden">Toggle Dropdown</span>
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end">
                                 <li>
-                                    <a class="dropdown-item" href="<?php
-                                        // Route to appropriate dashboard based on role
-                                        if (isSuperAdmin()) {
-                                            echo 'admin/dashboard.php';
-                                        } elseif (isPharmacyAdmin()) {
-                                            echo 'admin/pharmacy_dashboard.php';
-                                        } else {
-                                            echo 'admin/customer_dashboard.php';
-                                        }
-                                    ?>">
-                                        <i class="fas fa-tachometer-alt me-2"></i>My Dashboard
+                                    <a class="dropdown-item text-danger" href="login/logout.php">
+                                        <i class="fas fa-sign-out-alt me-2"></i>Logout
                                     </a>
                                 </li>
-                                <li><a class="dropdown-item" href="#profile.php">
-                                    <i class="fas fa-user me-2"></i>My Profile
-                                </a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item text-danger" href="login/logout.php">
-                                    <i class="fas fa-sign-out-alt me-2"></i>Logout
-                                </a></li>
                             </ul>
                         </div>
                     <?php endif; ?>

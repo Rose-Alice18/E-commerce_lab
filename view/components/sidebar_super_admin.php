@@ -17,12 +17,18 @@ if (!isSuperAdmin()) {
 $current_page = basename($_SERVER['PHP_SELF']);
 ?>
 
+<!-- Modern Hamburger Menu -->
+<div class="hamburger-menu super-admin" id="hamburgerMenu">
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+</div>
+
+<!-- Sidebar Backdrop -->
+<div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
 <!-- Modern Sidebar for Super Admin -->
 <div class="sidebar super-admin-theme" id="sidebar">
-    <!-- Collapse/Expand Toggle Button -->
-    <div class="sidebar-collapse-toggle" id="sidebarCollapseToggle" title="Collapse/Expand Sidebar">
-        <i class="fas fa-chevron-left"></i>
-    </div>
 
     <div class="sidebar-header">
         <div class="logo-container">
@@ -73,6 +79,14 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 <a href="products.php">
                     <i class="fas fa-pills"></i>
                     <span>Products</span>
+                </a>
+            </li>
+
+            <li class="nav-item <?php echo $current_page == 'suggestions_review.php' ? 'active' : ''; ?>">
+                <a href="suggestions_review.php">
+                    <i class="fas fa-lightbulb"></i>
+                    <span>Review Suggestions</span>
+                    <span class="badge" id="pendingSuggestionCount">0</span>
                 </a>
             </li>
 

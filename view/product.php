@@ -75,6 +75,9 @@ if (!empty($search_query)) {
     <!-- Sidebar CSS -->
     <link rel="stylesheet" href="../css/sidebar.css?v=2.2">
 
+    <!-- Cart & Wishlist CSS -->
+    <link rel="stylesheet" href="../css/cart-wishlist.css">
+
     <style>
         :root {
             --primary-color: #667eea;
@@ -350,6 +353,120 @@ if (!empty($search_query)) {
                 grid-template-columns: 1fr;
             }
         }
+
+        /* Product Action Buttons */
+        .product-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .btn-add-cart {
+            flex: 1;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-add-cart:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-add-cart:disabled {
+            background: #cbd5e1;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .btn-wishlist {
+            background: white;
+            color: #ef4444;
+            border: 2px solid #fecaca;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .btn-wishlist:hover {
+            background: #fef2f2;
+            border-color: #ef4444;
+            transform: scale(1.1);
+        }
+
+        .btn-wishlist.active {
+            background: #ef4444;
+            color: white;
+            border-color: #ef4444;
+        }
+
+        .btn-wishlist.active i {
+            font-weight: 900;
+        }
+
+        /* Toast Notification */
+        .toast-notification {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            background: white;
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            animation: slideIn 0.3s ease;
+            min-width: 300px;
+        }
+
+        .toast-notification.success {
+            border-left: 4px solid #10b981;
+        }
+
+        .toast-notification.error {
+            border-left: 4px solid #ef4444;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+        }
     </style>
 </head>
 <body>
@@ -360,15 +477,6 @@ if (!empty($search_query)) {
 
     <!-- Main Content Wrapper -->
     <div class="main-content">
-        <!-- Back to Dashboard Link (for logged in customers) -->
-        <?php if (isLoggedIn() && isRegularCustomer()): ?>
-            <div style="padding: 1rem 2rem;">
-                <a href="../admin/customer_dashboard.php" style="color: #667eea; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 0.5rem; transition: all 0.3s ease;">
-                    <i class="fas fa-arrow-left"></i> Back to Dashboard
-                </a>
-            </div>
-        <?php endif; ?>
-
         <!-- Page Header -->
         <div class="page-header">
             <div class="container">
@@ -490,6 +598,24 @@ if (!empty($search_query)) {
                                     </div>
                                 </div>
                             </div>
+
+                            <!-- Action Buttons -->
+                            <?php if (isLoggedIn() && isRegularCustomer()): ?>
+                                <div class="product-actions">
+                                    <button class="btn-add-cart"
+                                            data-product-id="<?php echo $product['product_id']; ?>"
+                                            onclick="addToCart(<?php echo $product['product_id']; ?>)"
+                                            <?php echo ($stock <= 0) ? 'disabled' : ''; ?>>
+                                        <i class="fas fa-shopping-cart me-1"></i>
+                                        <span>Add to Cart</span>
+                                    </button>
+                                    <button class="btn-wishlist"
+                                            onclick="toggleWishlist(<?php echo $product['product_id']; ?>, this)"
+                                            data-product-id="<?php echo $product['product_id']; ?>">
+                                        <i class="far fa-heart"></i>
+                                    </button>
+                                </div>
+                            <?php endif; ?>
                         </div>
                     </div>
                 <?php endforeach; ?>
@@ -519,5 +645,8 @@ if (!empty($search_query)) {
 
     <!-- Bootstrap JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Cart and Wishlist Functions -->
+    <script src="../js/cart-wishlist.js"></script>
 </body>
 </html>

@@ -32,7 +32,7 @@ $stats = $stats_result['data'] ?? [];
 $cart_items = $stats['cart_items'] ?? 0;
 $total_orders = $stats['total_orders'] ?? 0;
 $pending_deliveries = $stats['pending_deliveries'] ?? 0;
-$wishlist_items = 0; // Will implement wishlist later
+$wishlist_items = $stats['wishlist_items'] ?? 0;
 
 // Get featured products from database (limit to 6)
 $products_result = get_all_products_ctr(6);
@@ -63,7 +63,9 @@ if ($current_hour < 12) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <!-- Sidebar CSS -->
-    <link rel="stylesheet" href="../css/sidebar.css?v=2.2">
+    <link rel="stylesheet" href="../css/sidebar.css?v=2.5">
+    <!-- Cart & Wishlist CSS -->
+    <link rel="stylesheet" href="../css/cart-wishlist.css?v=1.0">
 
     <style>
         :root {
@@ -601,6 +603,8 @@ if ($current_hour < 12) {
 
     <!-- Sidebar JS -->
     <script src="../js/sidebar.js"></script>
+    <!-- Cart and Wishlist JS (for sidebar counts) -->
+    <script src="../js/cart-wishlist.js"></script>
 
     <script>
         function searchProducts() {
@@ -629,7 +633,66 @@ if ($current_hour < 12) {
 
         function addToCart(productId) {
             console.log('Adding product to cart:', productId);
-            alert('Cart functionality will be implemented with backend');
+
+            // Send AJAX request to add to cart
+            fetch('../actions/cart_actions.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `action=add&product_id=${productId}&quantity=1`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Show success message
+                    showToast('success', data.message);
+
+                    // Update cart count in sidebar if it exists
+                    updateCartCount();
+                } else {
+                    showToast('error', data.message || 'Failed to add to cart');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showToast('error', 'An error occurred. Please try again.');
+            });
+        }
+
+        function showToast(type, message) {
+            const toast = document.createElement('div');
+            toast.className = `toast-notification ${type}`;
+            toast.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"
+                   style="color: ${type === 'success' ? '#10b981' : '#ef4444'}; font-size: 1.5rem;"></i>
+                <span>${message}</span>
+            `;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function updateCartCount() {
+            fetch('../actions/cart_actions.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'action=get_count'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const cartBadge = document.querySelector('.badge');
+                    if (cartBadge) {
+                        cartBadge.textContent = data.cart_count;
+                    }
+                }
+            });
         }
 
         function addToWishlist(productId) {

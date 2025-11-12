@@ -50,7 +50,7 @@ if ($user_role == 0) {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 
     <!-- Sidebar CSS -->
-    <link rel="stylesheet" href="../css/sidebar.css">
+    <link rel="stylesheet" href="../css/sidebar.css?v=2.5">
 
     <style>
         .edit-profile-container {

@@ -24,12 +24,12 @@ if (!hasAdminPrivileges()) {
 $user_name = $_SESSION['user_name'];
 $user_id = getUserId();
 
-// Get all brands for this user
-$brands_result = get_all_brands_ctr($user_id);
+// Get all platform brands (both super admin and pharmacy admin see all platform brands)
+$brands_result = get_all_brands_ctr(null); // null = fetch all platform brands
 $brands = $brands_result['data'] ?? [];
 
-// Get all categories for this user
-$categories_result = fetch_categories_ctr($user_id);
+// Get all platform categories (both super admin and pharmacy admin see all platform categories)
+$categories_result = fetch_all_categories_ctr();
 $categories = $categories_result['data'] ?? [];
 ?>
 
@@ -491,17 +491,18 @@ $categories = $categories_result['data'] ?? [];
             </div>
         </div>
         <div class="content-wrapper">
-            <!-- Add Brand Form -->
+            <?php if (isSuperAdmin()): ?>
+            <!-- Add Brand Form (Super Admin Only) -->
             <div class="add-brand-card">
                 <h3><i class="fas fa-plus-circle"></i> Add New Brand</h3>
-                
+
                 <form id="addBrandForm">
                     <div class="form-group">
                         <label class="form-label">Brand Name</label>
-                        <input 
-                            type="text" 
-                            class="form-control" 
-                            id="brandName" 
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="brandName"
                             name="brand_name"
                             placeholder="e.g., Panadol, Centrum, Dettol"
                             required
@@ -532,6 +533,7 @@ $categories = $categories_result['data'] ?? [];
                     </button>
                 </form>
             </div>
+            <?php endif; ?>
 
             <!-- Brands Display -->
             <div class="brands-section">
@@ -540,12 +542,12 @@ $categories = $categories_result['data'] ?? [];
                     <span class="badge bg-primary" id="brandCount"><?php echo count($brands); ?></span>
                 </h3>
 
-                <div id="brandsContainer">
+                <div id="brandsContainer" data-can-edit="<?php echo isSuperAdmin() ? 'true' : 'false'; ?>">
                     <?php if (empty($brands)): ?>
                         <div class="empty-state">
                             <i class="fas fa-award"></i>
                             <h4>No Brands Yet</h4>
-                            <p>Start by adding your first product brand (e.g., Panadol, Centrum)</p>
+                            <p>No product brands have been created yet</p>
                         </div>
                     <?php else: 
                         // Group brands by category
@@ -574,22 +576,24 @@ $categories = $categories_result['data'] ?? [];
                                             <div class="brand-icon">
                                                 <i class="fas fa-award"></i>
                                             </div>
+                                            <?php if (isSuperAdmin()): ?>
                                             <div class="brand-actions">
-                                                <button 
-                                                    class="btn-edit" 
+                                                <button
+                                                    class="btn-edit"
                                                     onclick="editBrand(<?php echo $brand['brand_id']; ?>, '<?php echo htmlspecialchars($brand['brand_name'], ENT_QUOTES); ?>', <?php echo $brand['cat_id']; ?>)"
                                                     title="Edit Brand"
                                                 >
                                                     <i class="fas fa-edit"></i>
                                                 </button>
-                                                <button 
-                                                    class="btn-delete" 
+                                                <button
+                                                    class="btn-delete"
                                                     onclick="deleteBrand(<?php echo $brand['brand_id']; ?>, '<?php echo htmlspecialchars($brand['brand_name'], ENT_QUOTES); ?>')"
                                                     title="Delete Brand"
                                                 >
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </div>
+                                            <?php endif; ?>
                                         </div>
                                         <h5 class="brand-name"><?php echo htmlspecialchars($brand['brand_name']); ?></h5>
                                         <div class="brand-meta">

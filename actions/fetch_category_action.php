@@ -54,13 +54,10 @@ try {
         exit();
     }
 
-    // Super admins see ALL categories platform-wide, pharmacy admins see only their own
-    if (isSuperAdmin()) {
-        $result = fetch_all_categories_ctr(); // Fetch all categories
-    } else {
-        $result = fetch_categories_ctr($user_id); // Fetch user-specific categories
-    }
-    
+    // Both super admins and pharmacy admins see ALL platform categories
+    // The difference is in edit/delete permissions (handled in the frontend)
+    $result = fetch_all_categories_ctr(); // Fetch all platform categories
+
     // Return the result
     echo json_encode($result);
     

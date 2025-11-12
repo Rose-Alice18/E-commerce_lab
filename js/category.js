@@ -203,12 +203,15 @@ function displayCategories(categories) {
             <div class="text-center py-5">
                 <i class="fas fa-folder-open fa-3x text-muted mb-3"></i>
                 <h5 class="text-muted">No Categories Found</h5>
-                <p class="text-muted">Create your first category using the form above.</p>
+                <p class="text-muted">No categories have been created yet.</p>
             </div>
         `;
         return;
     }
     
+    // Check if user can edit/delete (passed from PHP via data attribute)
+    const canEdit = document.getElementById('categoriesContainer').dataset.canEdit === 'true';
+
     // Create categories grid
     let html = '<div class="row">';
     categories.forEach(category => {
@@ -223,23 +226,25 @@ function displayCategories(categories) {
                         <p class="card-text text-muted small">
                             Created: ${formatDate(category.created_at)}
                         </p>
+                        ${canEdit ? `
                         <div class="btn-group w-100" role="group">
-                            <button class="btn btn-outline-primary btn-sm" 
+                            <button class="btn btn-outline-primary btn-sm"
                                     onclick="editCategory(${category.cat_id}, '${escapeHtml(category.cat_name).replace(/'/g, "\\'")}')">
                                 <i class="fas fa-edit me-1"></i>Edit
                             </button>
-                            <button class="btn btn-outline-danger btn-sm" 
+                            <button class="btn btn-outline-danger btn-sm"
                                     onclick="deleteCategory(${category.cat_id}, '${escapeHtml(category.cat_name).replace(/'/g, "\\'")}')">
                                 <i class="fas fa-trash me-1"></i>Delete
                             </button>
                         </div>
+                        ` : ''}
                     </div>
                 </div>
             </div>
         `;
     });
     html += '</div>';
-    
+
     container.innerHTML = html;
 }
 

@@ -15,6 +15,7 @@ settings/db_cred_server.php
 *.key
 *.pem
 *.p12
+LOGIN_CREDENTIALS.md
 
 # =====================================
 # User Uploaded Files

@@ -34,12 +34,9 @@ if (!hasAdminPrivileges()) {
 // Get user ID from session
 $user_id = getUserId();
 
-// Super admins see ALL brands platform-wide, pharmacy admins see only their own
-if (isSuperAdmin()) {
-    $result = get_all_brands_ctr(null); // Fetch all brands (null = platform-wide)
-} else {
-    $result = get_all_brands_ctr($user_id); // Fetch user-specific brands
-}
+// Both super admins and pharmacy admins see ALL platform brands
+// The difference is in edit/delete permissions (handled in the frontend)
+$result = get_all_brands_ctr(null); // Fetch all platform brands (null = platform-wide)
 
 // Return response
 echo json_encode($result);

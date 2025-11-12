@@ -64,21 +64,16 @@ function add_brand_ctr($kwargs) {
 }
 
 /**
- * Get all brands for a user
- * @param int $user_id - User ID
+ * Get all brands for a user or all platform brands
+ * @param int|null $user_id - User ID (null for all platform brands)
  * @return array - ['success' => bool, 'data' => array, 'message' => string]
  */
-function get_all_brands_ctr($user_id) {
-    if (empty($user_id)) {
-        return [
-            'success' => false,
-            'message' => 'User ID is required',
-            'data' => []
-        ];
-    }
-
+function get_all_brands_ctr($user_id = null) {
     $brand = new Brand();
-    $brands = $brand->get_all_brands((int)$user_id);
+
+    // If user_id is null, fetch all platform brands
+    // Otherwise, fetch brands for specific user
+    $brands = $brand->get_all_brands($user_id);
 
     return [
         'success' => true,

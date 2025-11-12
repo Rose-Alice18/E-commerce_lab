@@ -88,7 +88,25 @@ require_once(dirname(__FILE__) . '/settings/core.php');
             box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
             color: white;
         }
-        
+
+        .btn-outline-gradient {
+            background: transparent;
+            border: 2px solid #667eea;
+            color: #667eea;
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-gradient:hover {
+            background: var(--primary-gradient);
+            border-color: transparent;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
         /* Page Header */
         .page-header {
             background: var(--primary-gradient);
@@ -337,41 +355,96 @@ require_once(dirname(__FILE__) . '/settings/core.php');
                 <i class="fas fa-pills me-2"></i>
                 <span>PharmaVault</span>
             </a>
-            
+
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            
+
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav mx-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="index.php">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="about.php">About</a>
-                    <!--/li>
-                    <li class="nav-item">
                         <a class="nav-link" href="index.php#features">Features</a>
-                    </li-->
-                    
-                    <?php if (isLoggedIn() && hasAdminPrivileges()): ?>
-                        <li class="nav-item">
-                            <a class="nav-link" href="admin/category.php">
-                                <i class="fas fa-cog me-1"></i>Manage
-                            </a>
-                        </li>
-                    <?php endif; ?>
+                    </li>
+                    <!-- PDF Requirement: All Products Link -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="view/all_product.php">
+                            <i class="fas fa-pills me-1"></i>All Products
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle active" href="#" id="otherDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Other
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="otherDropdown">
+                            <li>
+                                <a class="dropdown-item" href="index.php#services">
+                                    <i class="fas fa-concierge-bell me-2"></i>Services
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item active" href="about.php">
+                                    <i class="fas fa-info-circle me-2"></i>About
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="index.php#contact">
+                                    <i class="fas fa-envelope me-2"></i>Contact Us
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item" href="index.php#developer">
+                                    <i class="fas fa-code me-2"></i>About The App Developer
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
                 </ul>
-                
+
+                <!-- PDF Requirement: Search Box -->
+                <form action="view/all_product.php" method="GET" class="d-flex me-3" style="min-width: 300px;">
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="search" placeholder="Search products..." aria-label="Search">
+                        <button class="btn btn-gradient-primary" type="submit">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </form>
+
                 <div class="d-flex gap-2">
                     <?php if (!isLoggedIn()): ?>
-                        <a href="login/login.php" class="btn btn-gradient-primary">
+                        <a href="login/login.php" class="btn btn-outline-gradient">
                             <i class="fas fa-sign-in-alt me-1"></i>Login
                         </a>
-                    <?php else: ?>
-                        <a href="login/logout.php" class="btn btn-gradient-primary">
-                            <i class="fas fa-sign-out-alt me-1"></i>Logout
+                        <!-- PDF Requirement: Register Link -->
+                        <a href="login/register.php" class="btn btn-gradient-primary">
+                            <i class="fas fa-user-plus me-1"></i>Register
                         </a>
+                    <?php else: ?>
+                        <a href="<?php
+                            // Route to appropriate dashboard based on role
+                            if (isSuperAdmin()) {
+                                echo 'admin/dashboard.php';
+                            } elseif (isPharmacyAdmin()) {
+                                echo 'admin/pharmacy_dashboard.php';
+                            } else {
+                                echo 'admin/customer_dashboard.php';
+                            }
+                        ?>" class="btn btn-gradient-primary">
+                            <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                        </a>
+                        <div class="dropdown">
+                            <button class="btn btn-gradient-primary dropdown-toggle dropdown-toggle-split" type="button" data-bs-toggle="dropdown">
+                                <span class="visually-hidden">Toggle Dropdown</span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li>
+                                    <a class="dropdown-item text-danger" href="login/logout.php">
+                                        <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
                     <?php endif; ?>
                 </div>
             </div>

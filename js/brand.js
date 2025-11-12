@@ -58,7 +58,7 @@ function displayBrands(brands) {
             <div class="empty-state">
                 <i class="fas fa-award"></i>
                 <h4>No Brands Yet</h4>
-                <p>Start by adding your first product brand (e.g., Panadol, Centrum)</p>
+                <p>No product brands have been created yet</p>
             </div>
         `;
         return;
@@ -104,12 +104,17 @@ function createBrandCard(brand) {
         year: 'numeric'
     });
 
+    // Check if user can edit/delete (passed from PHP via data attribute)
+    const container = document.getElementById('brandsContainer');
+    const canEdit = container && container.dataset.canEdit === 'true';
+
     return `
         <div class="brand-card">
             <div class="brand-card-header">
                 <div class="brand-icon">
                     <i class="fas fa-award"></i>
                 </div>
+                ${canEdit ? `
                 <div class="brand-actions">
                     <button
                         class="btn-edit"
@@ -126,6 +131,7 @@ function createBrandCard(brand) {
                         <i class="fas fa-trash"></i>
                     </button>
                 </div>
+                ` : ''}
             </div>
             <h5 class="brand-name">${escapeHtml(brand.brand_name)}</h5>
             <div class="brand-meta">

@@ -2,6 +2,7 @@
 /**
  * Customer Sidebar Component
  * Role: 2 (Regular Customer)
+ * Last Updated: 2025-11-12 - Fixed SHOPPING section visibility
  */
 if (!isset($_SESSION)) {
     session_start();
@@ -37,13 +38,18 @@ if ($is_in_admin) {
 }
 ?>
 
+<!-- Modern Hamburger Menu -->
+<div class="hamburger-menu customer" id="hamburgerMenu">
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+</div>
+
+<!-- Sidebar Backdrop -->
+<div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
 <!-- Modern Sidebar for Customer -->
 <div class="sidebar customer-theme" id="sidebar">
-    <!-- Collapse/Expand Toggle Button -->
-    <div class="sidebar-collapse-toggle" id="sidebarCollapseToggle" title="Collapse/Expand Sidebar">
-        <i class="fas fa-chevron-left"></i>
-    </div>
-
     <div class="sidebar-header">
         <div class="logo-container">
             <i class="fas fa-hospital-symbol"></i>
@@ -64,15 +70,18 @@ if ($is_in_admin) {
 
     <nav class="sidebar-nav">
         <ul class="nav-list">
-            <li class="nav-item <?php echo $current_page == 'customer_dashboard.php' ? 'active' : ''; ?>">
-                <a href="<?php echo $base_path; ?>customer_dashboard.php" title="Home">
+            <li class="nav-item <?php echo $current_page == 'index.php' ? 'active' : ''; ?>">
+                <a href="<?php echo $is_in_admin ? '../index.php' : ($is_in_view ? '../index.php' : './index.php'); ?>" title="Home">
                     <i class="fas fa-home"></i>
                     <span>Home</span>
                 </a>
             </li>
 
-            <li class="nav-section-title">
-                <span>SHOPPING</span>
+            <li class="nav-item <?php echo $current_page == 'customer_dashboard.php' ? 'active' : ''; ?>">
+                <a href="<?php echo $base_path; ?>customer_dashboard.php" title="Dashboard">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
             </li>
 
             <li class="nav-item <?php echo $current_page == 'product.php' ? 'active' : ''; ?>">
@@ -94,11 +103,8 @@ if ($is_in_admin) {
                 <a href="<?php echo $base_path; ?>wishlist.php" title="Wishlist">
                     <i class="fas fa-heart"></i>
                     <span>Wishlist</span>
+                    <span class="badge" id="wishlistCount">0</span>
                 </a>
-            </li>
-
-            <li class="nav-section-title">
-                <span>ORDERS</span>
             </li>
 
             <li class="nav-item <?php echo $current_page == 'my_orders.php' ? 'active' : ''; ?>">
@@ -115,19 +121,11 @@ if ($is_in_admin) {
                 </a>
             </li>
 
-            <li class="nav-section-title">
-                <span>ACCOUNT</span>
-            </li>
-
             <li class="nav-item <?php echo ($current_page == 'profile.php' || $current_page == 'edit_profile.php' || $current_page == 'change_password.php') ? 'active' : ''; ?>">
                 <a href="<?php echo $base_path; ?>profile.php" title="My Profile">
                     <i class="fas fa-user-circle"></i>
                     <span>My Profile</span>
                 </a>
-            </li>
-
-            <li class="nav-section-title">
-                <span>SUPPORT</span>
             </li>
 
             <li class="nav-item <?php echo $current_page == 'help.php' ? 'active' : ''; ?>">

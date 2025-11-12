@@ -227,4 +227,19 @@ function update_customer_profile_ctr($data) {
         ];
     }
 }
+
+/**
+ * Get all users by role controller function
+ * @param int $role - User role (0=Super Admin, 1=Pharmacy Admin, 2=Customer)
+ * @return array
+ */
+function get_all_users_by_role_ctr($role) {
+    try {
+        $customer = new Customer();
+        return $customer->getAllUsersByRole($role);
+    } catch (Exception $e) {
+        error_log("Get users by role controller error: " . $e->getMessage());
+        return [];
+    }
+}
 ?>

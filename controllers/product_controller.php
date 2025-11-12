@@ -339,13 +339,17 @@ function get_customer_stats_ctr($customer_id) {
 
     $product = new Product();
 
+    // Include wishlist controller for wishlist count
+    require_once(__DIR__ . '/wishlist_controller.php');
+
     return [
         'success' => true,
         'message' => 'Stats retrieved successfully',
         'data' => [
             'cart_items' => $product->get_cart_count($customer_id),
             'total_orders' => $product->get_customer_orders_count($customer_id),
-            'pending_deliveries' => $product->get_pending_deliveries($customer_id)
+            'pending_deliveries' => $product->get_pending_deliveries($customer_id),
+            'wishlist_items' => get_wishlist_count_ctr($customer_id)
         ]
     ];
 }

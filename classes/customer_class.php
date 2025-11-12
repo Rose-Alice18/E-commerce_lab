@@ -310,4 +310,29 @@ class Customer extends db_connection {
             return false;
         }
     }
+
+    /**
+     * Get all users by role
+     * @param int $role - User role (0=Super Admin, 1=Pharmacy Admin, 2=Customer)
+     * @return array List of users
+     */
+    public function getAllUsersByRole($role) {
+        try {
+            $stmt = $this->db->prepare("SELECT * FROM customer WHERE user_role = ? ORDER BY customer_name ASC");
+            $stmt->bind_param("i", $role);
+            $stmt->execute();
+            $result = $stmt->get_result();
+
+            $users = [];
+            while ($row = $result->fetch_assoc()) {
+                $users[] = $row;
+            }
+
+            return $users;
+
+        } catch (Exception $e) {
+            error_log("Get users by role error: " . $e->getMessage());
+            return [];
+        }
+    }
 }

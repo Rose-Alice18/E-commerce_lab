@@ -4,7 +4,10 @@
       "Bash(php -l actions/update_product_action.php)",
       "Bash(php -l \"c:/xampp/htdocs/register_sample/admin/category.php\")",
       "Bash(C:/xampp/php/php.exe -l \"c:/xampp/htdocs/register_sample/admin/category.php\")",
-      "Bash(C:/xampp/php/php.exe:*)"
+      "Bash(C:/xampp/php/php.exe:*)",
+      "Bash(for file in change_password.php edit_profile.php)",
+      "Bash(do sed -i 's|sidebar\\.css[^\"\"]*\"\"|sidebar.css?v=2.5\"\"|g' \"$file\")",
+      "Bash(done)"
     ],
     "deny": [],
     "ask": []

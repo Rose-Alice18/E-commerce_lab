@@ -17,12 +17,18 @@ if (!isPharmacyAdmin()) {
 $current_page = basename($_SERVER['PHP_SELF']);
 ?>
 
+<!-- Modern Hamburger Menu -->
+<div class="hamburger-menu pharmacy" id="hamburgerMenu">
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+</div>
+
+<!-- Sidebar Backdrop -->
+<div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
 <!-- Modern Sidebar for Pharmacy Admin -->
 <div class="sidebar pharmacy-admin-theme" id="sidebar">
-    <!-- Collapse/Expand Toggle Button -->
-    <div class="sidebar-collapse-toggle" id="sidebarCollapseToggle" title="Collapse/Expand Sidebar">
-        <i class="fas fa-chevron-left"></i>
-    </div>
 
     <div class="sidebar-header">
         <div class="logo-container">
@@ -98,7 +104,6 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 <a href="orders.php">
                     <i class="fas fa-shopping-cart"></i>
                     <span>Orders</span>
-                    <span class="badge" id="orderCount">0</span>
                 </a>
             </li>
 

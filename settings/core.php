@@ -34,27 +34,27 @@ function getUserId() {
 
 /**
  * Check if the current user has administrative privileges (Super Admin OR Pharmacy Admin)
- * @return bool True if user has admin privileges (role 0 or 1), false otherwise
+ * @return bool True if user has admin privileges (role 0, 1, or 7), false otherwise
  */
 function hasAdminPrivileges() {
     if (!isLoggedIn()) {
         return false;
     }
 
-    // Check if role is set in session and equals 'admin' OR equals 0 or 1 (numeric admin roles)
+    // Check if role is set in session and equals 'admin' OR equals 0, 1, or 7 (numeric admin roles)
     if (isset($_SESSION['role'])) {
-        return $_SESSION['role'] === 'admin' || $_SESSION['role'] == 0 || $_SESSION['role'] == 1;
+        return $_SESSION['role'] === 'admin' || $_SESSION['role'] == 0 || $_SESSION['role'] == 1 || $_SESSION['role'] == 7;
     }
 
     if (isset($_SESSION['user_role'])) {
-        return $_SESSION['user_role'] === 'admin' || $_SESSION['user_role'] == 0 || $_SESSION['user_role'] == 1;
+        return $_SESSION['user_role'] === 'admin' || $_SESSION['user_role'] == 0 || $_SESSION['user_role'] == 1 || $_SESSION['user_role'] == 7;
     }
 
     return false;
 }
 
 /**
- * Check if the current user is a Super Admin (role 0)
+ * Check if the current user is a Super Admin (role 0 or role 7)
  * Super admins can manage platform-wide settings
  * @return bool True if user is super admin, false otherwise
  */
@@ -64,11 +64,11 @@ function isSuperAdmin() {
     }
 
     if (isset($_SESSION['role'])) {
-        return $_SESSION['role'] == 0;
+        return $_SESSION['role'] == 0 || $_SESSION['role'] == 7;
     }
 
     if (isset($_SESSION['user_role'])) {
-        return $_SESSION['user_role'] == 0;
+        return $_SESSION['user_role'] == 0 || $_SESSION['user_role'] == 7;
     }
 
     return false;
@@ -228,6 +228,7 @@ function getUserRoleName() {
 
     switch ($role) {
         case 0:
+        case 7:
             return 'Super Admin';
         case 1:
             return 'Pharmacy Admin';

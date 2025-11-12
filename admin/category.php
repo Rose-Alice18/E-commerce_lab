@@ -5,6 +5,8 @@ ini_set('display_errors', 1);
 
 // Include core functions (this will start the session)
 require_once(dirname(__FILE__) . '/../settings/core.php');
+require_once(dirname(__FILE__) . '/../controllers/suggestion_controller.php');
+require_once(dirname(__FILE__) . '/../controllers/customer_controller.php');
 
 // Check if user is logged in
 if (!isLoggedIn()) {
@@ -20,6 +22,14 @@ if (!hasAdminPrivileges()) {
 
 // Get user ID from session
 $user_id = getUserId();
+
+// Get user details for pharmacy name (if pharmacy admin)
+$pharmacy_name = '';
+if (isPharmacyAdmin()) {
+    $user_result = get_customer_by_id_ctr($user_id);
+    $user = $user_result['data'] ?? null;
+    $pharmacy_name = $user['customer_name'] ?? '';
+}
 ?>
 
 <!DOCTYPE html>
@@ -34,6 +44,9 @@ $user_id = getUserId();
 
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <!-- SweetAlert2 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 
     <!-- Sidebar CSS -->
     <link rel="stylesheet" href="../css/sidebar.css">
@@ -524,9 +537,53 @@ $user_id = getUserId();
                 transform: translateY(0);
             }
         }
-        
+
         .animate-fade-in {
             animation: fadeInUp 0.5s ease-out forwards;
+        }
+
+        /* Suggestion Styles */
+        .suggestion-item {
+            background: white;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            border-left: 4px solid #667eea;
+        }
+
+        .suggestion-item.pending {
+            border-left-color: #f59e0b;
+        }
+
+        .suggestion-item.approved {
+            border-left-color: #10b981;
+        }
+
+        .suggestion-item.rejected {
+            border-left-color: #ef4444;
+        }
+
+        .status-badge {
+            padding: 0.35rem 0.9rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-approved {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-rejected {
+            background: #fee2e2;
+            color: #991b1b;
         }
     </style>
 </head>
@@ -560,7 +617,8 @@ $user_id = getUserId();
         </div>
 
         <div style="max-width: 1400px; margin: 0 auto;">
-            <!-- Add Category Section -->
+            <?php if (isSuperAdmin()): ?>
+            <!-- Add Category Section (Super Admin Only) -->
             <div class="row g-4 mb-4">
                 <!-- Add Category Form -->
                 <div class="col-lg-6">
@@ -576,10 +634,10 @@ $user_id = getUserId();
                                     <label for="categoryName" class="form-label">
                                         <i class="fas fa-tag me-1"></i>Category Name
                                     </label>
-                                    <input type="text" 
-                                           class="form-control" 
-                                           id="categoryName" 
-                                           name="category_name" 
+                                    <input type="text"
+                                           class="form-control"
+                                           id="categoryName"
+                                           name="category_name"
                                            placeholder="e.g., Pain Relief Medications"
                                            required
                                            maxlength="100">
@@ -615,7 +673,7 @@ $user_id = getUserId();
                                     <p class="mb-0 small text-muted">Antibiotics, antihypertensives, insulin</p>
                                 </div>
                             </div>
-                            
+
                             <div class="example-item">
                                 <span class="example-icon" style="background: var(--secondary-gradient);">
                                     <i class="fas fa-capsules text-white"></i>
@@ -625,7 +683,7 @@ $user_id = getUserId();
                                     <p class="mb-0 small text-muted">Pain relievers, cough syrups, antacids</p>
                                 </div>
                             </div>
-                            
+
                             <div class="example-item">
                                 <span class="example-icon" style="background: var(--success-gradient);">
                                     <i class="fas fa-heartbeat text-white"></i>
@@ -635,7 +693,7 @@ $user_id = getUserId();
                                     <p class="mb-0 small text-muted">Multivitamins, calcium, omega-3</p>
                                 </div>
                             </div>
-                            
+
                             <div class="example-item">
                                 <span class="example-icon" style="background: var(--primary-gradient);">
                                     <i class="fas fa-baby text-white"></i>
@@ -645,7 +703,7 @@ $user_id = getUserId();
                                     <p class="mb-0 small text-muted">Baby formula, diapers, prenatal vitamins</p>
                                 </div>
                             </div>
-                            
+
                             <div class="example-item">
                                 <span class="example-icon" style="background: var(--secondary-gradient);">
                                     <i class="fas fa-spa text-dark"></i>
@@ -655,7 +713,7 @@ $user_id = getUserId();
                                     <p class="mb-0 small text-muted">Skincare, oral care, hygiene products</p>
                                 </div>
                             </div>
-                            
+
                             <div class="example-item">
                                 <span class="example-icon" style="background: var(--success-gradient);">
                                     <i class="fas fa-first-aid text-white"></i>
@@ -665,7 +723,7 @@ $user_id = getUserId();
                                     <p class="mb-0 small text-muted">Bandages, thermometers, masks</p>
                                 </div>
                             </div>
-                            
+
                             <div class="example-item">
                                 <span class="example-icon" style="background: var(--primary-gradient);">
                                     <i class="fas fa-laptop-medical text-white"></i>
@@ -675,7 +733,7 @@ $user_id = getUserId();
                                     <p class="mb-0 small text-muted">Blood pressure monitors, glucometers</p>
                                 </div>
                             </div>
-                            
+
                             <div class="example-item">
                                 <span class="example-icon" style="background: var(--secondary-gradient);">
                                     <i class="fas fa-leaf text-success"></i>
@@ -689,6 +747,7 @@ $user_id = getUserId();
                     </div>
                 </div>
             </div>
+            <?php endif; ?>
 
             <!-- Categories Display -->
             <div class="row">
@@ -696,25 +755,80 @@ $user_id = getUserId();
                     <div class="modern-card animate-fade-in" style="animation-delay: 0.2s;">
                         <div class="card-header-gradient d-flex justify-content-between align-items-center">
                             <h5>
-                                <i class="fas fa-th-large me-2"></i>Your Categories
+                                <i class="fas fa-th-large me-2"></i>Platform Categories
                             </h5>
                             <button class="btn btn-light btn-sm" onclick="loadCategories()">
                                 <i class="fas fa-sync-alt me-1"></i>Refresh
                             </button>
                         </div>
                         <div class="card-body-modern" style="min-height: 400px;">
-                            <div id="categoriesContainer">
+                            <div id="categoriesContainer" data-can-edit="<?php echo isSuperAdmin() ? 'true' : 'false'; ?>">
                                 <div class="text-center py-5">
                                     <div class="spinner-border text-primary" role="status">
                                         <span class="visually-hidden">Loading categories...</span>
                                     </div>
-                                    <p class="mt-3 text-muted">Loading your categories...</p>
+                                    <p class="mt-3 text-muted">Loading platform categories...</p>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <?php if (isPharmacyAdmin()): ?>
+            <!-- Suggest Category Section (Pharmacy Admin Only) -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="modern-card animate-fade-in" style="animation-delay: 0.3s;">
+                        <div class="card-header-gradient">
+                            <h5>
+                                <i class="fas fa-lightbulb me-2"></i>Suggest New Category
+                            </h5>
+                            <p class="mb-0 small" style="opacity: 0.9;">Suggest new categories for super admin approval</p>
+                        </div>
+                        <div class="card-body-modern">
+                            <div class="alert alert-info mb-4">
+                                <i class="fas fa-info-circle me-2"></i>
+                                <strong>Note:</strong> As a pharmacy admin, you can suggest new categories. Your suggestions will be reviewed by the super administrator before being added to the system.
+                            </div>
+
+                            <div class="row g-4">
+                                <!-- Suggest Form -->
+                                <div class="col-lg-6">
+                                    <form id="suggestCategoryForm">
+                                        <div class="mb-3">
+                                            <label class="form-label fw-bold">Category Name</label>
+                                            <input type="text" class="form-control" name="category_name" required
+                                                   placeholder="e.g., Vitamins, Pain Relief, etc.">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label fw-bold">Reason for Suggestion</label>
+                                            <textarea class="form-control" name="category_reason" rows="3"
+                                                      placeholder="Explain why this category is needed..."></textarea>
+                                        </div>
+                                        <button type="submit" class="btn btn-gradient-primary w-100">
+                                            <i class="fas fa-paper-plane me-2"></i>Submit Suggestion
+                                        </button>
+                                    </form>
+                                </div>
+
+                                <!-- My Suggestions -->
+                                <div class="col-lg-6">
+                                    <h6 class="mb-3"><i class="fas fa-history me-2"></i>My Category Suggestions</h6>
+                                    <div id="myCategorySuggestions" style="max-height: 300px; overflow-y: auto;">
+                                        <div class="text-center py-3">
+                                            <div class="spinner-border spinner-border-sm text-primary" role="status">
+                                                <span class="visually-hidden">Loading...</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <?php endif; ?>
         </div>
     </div>
 
@@ -789,9 +903,123 @@ $user_id = getUserId();
     </div>
     </div>
 
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- Sidebar JS -->
     <script src="../js/sidebar.js"></script>
     <!-- Category JS -->
     <script src="../js/category.js"></script>
+
+    <?php if (isPharmacyAdmin()): ?>
+    <!-- Suggestion Functionality -->
+    <script>
+        // Load pharmacy's category suggestions on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadMyCategorySuggestions();
+        });
+
+        // Suggest Category
+        document.getElementById('suggestCategoryForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const formData = new FormData();
+            formData.append('action', 'suggest_category');
+            formData.append('suggested_name', this.category_name.value);
+            formData.append('pharmacy_name', '<?php echo addslashes($pharmacy_name); ?>');
+            formData.append('reason', this.category_reason.value);
+
+            fetch('../actions/suggestion_actions.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: data.message,
+                        confirmButtonColor: '#667eea'
+                    }).then(() => {
+                        this.reset();
+                        loadMyCategorySuggestions();
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message,
+                        confirmButtonColor: '#ef4444'
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'An error occurred. Please try again.',
+                    confirmButtonColor: '#ef4444'
+                });
+            });
+        });
+
+        function loadMyCategorySuggestions() {
+            fetch('../actions/get_my_suggestions.php?type=category')
+                .then(response => response.json())
+                .then(data => {
+                    const container = document.getElementById('myCategorySuggestions');
+
+                    if (!data.success || data.suggestions.length === 0) {
+                        container.innerHTML = `
+                            <div class="text-center py-3 text-muted">
+                                <i class="fas fa-inbox" style="font-size: 2rem; opacity: 0.5;"></i>
+                                <p class="mb-0 small mt-2">No category suggestions yet</p>
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    container.innerHTML = data.suggestions.map(suggestion => `
+                        <div class="suggestion-item ${suggestion.status}">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="mb-1">${escapeHtml(suggestion.suggested_name)}</h6>
+                                    <small class="text-muted">
+                                        Suggested ${formatDate(suggestion.created_at)}
+                                    </small>
+                                    ${suggestion.review_comment ? `
+                                        <div class="alert alert-info mt-2 mb-0 py-2 px-3 small">
+                                            <strong>Admin Response:</strong> ${escapeHtml(suggestion.review_comment)}
+                                        </div>
+                                    ` : ''}
+                                </div>
+                                <span class="status-badge status-${suggestion.status}">
+                                    ${suggestion.status.charAt(0).toUpperCase() + suggestion.status.slice(1)}
+                                </span>
+                            </div>
+                        </div>
+                    `).join('');
+                })
+                .catch(error => {
+                    console.error('Error loading suggestions:', error);
+                });
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const options = { year: 'numeric', month: 'short', day: 'numeric' };
+            return date.toLocaleDateString('en-US', options);
+        }
+    </script>
+    <?php endif; ?>
 </body>
 </html>
