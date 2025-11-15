@@ -290,7 +290,13 @@ $cart_count = count($cart_items);
         </div>
 
         <?php if (isset($_GET['msg'])): ?>
-            <div class="alert alert-success alert-dismissible fade show">
+            <?php
+            $alert_class = 'alert-success';
+            if ($_GET['msg'] === 'no_selection') {
+                $alert_class = 'alert-warning';
+            }
+            ?>
+            <div class="alert <?php echo $alert_class; ?> alert-dismissible fade show">
                 <?php
                 switch ($_GET['msg']) {
                     case 'updated':
@@ -302,6 +308,9 @@ $cart_count = count($cart_items);
                     case 'cleared':
                         echo '<i class="fas fa-check-circle me-2"></i>Cart cleared successfully!';
                         break;
+                    case 'no_selection':
+                        echo '<i class="fas fa-exclamation-circle me-2"></i>Please select at least one item to checkout!';
+                        break;
                 }
                 ?>
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
@@ -310,9 +319,25 @@ $cart_count = count($cart_items);
 
         <div class="cart-container">
             <?php if ($cart_count > 0): ?>
+                <!-- Select All Checkbox -->
+                <div class="select-all-container mb-3 p-3" style="background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                    <label class="d-flex align-items-center" style="cursor: pointer;">
+                        <input type="checkbox" id="selectAll" style="width: 20px; height: 20px; cursor: pointer; margin-right: 10px;">
+                        <span style="font-weight: 600; color: #2c3e50;">Select All Items</span>
+                    </label>
+                </div>
+
                 <!-- Cart Items -->
                 <?php foreach ($cart_items as $item): ?>
                     <div class="cart-item">
+                        <!-- Checkbox for selection -->
+                        <input type="checkbox"
+                               class="cart-item-checkbox"
+                               data-product-id="<?php echo $item['p_id']; ?>"
+                               data-price="<?php echo $item['product_price'] * $item['qty']; ?>"
+                               data-qty="<?php echo $item['qty']; ?>"
+                               style="width: 20px; height: 20px; cursor: pointer; margin-right: 15px;">
+
                         <img src="<?php echo !empty($item['product_image']) ? '../' . $item['product_image'] : '../uploads/placeholder.jpg'; ?>"
                              alt="<?php echo htmlspecialchars($item['product_title']); ?>"
                              class="cart-item-image">
@@ -355,8 +380,8 @@ $cart_count = count($cart_items);
                 <div class="cart-summary">
                     <h4 class="mb-3"><i class="fas fa-receipt me-2"></i>Order Summary</h4>
                     <div class="summary-row">
-                        <span>Subtotal (<?php echo $cart_count; ?> items)</span>
-                        <span>GH₵ <?php echo number_format($cart_total, 2); ?></span>
+                        <span>Subtotal (<span id="selectedCount">0</span> selected)</span>
+                        <span>GH₵ <span id="selectedSubtotal">0.00</span></span>
                     </div>
                     <div class="summary-row">
                         <span>Delivery Fee</span>
@@ -364,11 +389,17 @@ $cart_count = count($cart_items);
                     </div>
                     <div class="summary-row">
                         <span>Total</span>
-                        <span>GH₵ <?php echo number_format($cart_total + 10, 2); ?></span>
+                        <span>GH₵ <span id="selectedTotal">10.00</span></span>
                     </div>
-                    <a href="../view/checkout.php" class="btn-checkout" style="text-decoration: none; text-align: center; display: block;">
-                        <i class="fas fa-lock me-2"></i>Proceed to Checkout
-                    </a>
+
+                    <!-- Form to submit selected items -->
+                    <form id="checkoutForm" method="POST" action="../view/checkout.php">
+                        <input type="hidden" name="selected_items" id="selectedItemsInput" value="">
+                        <button type="submit" class="btn-checkout" id="checkoutBtn" disabled style="border: none; opacity: 0.5;">
+                            <i class="fas fa-lock me-2"></i>Proceed to Checkout (<span id="checkoutCount">0</span>)
+                        </button>
+                    </form>
+
                     <form method="POST" class="mt-3">
                         <input type="hidden" name="action" value="clear">
                         <button type="submit" class="btn btn-outline-light w-100"
@@ -397,5 +428,91 @@ $cart_count = count($cart_items);
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Cart and Wishlist JS (for sidebar counts) -->
     <script src="../js/cart-wishlist.js"></script>
+
+    <!-- Selective Checkout JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const selectAllCheckbox = document.getElementById('selectAll');
+            const itemCheckboxes = document.querySelectorAll('.cart-item-checkbox');
+            const checkoutBtn = document.getElementById('checkoutBtn');
+            const checkoutForm = document.getElementById('checkoutForm');
+            const selectedItemsInput = document.getElementById('selectedItemsInput');
+            const deliveryFee = 10.00;
+
+            // Update totals when checkboxes change
+            function updateTotals() {
+                let selectedCount = 0;
+                let subtotal = 0;
+                let selectedIds = [];
+
+                itemCheckboxes.forEach(checkbox => {
+                    if (checkbox.checked) {
+                        selectedCount++;
+                        subtotal += parseFloat(checkbox.dataset.price);
+                        selectedIds.push(checkbox.dataset.productId);
+                    }
+                });
+
+                const total = subtotal + (selectedCount > 0 ? deliveryFee : 0);
+
+                // Update display
+                document.getElementById('selectedCount').textContent = selectedCount;
+                document.getElementById('selectedSubtotal').textContent = subtotal.toFixed(2);
+                document.getElementById('selectedTotal').textContent = total.toFixed(2);
+                document.getElementById('checkoutCount').textContent = selectedCount;
+
+                // Update hidden input with selected IDs
+                selectedItemsInput.value = selectedIds.join(',');
+
+                // Enable/disable checkout button
+                if (selectedCount > 0) {
+                    checkoutBtn.disabled = false;
+                    checkoutBtn.style.opacity = '1';
+                    checkoutBtn.style.cursor = 'pointer';
+                } else {
+                    checkoutBtn.disabled = true;
+                    checkoutBtn.style.opacity = '0.5';
+                    checkoutBtn.style.cursor = 'not-allowed';
+                }
+
+                // Update select all checkbox state
+                updateSelectAllState();
+            }
+
+            // Update select all checkbox based on individual checkboxes
+            function updateSelectAllState() {
+                const allChecked = Array.from(itemCheckboxes).every(cb => cb.checked);
+                const someChecked = Array.from(itemCheckboxes).some(cb => cb.checked);
+
+                selectAllCheckbox.checked = allChecked;
+                selectAllCheckbox.indeterminate = someChecked && !allChecked;
+            }
+
+            // Select all functionality
+            selectAllCheckbox.addEventListener('change', function() {
+                itemCheckboxes.forEach(checkbox => {
+                    checkbox.checked = this.checked;
+                });
+                updateTotals();
+            });
+
+            // Individual checkbox change
+            itemCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', updateTotals);
+            });
+
+            // Form submission validation
+            checkoutForm.addEventListener('submit', function(e) {
+                if (selectedItemsInput.value === '') {
+                    e.preventDefault();
+                    alert('Please select at least one item to checkout');
+                    return false;
+                }
+            });
+
+            // Initialize
+            updateTotals();
+        });
+    </script>
 </body>
 </html>

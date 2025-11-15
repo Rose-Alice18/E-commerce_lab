@@ -165,4 +165,28 @@ function get_category_distribution_ctr() {
         ];
     }
 }
+
+/**
+ * Get pharmacy dashboard analytics
+ * @param int $pharmacy_id - Pharmacy ID
+ * @return array - ['success' => bool, 'data' => array, 'message' => string]
+ */
+function get_pharmacy_dashboard_ctr($pharmacy_id) {
+    try {
+        $stats = new Stats();
+        $data = $stats->get_pharmacy_dashboard($pharmacy_id);
+
+        return [
+            'success' => true,
+            'message' => 'Pharmacy dashboard analytics retrieved successfully',
+            'data' => $data
+        ];
+    } catch (Exception $e) {
+        return [
+            'success' => false,
+            'message' => 'Failed to retrieve pharmacy analytics',
+            'data' => []
+        ];
+    }
+}
 ?>

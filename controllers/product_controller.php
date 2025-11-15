@@ -238,7 +238,18 @@ function delete_product_ctr($product_id, $pharmacy_id) {
     $product = new Product();
     $result = $product->delete_product((int)$product_id, (int)$pharmacy_id);
 
-    if ($result) {
+    // Check if result indicates product has orders (Week 9 constraint)
+    if (is_array($result) && isset($result['has_orders']) && $result['has_orders']) {
+        $order_count = $result['order_count'];
+        return [
+            'success' => false,
+            'message' => "Cannot delete this product. It has been ordered {$order_count} time(s). Products with order history must be kept for record-keeping purposes.",
+            'has_orders' => true,
+            'order_count' => $order_count
+        ];
+    }
+
+    if ($result === true) {
         return [
             'success' => true,
             'message' => 'Product deleted successfully'
@@ -246,7 +257,7 @@ function delete_product_ctr($product_id, $pharmacy_id) {
     } else {
         return [
             'success' => false,
-            'message' => 'Failed to delete product. It may not exist or may be in use'
+            'message' => 'Failed to delete product. It may not exist or you do not have permission to delete it'
         ];
     }
 }

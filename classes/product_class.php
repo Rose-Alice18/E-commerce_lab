@@ -77,7 +77,10 @@ class Product extends db_connection {
      * @return array - Array of products or empty array
      */
     public function get_all_products($limit = null) {
-        $sql = "SELECT p.*, c.cat_name, b.brand_name, cu.customer_name as pharmacy_name
+        $sql = "SELECT p.*, c.cat_name, b.brand_name,
+                       cu.customer_name as pharmacy_name,
+                       cu.customer_city as pharmacy_city,
+                       cu.customer_country as pharmacy_country
                 FROM products p
                 INNER JOIN categories c ON p.product_cat = c.cat_id
                 INNER JOIN brands b ON p.product_brand = b.brand_id
@@ -210,9 +213,32 @@ class Product extends db_connection {
      * Delete a product
      * @param int $product_id - Product ID
      * @param int $pharmacy_id - Pharmacy/User ID (for security)
-     * @return bool - True on success, false on failure
+     * @return mixed - True on success, array with error info if has orders, false on other failure
      */
     public function delete_product($product_id, $pharmacy_id) {
+        // IMPORTANT: Check if product has orders (Week 9 constraint)
+        // Products in orderdetails cannot be deleted due to foreign key constraint
+        // This maintains historical order data integrity
+        $check_sql = "SELECT COUNT(*) as order_count FROM orderdetails WHERE product_id = ?";
+        $check_stmt = $this->db_conn()->prepare($check_sql);
+        if (!$check_stmt) {
+            return false;
+        }
+
+        $check_stmt->bind_param("i", $product_id);
+        $check_stmt->execute();
+        $check_result = $check_stmt->get_result();
+        $check_data = $check_result->fetch_assoc();
+        $check_stmt->close();
+
+        // If product has orders, prevent deletion
+        if ($check_data['order_count'] > 0) {
+            // Return array to indicate deletion not allowed
+            // The controller/action should handle this with appropriate message
+            return ['has_orders' => true, 'order_count' => $check_data['order_count']];
+        }
+
+        // No orders found, safe to delete
         $sql = "DELETE FROM products WHERE product_id = ? AND pharmacy_id = ?";
         $stmt = $this->db_conn()->prepare($sql);
         if (!$stmt) {

@@ -17,16 +17,38 @@ if (!isLoggedIn() || !isRegularCustomer()) {
 $customer_id = $_SESSION['user_id'];
 $ip_address = $_SERVER['REMOTE_ADDR'];
 
-// Get cart items
-$cart_items = get_cart_items_ctr($customer_id, $ip_address);
-$cart_total = get_cart_total_ctr($customer_id, $ip_address);
+// Get selected items from POST (comma-separated product IDs)
+$selected_items_ids = isset($_POST['selected_items']) ? explode(',', $_POST['selected_items']) : [];
+
+// Get all cart items
+$all_cart_items = get_cart_items_ctr($customer_id, $ip_address);
+
+// Filter only selected items
+$cart_items = [];
+if (!empty($selected_items_ids)) {
+    foreach ($all_cart_items as $item) {
+        if (in_array($item['p_id'], $selected_items_ids)) {
+            $cart_items[] = $item;
+        }
+    }
+}
+
+// Calculate totals for selected items only
+$cart_total = 0;
+foreach ($cart_items as $item) {
+    $cart_total += $item['product_price'] * $item['qty'];
+}
+
 $cart_count = count($cart_items);
 
-// Redirect if cart is empty
+// Redirect if no items selected
 if ($cart_count === 0) {
-    header("Location: ../admin/cart.php");
+    header("Location: ../admin/cart.php?msg=no_selection");
     exit();
 }
+
+// Store selected item IDs in session for checkout processing
+$_SESSION['checkout_items'] = $selected_items_ids;
 
 // Calculate delivery fee and grand total
 $delivery_fee = 10.00;

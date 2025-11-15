@@ -29,9 +29,26 @@ $brand_obj = new Brand();
 $categories = $category_obj->fetch_all_categories();
 $brands = $brand_obj->get_all_brands(null);
 
+// Get unique pharmacy locations for filter
+$location_query = "SELECT DISTINCT customer_city FROM customer WHERE user_role = 1 ORDER BY customer_city";
+$conn = new mysqli(SERVER, USERNAME, PASSWD, DATABASE);
+$location_result = $conn->query($location_query);
+$locations = [];
+if ($location_result) {
+    while ($row = $location_result->fetch_assoc()) {
+        if (!empty($row['customer_city'])) {
+            $locations[] = $row['customer_city'];
+        }
+    }
+}
+$conn->close();
+
 // Get filter parameters
 $filter_category = isset($_GET['category']) ? intval($_GET['category']) : 0;
 $filter_brand = isset($_GET['brand']) ? intval($_GET['brand']) : 0;
+$filter_location = isset($_GET['location']) ? trim($_GET['location']) : '';
+$filter_min_price = isset($_GET['min_price']) && $_GET['min_price'] !== '' ? floatval($_GET['min_price']) : 0;
+$filter_max_price = isset($_GET['max_price']) && $_GET['max_price'] !== '' ? floatval($_GET['max_price']) : 0;
 $search_query = isset($_GET['search']) ? trim($_GET['search']) : '';
 
 // Apply filters
@@ -46,6 +63,28 @@ if ($filter_category > 0) {
 if ($filter_brand > 0) {
     $filtered_products = array_filter($filtered_products, function($product) use ($filter_brand) {
         return $product['product_brand'] == $filter_brand;
+    });
+}
+
+// Location filter (filter by pharmacy city)
+if (!empty($filter_location)) {
+    $filtered_products = array_filter($filtered_products, function($product) use ($filter_location) {
+        // Get pharmacy city from product data (joined in get_all_products)
+        return isset($product['pharmacy_city']) &&
+               stripos($product['pharmacy_city'], $filter_location) !== false;
+    });
+}
+
+// Price range filter
+if ($filter_min_price > 0) {
+    $filtered_products = array_filter($filtered_products, function($product) use ($filter_min_price) {
+        return $product['product_price'] >= $filter_min_price;
+    });
+}
+
+if ($filter_max_price > 0) {
+    $filtered_products = array_filter($filtered_products, function($product) use ($filter_max_price) {
+        return $product['product_price'] <= $filter_max_price;
     });
 }
 
@@ -490,14 +529,17 @@ if (!empty($search_query)) {
         <!-- Filter Section -->
         <div class="filter-section">
             <form method="GET" action="product.php" class="row g-3 align-items-end">
+                <!-- Search -->
                 <div class="col-md-3">
-                    <label class="filter-label">Search</label>
+                    <label class="filter-label"><i class="fas fa-search me-1"></i>Search</label>
                     <input type="text" class="form-control" name="search"
                            placeholder="Search products..."
                            value="<?php echo htmlspecialchars($search_query); ?>">
                 </div>
+
+                <!-- Category Filter -->
                 <div class="col-md-3">
-                    <label class="filter-label">Category</label>
+                    <label class="filter-label"><i class="fas fa-th-large me-1"></i>Category</label>
                     <select class="form-select" name="category">
                         <option value="0">All Categories</option>
                         <?php foreach ($categories as $category): ?>
@@ -508,8 +550,10 @@ if (!empty($search_query)) {
                         <?php endforeach; ?>
                     </select>
                 </div>
+
+                <!-- Brand Filter -->
                 <div class="col-md-3">
-                    <label class="filter-label">Brand</label>
+                    <label class="filter-label"><i class="fas fa-tag me-1"></i>Brand</label>
                     <select class="form-select" name="brand">
                         <option value="0">All Brands</option>
                         <?php foreach ($brands as $brand): ?>
@@ -520,17 +564,90 @@ if (!empty($search_query)) {
                         <?php endforeach; ?>
                     </select>
                 </div>
+
+                <!-- Location Filter (NEW) -->
+                <div class="col-md-3">
+                    <label class="filter-label"><i class="fas fa-map-marker-alt me-1"></i>Location</label>
+                    <select class="form-select" name="location">
+                        <option value="">All Locations</option>
+                        <?php foreach ($locations as $location): ?>
+                            <option value="<?php echo htmlspecialchars($location); ?>"
+                                    <?php echo $filter_location === $location ? 'selected' : ''; ?>>
+                                <?php echo htmlspecialchars($location); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
+                <!-- Price Range Filter (NEW) -->
+                <div class="col-md-3">
+                    <label class="filter-label"><i class="fas fa-dollar-sign me-1"></i>Min Price (GH₵)</label>
+                    <input type="number" class="form-control" name="min_price"
+                           placeholder="0" step="0.01" min="0"
+                           value="<?php echo $filter_min_price > 0 ? $filter_min_price : ''; ?>">
+                </div>
+
+                <div class="col-md-3">
+                    <label class="filter-label"><i class="fas fa-dollar-sign me-1"></i>Max Price (GH₵)</label>
+                    <input type="number" class="form-control" name="max_price"
+                           placeholder="Any" step="0.01" min="0"
+                           value="<?php echo $filter_max_price > 0 ? $filter_max_price : ''; ?>">
+                </div>
+
+                <!-- Apply Filters Button -->
                 <div class="col-md-3">
                     <button type="submit" class="btn btn-filter w-100">
                         <i class="fas fa-filter me-2"></i>Apply Filters
                     </button>
                 </div>
-            </form>
-            <?php if ($filter_category > 0 || $filter_brand > 0 || !empty($search_query)): ?>
-                <div class="mt-2">
-                    <a href="product.php" class="btn btn-clear btn-sm">
-                        <i class="fas fa-times me-1"></i>Clear Filters
+
+                <!-- Clear Filters Button -->
+                <div class="col-md-3">
+                    <a href="product.php" class="btn btn-clear w-100">
+                        <i class="fas fa-times me-2"></i>Clear All
                     </a>
+                </div>
+            </form>
+
+            <!-- Active Filters Display -->
+            <?php
+            $active_filters = [];
+            if ($filter_category > 0) {
+                foreach ($categories as $cat) {
+                    if ($cat['cat_id'] == $filter_category) {
+                        $active_filters[] = 'Category: ' . $cat['cat_name'];
+                    }
+                }
+            }
+            if ($filter_brand > 0) {
+                foreach ($brands as $brand) {
+                    if ($brand['brand_id'] == $filter_brand) {
+                        $active_filters[] = 'Brand: ' . $brand['brand_name'];
+                    }
+                }
+            }
+            if (!empty($filter_location)) {
+                $active_filters[] = 'Location: ' . $filter_location;
+            }
+            if ($filter_min_price > 0) {
+                $active_filters[] = 'Min Price: GH₵ ' . number_format($filter_min_price, 2);
+            }
+            if ($filter_max_price > 0) {
+                $active_filters[] = 'Max Price: GH₵ ' . number_format($filter_max_price, 2);
+            }
+            if (!empty($search_query)) {
+                $active_filters[] = 'Search: "' . htmlspecialchars($search_query) . '"';
+            }
+            ?>
+
+            <?php if (!empty($active_filters)): ?>
+                <div class="mt-3 pt-3" style="border-top: 1px solid #e5e7eb;">
+                    <div class="d-flex align-items-center flex-wrap gap-2">
+                        <span class="text-muted small"><strong>Active Filters:</strong></span>
+                        <?php foreach ($active_filters as $filter): ?>
+                            <span class="badge bg-primary"><?php echo $filter; ?></span>
+                        <?php endforeach; ?>
+                    </div>
                 </div>
             <?php endif; ?>
         </div>

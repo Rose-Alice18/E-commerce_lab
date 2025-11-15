@@ -323,6 +323,68 @@ $stats = $stats_result['data'] ?? [];
                     <span><?php echo $stats['total_brands'] ?? 0; ?> brands</span>
                 </div>
             </div>
+
+            <div class="stat-card success animate-fade-in" style="animation-delay: 0.5s;">
+                <div class="stat-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                </div>
+                <h2 class="stat-value" id="totalOrders">
+                    <?php echo $stats['total_orders'] ?? 0; ?>
+                </h2>
+                <p class="stat-label">Total Orders</p>
+                <div class="stat-change positive">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Platform-wide</span>
+                </div>
+            </div>
+
+            <div class="stat-card primary animate-fade-in" style="animation-delay: 0.6s;">
+                <div class="stat-icon">
+                    <i class="fas fa-dollar-sign"></i>
+                </div>
+                <h2 class="stat-value" id="totalRevenue">
+                    GH₵ <?php echo number_format($stats['total_revenue'] ?? 0, 2); ?>
+                </h2>
+                <p class="stat-label">Total Revenue</p>
+                <div class="stat-change positive">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <span>All transactions</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Monthly Revenue Card -->
+        <div class="content-card animate-fade-in" style="animation-delay: 0.7s; margin-bottom: 2rem;">
+            <h3><i class="fas fa-calendar-alt" style="margin-right: 0.5rem;"></i>This Month's Performance</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius: 12px; padding: 1.5rem; color: white;">
+                    <div style="font-size: 0.9rem; opacity: 0.9; margin-bottom: 0.5rem;">Monthly Revenue</div>
+                    <div style="font-size: 2rem; font-weight: 700;">GH₵ <?php echo number_format($stats['monthly_revenue'] ?? 0, 2); ?></div>
+                    <div style="font-size: 0.85rem; opacity: 0.8; margin-top: 0.5rem;">
+                        <i class="fas fa-chart-line"></i> Current month earnings
+                    </div>
+                </div>
+                <div style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); border-radius: 12px; padding: 1.5rem; color: white;">
+                    <div style="font-size: 0.9rem; opacity: 0.9; margin-bottom: 0.5rem;">Platform Growth</div>
+                    <div style="font-size: 2rem; font-weight: 700;"><?php echo $stats['total_pharmacies'] + $stats['total_customers']; ?></div>
+                    <div style="font-size: 0.85rem; opacity: 0.8; margin-top: 0.5rem;">
+                        <i class="fas fa-users"></i> Total users on platform
+                    </div>
+                </div>
+                <div style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); border-radius: 12px; padding: 1.5rem; color: white;">
+                    <div style="font-size: 0.9rem; opacity: 0.9; margin-bottom: 0.5rem;">Product Catalog</div>
+                    <div style="font-size: 2rem; font-weight: 700;"><?php echo $stats['total_products'] ?? 0; ?></div>
+                    <div style="font-size: 0.85rem; opacity: 0.8; margin-top: 0.5rem;">
+                        <i class="fas fa-boxes"></i> Products across all pharmacies
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Revenue Chart -->
+        <div class="content-card animate-fade-in" style="animation-delay: 0.8s; margin-bottom: 2rem;">
+            <h3><i class="fas fa-chart-area" style="margin-right: 0.5rem;"></i>Platform Revenue Trend (Last 6 Months)</h3>
+            <canvas id="revenueChart" style="max-height: 350px;"></canvas>
         </div>
 
         <!-- Charts and Tables Row -->
@@ -407,10 +469,127 @@ $stats = $stats_result['data'] ?? [];
     <script src="../js/sidebar.js"></script>
 
     <script>
-        // Auto-refresh dashboard every 30 seconds
-        setInterval(function() {
+        // Platform Revenue Chart
+        const revenueCtx = document.getElementById('revenueChart');
+        if (revenueCtx) {
+            const revenueData = <?php echo json_encode($stats['revenue_by_month_chart'] ?? []); ?>;
+
+            const labels = revenueData.map(item => item.month_label || 'N/A');
+            const revenues = revenueData.map(item => parseFloat(item.revenue || 0));
+
+            new Chart(revenueCtx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Platform Revenue (GH₵)',
+                        data: revenues,
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        borderColor: 'rgba(102, 126, 234, 1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 5,
+                        pointBackgroundColor: 'rgba(102, 126, 234, 1)',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointHoverRadius: 7,
+                        pointHoverBackgroundColor: 'rgba(102, 126, 234, 1)',
+                        pointHoverBorderColor: '#fff',
+                        pointHoverBorderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                            labels: {
+                                font: {
+                                    family: "'Inter', sans-serif",
+                                    size: 13,
+                                    weight: '600'
+                                },
+                                padding: 15,
+                                usePointStyle: true,
+                                pointStyle: 'circle'
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            padding: 15,
+                            titleFont: {
+                                size: 14,
+                                weight: '600'
+                            },
+                            bodyFont: {
+                                size: 13
+                            },
+                            borderColor: 'rgba(102, 126, 234, 0.5)',
+                            borderWidth: 1,
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.y !== null) {
+                                        label += 'GH₵ ' + context.parsed.y.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                font: {
+                                    size: 11
+                                },
+                                callback: function(value) {
+                                    return 'GH₵ ' + value.toFixed(0);
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: 'Revenue (GH₵)',
+                                font: {
+                                    size: 13,
+                                    weight: '600'
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false,
+                                drawBorder: false
+                            },
+                            ticks: {
+                                font: {
+                                    size: 11,
+                                    weight: '500'
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Auto-refresh dashboard every 5 minutes
+        setTimeout(function() {
             location.reload();
-        }, 30000);
+        }, 300000);
+
+        console.log('Super Admin Dashboard loaded with analytics');
     </script>
 </body>
 </html>

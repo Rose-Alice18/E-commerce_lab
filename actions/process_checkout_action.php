@@ -31,15 +31,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $conn->begin_transaction();
 
-        // 1. Get cart items
-        $cart_items = get_cart_items_ctr($customer_id, $ip_address);
+        // 1. Get selected items from session (set by checkout.php)
+        $selected_items_ids = isset($_SESSION['checkout_items']) ? $_SESSION['checkout_items'] : [];
 
-        if (empty($cart_items)) {
-            echo json_encode(['success' => false, 'message' => 'Your cart is empty']);
+        if (empty($selected_items_ids)) {
+            echo json_encode(['success' => false, 'message' => 'No items selected for checkout']);
             exit();
         }
 
-        // 2. Validate stock availability for all items
+        // Get all cart items
+        $all_cart_items = get_cart_items_ctr($customer_id, $ip_address);
+
+        // Filter only selected items for checkout
+        $cart_items = [];
+        foreach ($all_cart_items as $item) {
+            if (in_array($item['p_id'], $selected_items_ids)) {
+                $cart_items[] = $item;
+            }
+        }
+
+        if (empty($cart_items)) {
+            echo json_encode(['success' => false, 'message' => 'Selected items not found in cart']);
+            exit();
+        }
+
+        // 2. Validate stock availability for selected items
         foreach ($cart_items as $item) {
             if ($item['qty'] > $item['product_stock']) {
                 $conn->rollback();
@@ -51,8 +67,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
-        // 3. Calculate total amount
-        $total_amount = get_cart_total_ctr($customer_id, $ip_address);
+        // 3. Calculate total amount for selected items only
+        $total_amount = 0;
+        foreach ($cart_items as $item) {
+            $total_amount += $item['product_price'] * $item['qty'];
+        }
 
         if ($total_amount <= 0) {
             $conn->rollback();
@@ -104,14 +123,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
-        // 9. Empty the cart
-        $clear_result = clear_cart_ctr($customer_id, $ip_address);
-
-        if (!$clear_result) {
-            $conn->rollback();
-            echo json_encode(['success' => false, 'message' => 'Failed to clear cart']);
-            exit();
+        // 9. Remove only checked-out items from cart (not all items)
+        foreach ($cart_items as $item) {
+            $remove_result = remove_from_cart_ctr($item['p_id'], $customer_id, $ip_address);
+            if (!$remove_result) {
+                $conn->rollback();
+                echo json_encode(['success' => false, 'message' => 'Failed to remove items from cart']);
+                exit();
+            }
         }
+
+        // Clear checkout items from session
+        unset($_SESSION['checkout_items']);
 
         // 10. Commit transaction
         $conn->commit();
