@@ -1,16 +1,4 @@
 <?php
-
-
-// Temporary error display - REMOVE after debugging
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
-// Start session
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
 // Temporary error display for debugging - REMOVE after fixing
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
@@ -21,21 +9,47 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+// Debug checkpoint 1
+echo "<!-- Checkpoint 1: Session started -->\n";
+
 // Include core functions and controllers
-require_once('../settings/core.php');
-require_once('../controllers/product_controller.php');
+try {
+    require_once('../settings/core.php');
+    echo "<!-- Checkpoint 2: core.php loaded -->\n";
+} catch (Exception $e) {
+    die("ERROR loading core.php: " . $e->getMessage());
+}
+
+try {
+    require_once('../controllers/product_controller.php');
+    echo "<!-- Checkpoint 3: product_controller.php loaded -->\n";
+} catch (Exception $e) {
+    die("ERROR loading product_controller.php: " . $e->getMessage());
+}
 
 // Check if user is logged in
+if (!function_exists('isLoggedIn')) {
+    die("ERROR: isLoggedIn function not found");
+}
+
 if (!isLoggedIn()) {
     header("Location: ../login/login.php");
     exit();
 }
 
+echo "<!-- Checkpoint 4: User is logged in -->\n";
+
 // Check if user is CUSTOMER (role 2 only)
+if (!function_exists('isRegularCustomer')) {
+    die("ERROR: isRegularCustomer function not found");
+}
+
 if (!isRegularCustomer()) {
     header("Location: ../index.php");
     exit();
 }
+
+echo "<!-- Checkpoint 5: User is regular customer -->\n";
 
 $user_id = getUserId();
 $user_name = $_SESSION['user_name'] ?? getUserName();
@@ -43,8 +57,15 @@ $user_email = $_SESSION['user_email'] ?? '';
 $user_city = $_SESSION['user_city'] ?? 'Ghana';
 $user_role = getUserRoleName();
 
+echo "<!-- Checkpoint 6: User data retrieved, ID: $user_id -->\n";
+
 // Get customer stats from database
+if (!function_exists('get_customer_stats_ctr')) {
+    die("ERROR: get_customer_stats_ctr function not found in product_controller.php");
+}
+
 $stats_result = get_customer_stats_ctr($user_id);
+echo "<!-- Checkpoint 7: Stats retrieved -->\n";
 $stats = $stats_result['data'] ?? [];
 $cart_items = $stats['cart_items'] ?? 0;
 $total_orders = $stats['total_orders'] ?? 0;
