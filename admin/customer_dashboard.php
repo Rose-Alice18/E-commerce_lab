@@ -1,4 +1,21 @@
 <?php
+
+
+// Temporary error display - REMOVE after debugging
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+// Start session
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Temporary error display for debugging - REMOVE after fixing
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 // Start session
 if (session_status() === PHP_SESSION_NONE) {
     session_start();

@@ -18,6 +18,6 @@ if (!defined("PASSWD")) {
 if (!defined("DATABASE")) {
     // Local: pharmavault_db
     // Production Server: ecommerce_2025A_roseline_tsatsu
-    define("DATABASE", "pharmavault_db");
+    define("DATABASE", "ecommerce_2025A_roseline_tsatsu");
 }
 ?>
