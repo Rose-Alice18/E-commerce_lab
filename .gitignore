@@ -9,6 +9,10 @@
 # =====================================
 settings/db_cred.php
 settings/db_cred_server.php
+settings/db_class.php
+settings/google_maps_config.php
+settings/paystack_config.php
+
 .env
 .env.local
 .env.production

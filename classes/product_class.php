@@ -80,7 +80,11 @@ class Product extends db_connection {
         $sql = "SELECT p.*, c.cat_name, b.brand_name,
                        cu.customer_name as pharmacy_name,
                        cu.customer_city as pharmacy_city,
-                       cu.customer_country as pharmacy_country
+                       cu.customer_country as pharmacy_country,
+                       cu.customer_address as pharmacy_address,
+                       cu.customer_latitude as pharmacy_latitude,
+                       cu.customer_longitude as pharmacy_longitude,
+                       cu.customer_contact as pharmacy_contact
                 FROM products p
                 INNER JOIN categories c ON p.product_cat = c.cat_id
                 INNER JOIN brands b ON p.product_brand = b.brand_id
@@ -259,7 +263,14 @@ class Product extends db_connection {
      * @return array - Array of products or empty array
      */
     public function get_products_by_category($cat_id) {
-        $sql = "SELECT p.*, c.cat_name, b.brand_name, cu.customer_name as pharmacy_name
+        $sql = "SELECT p.*, c.cat_name, b.brand_name,
+                       cu.customer_name as pharmacy_name,
+                       cu.customer_city as pharmacy_city,
+                       cu.customer_country as pharmacy_country,
+                       cu.customer_address as pharmacy_address,
+                       cu.customer_latitude as pharmacy_latitude,
+                       cu.customer_longitude as pharmacy_longitude,
+                       cu.customer_contact as pharmacy_contact
                 FROM products p
                 INNER JOIN categories c ON p.product_cat = c.cat_id
                 INNER JOIN brands b ON p.product_brand = b.brand_id
@@ -287,7 +298,14 @@ class Product extends db_connection {
      * @return array - Array of products or empty array
      */
     public function get_products_by_brand($brand_id) {
-        $sql = "SELECT p.*, c.cat_name, b.brand_name, cu.customer_name as pharmacy_name
+        $sql = "SELECT p.*, c.cat_name, b.brand_name,
+                       cu.customer_name as pharmacy_name,
+                       cu.customer_city as pharmacy_city,
+                       cu.customer_country as pharmacy_country,
+                       cu.customer_address as pharmacy_address,
+                       cu.customer_latitude as pharmacy_latitude,
+                       cu.customer_longitude as pharmacy_longitude,
+                       cu.customer_contact as pharmacy_contact
                 FROM products p
                 INNER JOIN categories c ON p.product_cat = c.cat_id
                 INNER JOIN brands b ON p.product_brand = b.brand_id
@@ -316,7 +334,14 @@ class Product extends db_connection {
      */
     public function search_products($keyword) {
         $search_term = "%{$keyword}%";
-        $sql = "SELECT p.*, c.cat_name, b.brand_name, cu.customer_name as pharmacy_name
+        $sql = "SELECT p.*, c.cat_name, b.brand_name,
+                       cu.customer_name as pharmacy_name,
+                       cu.customer_city as pharmacy_city,
+                       cu.customer_country as pharmacy_country,
+                       cu.customer_address as pharmacy_address,
+                       cu.customer_latitude as pharmacy_latitude,
+                       cu.customer_longitude as pharmacy_longitude,
+                       cu.customer_contact as pharmacy_contact
                 FROM products p
                 INNER JOIN categories c ON p.product_cat = c.cat_id
                 INNER JOIN brands b ON p.product_brand = b.brand_id
@@ -695,5 +720,89 @@ class Product extends db_connection {
      */
     public function filter_products_by_brand($brand_id) {
         return $this->get_products_by_brand($brand_id);
+    }
+
+    /**
+     * Get product recommendations based on category and brand (Content-based filtering)
+     * BONUS FEATURE: AI/ML Product Recommendations (+5 marks)
+     *
+     * @param int $product_id - Current product ID
+     * @param int $limit - Number of recommendations to return (default 4)
+     * @return array - Recommended products
+     */
+    public function get_recommendations($product_id, $limit = 4) {
+        $product_id = intval($product_id);
+        $limit = intval($limit);
+
+        // First, get the current product's category and brand
+        $sql = "SELECT product_cat, product_brand FROM products WHERE product_id = ?";
+        $stmt = $this->db_conn()->prepare($sql);
+
+        if (!$stmt) {
+            return [];
+        }
+
+        $stmt->bind_param("i", $product_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $current_product = $result->fetch_assoc();
+        $stmt->close();
+
+        if (!$current_product) {
+            return [];
+        }
+
+        $category_id = intval($current_product['product_cat']);
+        $brand_id = intval($current_product['product_brand']);
+
+        // Content-based recommendation algorithm:
+        // Priority: Same category + same brand (score 3) > same category (score 2) > same brand (score 1)
+        // This simulates a simple machine learning recommendation system
+        $sql = "SELECT p.*,
+                       c.cat_name,
+                       b.brand_name,
+                       cu.customer_name as pharmacy_name,
+                       CASE
+                           WHEN p.product_cat = ? AND p.product_brand = ? THEN 3
+                           WHEN p.product_cat = ? THEN 2
+                           WHEN p.product_brand = ? THEN 1
+                           ELSE 0
+                       END as relevance_score
+                FROM products p
+                LEFT JOIN categories c ON p.product_cat = c.cat_id
+                LEFT JOIN brands b ON p.product_brand = b.brand_id
+                LEFT JOIN customer cu ON p.pharmacy_id = cu.customer_id
+                WHERE p.product_id != ?
+                  AND p.product_stock > 0
+                  AND (p.product_cat = ? OR p.product_brand = ?)
+                ORDER BY relevance_score DESC, RAND()
+                LIMIT ?";
+
+        $stmt = $this->db_conn()->prepare($sql);
+
+        if (!$stmt) {
+            return [];
+        }
+
+        $stmt->bind_param("iiiiiiii",
+            $category_id, $brand_id,
+            $category_id,
+            $brand_id,
+            $product_id,
+            $category_id, $brand_id,
+            $limit
+        );
+
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        $recommendations = [];
+        while ($row = $result->fetch_assoc()) {
+            $recommendations[] = $row;
+        }
+
+        $stmt->close();
+
+        return $recommendations;
     }
 }

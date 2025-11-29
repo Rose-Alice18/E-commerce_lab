@@ -117,6 +117,14 @@ if (!empty($search_query)) {
     <!-- Cart & Wishlist CSS -->
     <link rel="stylesheet" href="../css/cart-wishlist.css">
 
+    <!-- Google Maps API -->
+    <?php
+    require_once('../settings/google_maps_config.php');
+    $google_maps_api_key = GOOGLE_MAPS_API_KEY;
+    ?>
+    <script src="https://maps.googleapis.com/maps/api/js?key=<?php echo $google_maps_api_key; ?>&libraries=places"></script>
+    <script src="../js/google-maps.js"></script>
+
     <style>
         :root {
             --primary-color: #667eea;
@@ -506,6 +514,97 @@ if (!empty($search_query)) {
                 opacity: 0;
             }
         }
+
+        /* Pharmacy Information Styles */
+        .pharmacy-info {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 0.5rem;
+            margin-bottom: 0.75rem;
+            font-size: 0.8rem;
+        }
+
+        .pharmacy-name {
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.15rem;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-size: 0.85rem;
+        }
+
+        .pharmacy-location {
+            color: #64748b;
+            margin-bottom: 0.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.75rem;
+        }
+
+        .pharmacy-distance {
+            background: linear-gradient(135deg, var(--success-color), #059669);
+            color: white;
+            padding: 0.25rem 0.6rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.7rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            margin-top: 0.35rem;
+        }
+
+        .pharmacy-contact {
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            margin-top: 0.1rem;
+            font-size: 0.75rem;
+        }
+
+        .location-btn {
+            background: linear-gradient(135deg, var(--success-color), #059669);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 10px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .location-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .location-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: #f0fdf4;
+            border-radius: 8px;
+            color: var(--success-color);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .calculating-distances {
+            display: none;
+            padding: 0.5rem 1rem;
+            background: #eff6ff;
+            border-radius: 8px;
+            color: #3b82f6;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
     </style>
 </head>
 <body>
@@ -528,6 +627,21 @@ if (!empty($search_query)) {
         <div class="container">
         <!-- Filter Section -->
         <div class="filter-section">
+            <!-- Location Section -->
+            <div class="row mb-3">
+                <div class="col-12 d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <button type="button" class="location-btn" id="useLocationBtn" onclick="enableUserLocation()">
+                        <i class="fas fa-crosshairs"></i> Use My Location
+                    </button>
+                    <span class="location-status" id="locationStatus" style="display: none;">
+                        <i class="fas fa-check-circle"></i> Location detected
+                    </span>
+                    <span class="calculating-distances" id="calculatingStatus">
+                        <i class="fas fa-spinner fa-spin"></i> Calculating distances...
+                    </span>
+                </div>
+            </div>
+
             <form method="GET" action="product.php" class="row g-3 align-items-end">
                 <!-- Search -->
                 <div class="col-md-3">
@@ -664,7 +778,10 @@ if (!empty($search_query)) {
         <?php if (count($filtered_products) > 0): ?>
             <div class="product-grid">
                 <?php foreach ($filtered_products as $product): ?>
-                    <div class="product-card">
+                    <div class="product-card"
+                         data-pharmacy-lat="<?php echo htmlspecialchars($product['pharmacy_latitude'] ?? ''); ?>"
+                         data-pharmacy-lng="<?php echo htmlspecialchars($product['pharmacy_longitude'] ?? ''); ?>"
+                         data-product-id="<?php echo $product['product_id']; ?>">
                         <div class="product-image">
                             <?php if (!empty($product['product_image'])): ?>
                                 <img src="../<?php echo htmlspecialchars($product['product_image']); ?>"
@@ -684,6 +801,37 @@ if (!empty($search_query)) {
                             <div class="product-brand">
                                 <i class="fas fa-certificate me-1"></i>
                                 <?php echo htmlspecialchars($product['brand_name'] ?? 'Generic'); ?>
+                            </div>
+
+                            <!-- Pharmacy Information -->
+                            <div class="pharmacy-info">
+                                <div class="pharmacy-name">
+                                    <i class="fas fa-hospital"></i>
+                                    <?php echo htmlspecialchars($product['pharmacy_name'] ?? 'Unknown Pharmacy'); ?>
+                                </div>
+                                <?php if (!empty($product['pharmacy_city'])): ?>
+                                    <div class="pharmacy-location">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        <?php
+                                        $location_parts = [];
+                                        if (!empty($product['pharmacy_city'])) {
+                                            $location_parts[] = $product['pharmacy_city'];
+                                        }
+                                        if (!empty($product['pharmacy_country'])) {
+                                            $location_parts[] = $product['pharmacy_country'];
+                                        }
+                                        echo htmlspecialchars(implode(', ', $location_parts));
+                                        ?>
+                                    </div>
+                                <?php endif; ?>
+                                <?php if (!empty($product['pharmacy_contact'])): ?>
+                                    <div class="pharmacy-contact">
+                                        <i class="fas fa-phone"></i>
+                                        <?php echo htmlspecialchars($product['pharmacy_contact']); ?>
+                                    </div>
+                                <?php endif; ?>
+                                <!-- Distance will be calculated and inserted here by JavaScript -->
+                                <div class="distance-container-<?php echo $product['product_id']; ?>"></div>
                             </div>
                             <?php if (!empty($product['product_desc'])): ?>
                                 <p class="product-description">
@@ -765,5 +913,104 @@ if (!empty($search_query)) {
 
     <!-- Cart and Wishlist Functions -->
     <script src="../js/cart-wishlist.js"></script>
+
+    <!-- Location and Distance Calculation -->
+    <script>
+        let userLocation = null;
+
+        // Function to enable user location
+        function enableUserLocation() {
+            const btn = document.getElementById('useLocationBtn');
+            const statusEl = document.getElementById('locationStatus');
+            const calculatingEl = document.getElementById('calculatingStatus');
+
+            // Update button state
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Getting location...';
+            btn.disabled = true;
+
+            // Get user location using the Google Maps utility
+            getUserLocation()
+                .then(position => {
+                    userLocation = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    };
+
+                    // Update UI
+                    btn.style.display = 'none';
+                    statusEl.style.display = 'inline-flex';
+                    calculatingEl.style.display = 'inline-flex';
+
+                    // Calculate and display distances
+                    calculateAllDistances();
+                })
+                .catch(error => {
+                    console.error('Error getting location:', error);
+
+                    // Reset button
+                    btn.innerHTML = '<i class="fas fa-crosshairs"></i> Use My Location';
+                    btn.disabled = false;
+
+                    // Show error message
+                    alert('Unable to get your location. Please check your browser permissions.');
+                });
+        }
+
+        // Function to calculate distances for all products
+        function calculateAllDistances() {
+            if (!userLocation) return;
+
+            const productCards = document.querySelectorAll('.product-card');
+
+            productCards.forEach(card => {
+                const pharmacyLat = parseFloat(card.dataset.pharmacyLat);
+                const pharmacyLng = parseFloat(card.dataset.pharmacyLng);
+                const productId = card.dataset.productId;
+
+                if (pharmacyLat && pharmacyLng && !isNaN(pharmacyLat) && !isNaN(pharmacyLng)) {
+                    // Calculate distance using the Haversine formula from google-maps.js
+                    const distance = calculateDistance(
+                        userLocation.lat,
+                        userLocation.lng,
+                        pharmacyLat,
+                        pharmacyLng
+                    );
+
+                    // Display the distance in the product card
+                    const distanceContainer = card.querySelector('.distance-container-' + productId);
+                    if (distanceContainer) {
+                        distanceContainer.innerHTML = `
+                            <div class="pharmacy-distance">
+                                <i class="fas fa-route"></i>
+                                ${distance.toFixed(1)} km away
+                            </div>
+                        `;
+                    }
+                }
+            });
+
+            // Hide calculating status
+            setTimeout(() => {
+                calculatingEl.style.display = 'none';
+            }, 500);
+        }
+
+        // Auto-enable location if user previously granted permission
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if geolocation is available
+            if ('geolocation' in navigator) {
+                // Try to get location without prompting if already granted
+                navigator.permissions.query({ name: 'geolocation' }).then(function(result) {
+                    if (result.state === 'granted') {
+                        // Permission already granted, auto-enable location
+                        enableUserLocation();
+                    }
+                }).catch(function(error) {
+                    // Permissions API not supported, do nothing
+                    console.log('Permissions API not supported');
+                });
+            }
+        });
+    </script>
 </body>
 </html>

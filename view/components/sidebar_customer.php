@@ -52,8 +52,7 @@ if ($is_in_admin) {
 <div class="sidebar customer-theme" id="sidebar">
     <div class="sidebar-header">
         <div class="logo-container">
-            <i class="fas fa-hospital-symbol"></i>
-            <h4>PharmaVault</h4>
+            <img src="../../Piharma1.png" alt="Piharma Logo" style="max-width: 100%; height: auto; max-height: 50px; object-fit: contain;">
         </div>
         <span class="role-badge customer">Customer</span>
     </div>
@@ -91,6 +90,27 @@ if ($is_in_admin) {
                 </a>
             </li>
 
+            <li class="nav-item <?php echo $current_page == 'medicine_availability.php' ? 'active' : ''; ?>">
+                <a href="<?php echo $view_path; ?>medicine_availability.php" title="Medicine Availability">
+                    <i class="fas fa-search-location"></i>
+                    <span>Medicine Availability</span>
+                </a>
+            </li>
+
+            <li class="nav-item <?php echo $current_page == 'pharmacies.php' || $current_page == 'pharmacy_view.php' ? 'active' : ''; ?>">
+                <a href="<?php echo $view_path; ?>pharmacies.php" title="Pharmacies">
+                    <i class="fas fa-hospital"></i>
+                    <span>Our Pharmacies</span>
+                </a>
+            </li>
+
+            <li class="nav-item <?php echo $current_page == 'upload_prescription.php' || $current_page == 'my_prescriptions.php' ? 'active' : ''; ?>">
+                <a href="<?php echo $view_path; ?>upload_prescription.php" title="Prescriptions">
+                    <i class="fas fa-file-medical"></i>
+                    <span>Prescriptions</span>
+                </a>
+            </li>
+
             <li class="nav-item <?php echo $current_page == 'cart.php' ? 'active' : ''; ?>">
                 <a href="<?php echo $base_path; ?>cart.php" title="My Cart">
                     <i class="fas fa-shopping-cart"></i>
@@ -115,7 +135,7 @@ if ($is_in_admin) {
             </li>
 
             <li class="nav-item <?php echo $current_page == 'track_order.php' ? 'active' : ''; ?>">
-                <a href="<?php echo $base_path; ?>track_order.php" title="Track Order">
+                <a href="<?php echo $view_path; ?>track_order.php" title="Track Order">
                     <i class="fas fa-shipping-fast"></i>
                     <span>Track Order</span>
                 </a>

@@ -75,6 +75,14 @@ $products_to_display = array_slice($all_products, $offset, $products_per_page);
         <link rel="stylesheet" href="../css/sidebar.css?v=2.2">
     <?php endif; ?>
 
+    <!-- Google Maps API -->
+    <?php
+    require_once('../settings/google_maps_config.php');
+    $google_maps_api_key = GOOGLE_MAPS_API_KEY;
+    ?>
+    <script src="https://maps.googleapis.com/maps/api/js?key=<?php echo $google_maps_api_key; ?>&libraries=places"></script>
+    <script src="../js/google-maps.js"></script>
+
     <style>
         :root {
             --primary-color: #667eea;
@@ -221,6 +229,138 @@ $products_to_display = array_slice($all_products, $offset, $products_per_page);
                 grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
             }
         }
+
+        /* Toast Notifications */
+        .toast-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            z-index: 99999;
+            animation: slideIn 0.3s ease;
+            min-width: 300px;
+            max-width: 500px;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+        }
+
+        /* Pharmacy Information Styles */
+        .pharmacy-info {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            font-size: 0.85rem;
+        }
+
+        .pharmacy-name {
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .pharmacy-location {
+            color: #64748b;
+            margin-bottom: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .pharmacy-distance {
+            background: linear-gradient(135deg, var(--success-color), #059669);
+            color: white;
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.75rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            margin-top: 0.5rem;
+        }
+
+        .pharmacy-contact {
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            margin-top: 0.25rem;
+        }
+
+        .location-btn {
+            background: linear-gradient(135deg, var(--success-color), #059669);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 10px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .location-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .location-btn i {
+            font-size: 1rem;
+        }
+
+        .location-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: #f0fdf4;
+            border-radius: 8px;
+            color: var(--success-color);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .calculating-distances {
+            display: none;
+            padding: 0.5rem 1rem;
+            background: #eff6ff;
+            border-radius: 8px;
+            color: #3b82f6;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
     </style>
 </head>
 <body>
@@ -249,6 +389,21 @@ $products_to_display = array_slice($all_products, $offset, $products_per_page);
         <div class="container">
             <!-- Filter Section (PDF Requirement: dropdowns for category and brand + search) -->
             <div class="filter-section">
+                <!-- Location Section -->
+                <div class="row mb-3">
+                    <div class="col-12 d-flex justify-content-between align-items-center">
+                        <button type="button" class="location-btn" id="useLocationBtn" onclick="enableUserLocation()">
+                            <i class="fas fa-crosshairs"></i> Use My Location
+                        </button>
+                        <span class="location-status" id="locationStatus" style="display: none;">
+                            <i class="fas fa-check-circle"></i> Location detected
+                        </span>
+                        <span class="calculating-distances" id="calculatingStatus">
+                            <i class="fas fa-spinner fa-spin"></i> Calculating distances...
+                        </span>
+                    </div>
+                </div>
+
                 <form method="GET" action="all_product.php" class="row g-3 align-items-end">
                     <!-- Search Box -->
                     <div class="col-md-12 mb-2">
@@ -329,7 +484,10 @@ $products_to_display = array_slice($all_products, $offset, $products_per_page);
             <?php if (count($products_to_display) > 0): ?>
                 <div class="product-grid">
                     <?php foreach ($products_to_display as $product): ?>
-                        <div class="product-card" onclick="window.location.href='single_product.php?id=<?php echo $product['product_id']; ?>'">
+                        <div class="product-card" onclick="window.location.href='single_product.php?id=<?php echo $product['product_id']; ?>'"
+                             data-pharmacy-lat="<?php echo htmlspecialchars($product['pharmacy_latitude'] ?? ''); ?>"
+                             data-pharmacy-lng="<?php echo htmlspecialchars($product['pharmacy_longitude'] ?? ''); ?>"
+                             data-product-id="<?php echo $product['product_id']; ?>">
                             <!-- Product Image (PDF Requirement) -->
                             <div class="product-image">
                                 <?php if (!empty($product['product_image'])): ?>
@@ -357,6 +515,37 @@ $products_to_display = array_slice($all_products, $offset, $products_per_page);
                                     <?php echo htmlspecialchars($product['brand_name'] ?? 'Generic'); ?>
                                 </div>
 
+                                <!-- Pharmacy Information -->
+                                <div class="pharmacy-info">
+                                    <div class="pharmacy-name">
+                                        <i class="fas fa-hospital"></i>
+                                        <?php echo htmlspecialchars($product['pharmacy_name'] ?? 'Unknown Pharmacy'); ?>
+                                    </div>
+                                    <?php if (!empty($product['pharmacy_city'])): ?>
+                                        <div class="pharmacy-location">
+                                            <i class="fas fa-map-marker-alt"></i>
+                                            <?php
+                                            $location_parts = [];
+                                            if (!empty($product['pharmacy_city'])) {
+                                                $location_parts[] = $product['pharmacy_city'];
+                                            }
+                                            if (!empty($product['pharmacy_country'])) {
+                                                $location_parts[] = $product['pharmacy_country'];
+                                            }
+                                            echo htmlspecialchars(implode(', ', $location_parts));
+                                            ?>
+                                        </div>
+                                    <?php endif; ?>
+                                    <?php if (!empty($product['pharmacy_contact'])): ?>
+                                        <div class="pharmacy-contact">
+                                            <i class="fas fa-phone"></i>
+                                            <?php echo htmlspecialchars($product['pharmacy_contact']); ?>
+                                        </div>
+                                    <?php endif; ?>
+                                    <!-- Distance will be calculated and inserted here by JavaScript -->
+                                    <div class="distance-container-<?php echo $product['product_id']; ?>"></div>
+                                </div>
+
                                 <!-- Product Price (PDF Requirement) -->
                                 <div class="product-price">
                                     GH₵ <?php echo number_format($product['product_price'], 2); ?>
@@ -365,8 +554,8 @@ $products_to_display = array_slice($all_products, $offset, $products_per_page);
                                 <!-- Product ID hidden for URL purposes (PDF Requirement) -->
                                 <input type="hidden" value="<?php echo $product['product_id']; ?>">
 
-                                <!-- Add to Cart Button/Link (PDF Requirement: placeholder for now) -->
-                                <button class="btn-add-cart" onclick="event.stopPropagation(); alert('Cart functionality coming soon!');">
+                                <!-- Add to Cart Button -->
+                                <button class="btn-add-cart" onclick="event.stopPropagation(); addToCart(<?php echo $product['product_id']; ?>);">
                                     <i class="fas fa-cart-plus me-2"></i>Add to Cart
                                 </button>
                             </div>
@@ -444,6 +633,9 @@ $products_to_display = array_slice($all_products, $offset, $products_per_page);
     <!-- Bootstrap JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 
+    <!-- Cart & Wishlist JS -->
+    <script src="../js/cart-wishlist.js"></script>
+
     <!-- Back Button Functionality -->
     <script>
         function goBack() {
@@ -455,6 +647,132 @@ $products_to_display = array_slice($all_products, $offset, $products_per_page);
                 window.location.href = '../index.php';
             }
         }
+    </script>
+
+    <!-- Location and Distance Calculation -->
+    <script>
+        let userLocation = null;
+
+        // Function to enable user location
+        function enableUserLocation() {
+            const btn = document.getElementById('useLocationBtn');
+            const statusEl = document.getElementById('locationStatus');
+            const calculatingEl = document.getElementById('calculatingStatus');
+
+            // Update button state
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Getting location...';
+            btn.disabled = true;
+
+            // Get user location using the Google Maps utility
+            getUserLocation()
+                .then(position => {
+                    userLocation = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    };
+
+                    // Update UI
+                    btn.style.display = 'none';
+                    statusEl.style.display = 'inline-flex';
+                    calculatingEl.style.display = 'inline-flex';
+
+                    // Calculate and display distances
+                    calculateAllDistances();
+                })
+                .catch(error => {
+                    console.error('Error getting location:', error);
+
+                    // Reset button
+                    btn.innerHTML = '<i class="fas fa-crosshairs"></i> Use My Location';
+                    btn.disabled = false;
+
+                    // Show error message
+                    showToast('error', 'Location Error', 'Unable to get your location. Please check your browser permissions.');
+                });
+        }
+
+        // Function to calculate distances for all products
+        function calculateAllDistances() {
+            if (!userLocation) return;
+
+            const productCards = document.querySelectorAll('.product-card');
+            let processedCount = 0;
+
+            productCards.forEach(card => {
+                const pharmacyLat = parseFloat(card.dataset.pharmacyLat);
+                const pharmacyLng = parseFloat(card.dataset.pharmacyLng);
+                const productId = card.dataset.productId;
+
+                if (pharmacyLat && pharmacyLng && !isNaN(pharmacyLat) && !isNaN(pharmacyLng)) {
+                    // Calculate distance using the Haversine formula from google-maps.js
+                    const distance = calculateDistance(
+                        userLocation.lat,
+                        userLocation.lng,
+                        pharmacyLat,
+                        pharmacyLng
+                    );
+
+                    // Display the distance in the product card
+                    const distanceContainer = card.querySelector('.distance-container-' + productId);
+                    if (distanceContainer) {
+                        distanceContainer.innerHTML = `
+                            <div class="pharmacy-distance">
+                                <i class="fas fa-route"></i>
+                                ${distance.toFixed(1)} km away
+                            </div>
+                        `;
+                    }
+                }
+
+                processedCount++;
+            });
+
+            // Hide calculating status
+            setTimeout(() => {
+                document.getElementById('calculatingStatus').style.display = 'none';
+            }, 500);
+        }
+
+        // Helper function to show toast notifications
+        function showToast(type, title, message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast-notification';
+
+            const icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
+            const color = type === 'success' ? '#10b981' : '#ef4444';
+
+            toast.innerHTML = `
+                <i class="fas ${icon}" style="font-size: 1.5rem; color: ${color};"></i>
+                <div>
+                    <strong style="display: block; margin-bottom: 0.25rem;">${title}</strong>
+                    <span style="color: #64748b; font-size: 0.9rem;">${message}</span>
+                </div>
+            `;
+
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 5000);
+        }
+
+        // Auto-enable location if user previously granted permission
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if geolocation is available
+            if ('geolocation' in navigator) {
+                // Try to get location without prompting if already granted
+                navigator.permissions.query({ name: 'geolocation' }).then(function(result) {
+                    if (result.state === 'granted') {
+                        // Permission already granted, auto-enable location
+                        enableUserLocation();
+                    }
+                }).catch(function(error) {
+                    // Permissions API not supported, do nothing
+                    console.log('Permissions API not supported');
+                });
+            }
+        });
     </script>
 </body>
 </html>

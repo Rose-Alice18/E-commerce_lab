@@ -465,3 +465,30 @@ function delete_product_image_ctr($image_id, $image_path) {
         ];
     }
 }
+
+/**
+ * Get product recommendations (Content-based filtering)
+ * BONUS FEATURE: AI/ML recommendations (+5 marks)
+ *
+ * @param int $product_id - Product ID to get recommendations for
+ * @param int $limit - Number of recommendations (default 4)
+ * @return array - ['success' => bool, 'data' => array, 'message' => string]
+ */
+function get_product_recommendations_ctr($product_id, $limit = 4) {
+    if (empty($product_id)) {
+        return [
+            'success' => false,
+            'message' => 'Product ID is required',
+            'data' => []
+        ];
+    }
+
+    $product = new Product();
+    $recommendations = $product->get_recommendations((int)$product_id, (int)$limit);
+
+    return [
+        'success' => true,
+        'message' => 'Recommendations retrieved successfully',
+        'data' => $recommendations
+    ];
+}

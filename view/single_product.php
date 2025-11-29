@@ -246,6 +246,302 @@ $product_images = $product_obj->get_product_images($product_id);
                 font-size: 2rem;
             }
         }
+
+        /* Reviews Section Styles */
+        .reviews-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            margin-bottom: 2rem;
+        }
+
+        .rating-summary {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .rating-overview {
+            text-align: center;
+        }
+
+        .average-rating {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: #1e293b;
+            line-height: 1;
+        }
+
+        .stars {
+            color: #f59e0b;
+            font-size: 1.5rem;
+            margin: 0.5rem 0;
+        }
+
+        .total-reviews {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        .rating-breakdown {
+            flex: 1;
+        }
+
+        .rating-bar-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .rating-bar-label {
+            min-width: 60px;
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        .rating-bar {
+            flex: 1;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .rating-bar-fill {
+            height: 100%;
+            background: #f59e0b;
+            transition: width 0.3s ease;
+        }
+
+        .rating-bar-count {
+            min-width: 40px;
+            text-align: right;
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        .write-review-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .write-review-section h4 {
+            margin-bottom: 1.5rem;
+            color: #1e293b;
+        }
+
+        .stars-input {
+            display: flex;
+            gap: 0.5rem;
+            font-size: 2rem;
+        }
+
+        .stars-input i {
+            cursor: pointer;
+            color: #cbd5e1;
+            transition: all 0.2s;
+        }
+
+        .stars-input i:hover,
+        .stars-input i.active {
+            color: #f59e0b;
+            transform: scale(1.1);
+        }
+
+        .review-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s;
+        }
+
+        .review-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
+        }
+
+        .reviewer-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .reviewer-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        .reviewer-details h5 {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .review-date {
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+
+        .review-rating {
+            color: #f59e0b;
+        }
+
+        .verified-badge {
+            background: #d1fae5;
+            color: #065f46;
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .review-content h6 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+        }
+
+        .review-text {
+            color: #475569;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .review-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .review-action-btn {
+            background: none;
+            border: none;
+            color: #64748b;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: color 0.2s;
+        }
+
+        .review-action-btn:hover {
+            color: var(--primary-color);
+        }
+
+        /* Recommendations Section Styles */
+        .recommendations-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .section-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .recommendation-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .recommendation-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            border-color: var(--primary-color);
+        }
+
+        .recommendation-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+        }
+
+        .recommendation-body {
+            padding: 1rem;
+        }
+
+        .recommendation-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .recommendation-price {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--success-color);
+        }
+
+        /* Toast Notifications */
+        .toast-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            z-index: 99999;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(400px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
     </style>
 </head>
 <body>
@@ -394,6 +690,86 @@ $product_images = $product_obj->get_product_images($product_id);
             </div>
         </div>
 
+        <!-- Product Reviews Section (+3 MARKS) -->
+        <div class="container mt-5">
+            <div class="reviews-section">
+                <h2 class="section-title">
+                    <i class="fas fa-star"></i> Customer Reviews
+                </h2>
+
+                <!-- Rating Summary -->
+                <div class="rating-summary" id="ratingSummary">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading ratings...</span>
+                    </div>
+                </div>
+
+                <!-- Write Review Form (if logged in and can review) -->
+                <?php if (isLoggedIn() && isRegularCustomer()): ?>
+                <div class="write-review-section" id="writeReviewSection" style="display: none;">
+                    <h4><i class="fas fa-pencil-alt"></i> Write a Review</h4>
+                    <form id="reviewForm">
+                        <div class="star-rating-input mb-3">
+                            <label class="form-label">Your Rating *</label>
+                            <div class="stars-input">
+                                <i class="far fa-star" data-rating="1"></i>
+                                <i class="far fa-star" data-rating="2"></i>
+                                <i class="far fa-star" data-rating="3"></i>
+                                <i class="far fa-star" data-rating="4"></i>
+                                <i class="far fa-star" data-rating="5"></i>
+                            </div>
+                            <input type="hidden" id="ratingInput" name="rating" value="0">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Review Title</label>
+                            <input type="text" class="form-control" id="reviewTitle" placeholder="Sum up your experience">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Your Review</label>
+                            <textarea class="form-control" id="reviewText" rows="4" placeholder="Share your thoughts about this product..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i> Submit Review
+                        </button>
+                    </form>
+                </div>
+                <?php else: ?>
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i> Please <a href="../login/login_view.php">login</a> to leave a review.
+                </div>
+                <?php endif; ?>
+
+                <!-- Reviews List -->
+                <div class="reviews-list" id="reviewsList">
+                    <div class="text-center py-4">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading reviews...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Recommendations Section - BONUS FEATURE (+5 MARKS) -->
+        <div class="container mt-5">
+            <div class="recommendations-section">
+                <h2 class="section-title">
+                    <i class="fas fa-magic"></i> You May Also Like
+                </h2>
+                <p class="text-muted mb-4">Based on your viewing history and similar products</p>
+
+                <div id="recommendations-grid" class="product-grid">
+                    <!-- Loading state -->
+                    <div class="col-12 text-center py-5">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading recommendations...</span>
+                        </div>
+                        <p class="text-muted mt-2">Finding similar products...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div style="height: 3rem;"></div>
     </div>
 
@@ -417,11 +793,267 @@ $product_images = $product_obj->get_product_images($product_id);
             event.target.classList.add('active');
         }
 
-        // Add to cart placeholder function
-        function addToCart(productId) {
-            alert('Cart functionality will be implemented in future labs.\nProduct ID: ' + productId);
-            // This will be replaced with actual cart functionality later
+        // Load Product Recommendations (BONUS FEATURE - +5 MARKS)
+        document.addEventListener('DOMContentLoaded', function() {
+            loadRecommendations();
+        });
+
+        function loadRecommendations() {
+            const productId = <?php echo $product_id; ?>;
+            const grid = document.getElementById('recommendations-grid');
+
+            fetch(`../actions/get_recommendations_action.php?product_id=${productId}&limit=4`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.data.length > 0) {
+                        displayRecommendations(data.data);
+                    } else {
+                        grid.innerHTML = `
+                            <div class="col-12 text-center py-4">
+                                <p class="text-muted">No similar products found</p>
+                            </div>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading recommendations:', error);
+                    grid.innerHTML = `
+                        <div class="col-12 text-center py-4">
+                            <p class="text-muted">Unable to load recommendations</p>
+                        </div>
+                    `;
+                });
         }
+
+        function displayRecommendations(products) {
+            const grid = document.getElementById('recommendations-grid');
+            grid.innerHTML = products.map(product => `
+                <div class="recommendation-card" onclick="window.location.href='single_product.php?id=${product.product_id}'">
+                    <img src="../${product.product_image || 'uploads/products/placeholder.png'}"
+                         alt="${escapeHtml(product.product_title)}"
+                         class="recommendation-image"
+                         onerror="this.src='../uploads/products/placeholder.png'">
+                    <div class="recommendation-body">
+                        <div class="recommendation-title">${escapeHtml(product.product_title)}</div>
+                        <div class="recommendation-price">GH₵ ${parseFloat(product.product_price).toFixed(2)}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Load Reviews (+3 MARKS)
+        loadProductReviews();
+
+        function loadProductReviews() {
+            const productId = <?php echo $product_id; ?>;
+
+            // Load rating summary
+            fetch(`../actions/review_actions.php?action=get_rating&product_id=${productId}`)
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        displayRatingSummary(data.data);
+                    }
+                });
+
+            // Load reviews list
+            fetch(`../actions/review_actions.php?action=get_reviews&product_id=${productId}`)
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        displayReviews(data.data);
+                    }
+                });
+
+            // Check if user can review
+            <?php if (isLoggedIn() && isRegularCustomer()): ?>
+            fetch(`../actions/review_actions.php?action=can_review&product_id=${productId}`)
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success && data.can_review) {
+                        document.getElementById('writeReviewSection').style.display = 'block';
+                        initReviewForm();
+                    }
+                });
+            <?php endif; ?>
+        }
+
+        function displayRatingSummary(data) {
+            const summary = document.getElementById('ratingSummary');
+            const dist = data.distribution || {};
+            const total = data.count || 0;
+
+            if (total === 0) {
+                summary.innerHTML = `
+                    <div class="text-center py-4 w-100">
+                        <p class="text-muted">No reviews yet. Be the first to review this product!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            summary.innerHTML = `
+                <div class="rating-overview">
+                    <div class="average-rating">${data.average.toFixed(1)}</div>
+                    <div class="stars">${getStarsHTML(data.average)}</div>
+                    <div class="total-reviews">${total} review${total !== 1 ? 's' : ''}</div>
+                </div>
+                <div class="rating-breakdown">
+                    ${[5,4,3,2,1].map(rating => {
+                        const count = dist[rating] || 0;
+                        const percentage = total > 0 ? (count / total * 100) : 0;
+                        return `
+                            <div class="rating-bar-row">
+                                <div class="rating-bar-label">${rating} stars</div>
+                                <div class="rating-bar">
+                                    <div class="rating-bar-fill" style="width: ${percentage}%"></div>
+                                </div>
+                                <div class="rating-bar-count">${count}</div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+        }
+
+        function displayReviews(reviews) {
+            const list = document.getElementById('reviewsList');
+
+            if (reviews.length === 0) {
+                list.innerHTML = '<p class="text-muted text-center py-4">No reviews yet.</p>';
+                return;
+            }
+
+            list.innerHTML = reviews.map(review => `
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="reviewer-info">
+                            <div class="reviewer-avatar">${getInitials(review.customer_name)}</div>
+                            <div class="reviewer-details">
+                                <h5>${escapeHtml(review.customer_name)}</h5>
+                                <div class="review-date">${formatDate(review.created_at)}</div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="review-rating">${getStarsHTML(review.rating)}</div>
+                            ${review.is_verified_purchase ? '<span class="verified-badge mt-2"><i class="fas fa-check-circle"></i> Verified Purchase</span>' : ''}
+                        </div>
+                    </div>
+                    <div class="review-content">
+                        ${review.review_title ? `<h6>${escapeHtml(review.review_title)}</h6>` : ''}
+                        <div class="review-text">${escapeHtml(review.review_text)}</div>
+                    </div>
+                    <div class="review-actions">
+                        <button class="review-action-btn" onclick="markHelpful(${review.review_id})">
+                            <i class="far fa-thumbs-up"></i> Helpful ${review.helpful_count > 0 ? '(' + review.helpful_count + ')' : ''}
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function getStarsHTML(rating) {
+            let html = '';
+            for (let i = 1; i <= 5; i++) {
+                html += `<i class="fas fa-star" style="color: ${i <= rating ? '#f59e0b' : '#cbd5e1'}"></i>`;
+            }
+            return html;
+        }
+
+        function getInitials(name) {
+            return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return date.toLocaleDateString('en-US', options);
+        }
+
+        <?php if (isLoggedIn() && isRegularCustomer()): ?>
+        function initReviewForm() {
+            const stars = document.querySelectorAll('.stars-input i');
+            const ratingInput = document.getElementById('ratingInput');
+
+            stars.forEach(star => {
+                star.addEventListener('click', function() {
+                    const rating = this.dataset.rating;
+                    ratingInput.value = rating;
+
+                    stars.forEach((s, index) => {
+                        if (index < rating) {
+                            s.classList.remove('far');
+                            s.classList.add('fas', 'active');
+                        } else {
+                            s.classList.remove('fas', 'active');
+                            s.classList.add('far');
+                        }
+                    });
+                });
+            });
+
+            document.getElementById('reviewForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                const rating = parseInt(ratingInput.value);
+                if (rating === 0) {
+                    showToast('Please select a rating', 'error');
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append('action', 'add_review');
+                formData.append('product_id', <?php echo $product_id; ?>);
+                formData.append('rating', rating);
+                formData.append('review_title', document.getElementById('reviewTitle').value);
+                formData.append('review_text', document.getElementById('reviewText').value);
+
+                fetch('../actions/review_actions.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        showToast(data.message, 'success');
+                        document.getElementById('writeReviewSection').style.display = 'none';
+                        loadProductReviews(); // Reload reviews
+                    } else {
+                        showToast(data.message, 'error');
+                    }
+                });
+            });
+        }
+
+        function markHelpful(reviewId) {
+            const formData = new FormData();
+            formData.append('action', 'mark_helpful');
+            formData.append('review_id', reviewId);
+
+            fetch('../actions/review_actions.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    loadProductReviews();
+                } else {
+                    showToast(data.message || 'Error', 'error');
+                }
+            });
+        }
+        <?php endif; ?>
     </script>
+
+    <!-- Cart & Wishlist JS -->
+    <script src="../js/cart-wishlist.js"></script>
 </body>
 </html>

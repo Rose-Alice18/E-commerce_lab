@@ -101,6 +101,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ]);
             break;
 
+        case 'move_to_cart':
+            $result = move_wishlist_to_cart_ctr($customer_id);
+            echo json_encode([
+                'success' => $result['status'] === 'success',
+                'message' => $result['message'],
+                'moved_count' => $result['moved_count'],
+                'errors' => $result['errors'] ?? []
+            ]);
+            break;
+
+        case 'clear':
+            $result = clear_wishlist_ctr($customer_id);
+            if ($result) {
+                echo json_encode([
+                    'success' => true,
+                    'message' => 'Wishlist cleared successfully'
+                ]);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Failed to clear wishlist']);
+            }
+            break;
+
         default:
             echo json_encode(['success' => false, 'message' => 'Invalid action']);
             break;

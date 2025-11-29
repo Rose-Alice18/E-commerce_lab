@@ -32,8 +32,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
 
     <div class="sidebar-header">
         <div class="logo-container">
-            <i class="fas fa-hospital-symbol"></i>
-            <h4>PharmaVault</h4>
+            <img src="../../Piharma1.png" alt="Piharma Logo" style="max-width: 100%; height: auto; max-height: 50px; object-fit: contain;">
         </div>
         <span class="role-badge pharmacy-admin">Pharmacy Admin</span>
     </div>

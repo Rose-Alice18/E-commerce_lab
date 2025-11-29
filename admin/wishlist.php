@@ -269,12 +269,9 @@ $wishlist_count = count($wishlist_items);
                         <h5 class="mb-0">Your Wishlist</h5>
                         <p class="wishlist-count mb-0"><?php echo $wishlist_count; ?> <?php echo $wishlist_count == 1 ? 'item' : 'items'; ?></p>
                     </div>
-                    <form method="POST" style="display: inline;">
-                        <input type="hidden" name="action" value="clear">
-                        <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('Clear all wishlist items?')">
-                            <i class="fas fa-trash me-1"></i>Clear All
-                        </button>
-                    </form>
+                    <button type="button" class="btn btn-outline-danger btn-sm" id="clear-wishlist-btn">
+                        <i class="fas fa-trash me-1"></i>Clear All
+                    </button>
                 </div>
 
                 <?php foreach ($wishlist_items as $item): ?>
@@ -303,27 +300,22 @@ $wishlist_count = count($wishlist_items);
 
                         <div class="wishlist-actions">
                             <?php if ($item['product_stock'] > 0): ?>
-                                <form method="POST" action="../actions/add_to_cart_action.php">
-                                    <input type="hidden" name="product_id" value="<?php echo $item['product_id']; ?>">
-                                    <input type="hidden" name="quantity" value="1">
-                                    <input type="hidden" name="redirect" value="../admin/wishlist.php?msg=added_to_cart">
-                                    <button type="submit" class="btn btn-add-cart">
-                                        <i class="fas fa-shopping-cart me-1"></i>Add to Cart
-                                    </button>
-                                </form>
+                                <button type="button"
+                                        class="btn btn-add-cart add-to-cart-btn"
+                                        data-product-id="<?php echo $item['product_id']; ?>">
+                                    <i class="fas fa-shopping-cart me-1"></i>Add to Cart
+                                </button>
                             <?php else: ?>
                                 <button class="btn btn-add-cart" disabled>
                                     <i class="fas fa-times-circle me-1"></i>Out of Stock
                                 </button>
                             <?php endif; ?>
 
-                            <form method="POST">
-                                <input type="hidden" name="action" value="remove">
-                                <input type="hidden" name="product_id" value="<?php echo $item['product_id']; ?>">
-                                <button type="submit" class="btn btn-remove">
-                                    <i class="fas fa-trash me-1"></i>Remove
-                                </button>
-                            </form>
+                            <button type="button"
+                                    class="btn btn-remove remove-from-wishlist-btn"
+                                    data-product-id="<?php echo $item['product_id']; ?>">
+                                <i class="fas fa-trash me-1"></i>Remove
+                            </button>
                         </div>
                     </div>
                 <?php endforeach; ?>
@@ -344,5 +336,202 @@ $wishlist_count = count($wishlist_items);
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Cart and Wishlist JS (for sidebar counts) -->
     <script src="../js/cart-wishlist.js"></script>
+
+    <script>
+    // Clear All Wishlist Items
+    const clearWishlistBtn = document.getElementById('clear-wishlist-btn');
+    if (clearWishlistBtn) {
+        clearWishlistBtn.addEventListener('click', function() {
+            if (!confirm('Are you sure you want to clear all wishlist items?')) return;
+
+            const btnIcon = this.querySelector('i');
+            this.disabled = true;
+            btnIcon.className = 'fas fa-spinner fa-spin me-1';
+
+            fetch('../actions/wishlist_actions.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: 'action=clear'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showToast('Wishlist cleared successfully', 'success');
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    showToast(data.message || 'Failed to clear wishlist', 'error');
+                    btnIcon.className = 'fas fa-trash me-1';
+                    this.disabled = false;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showToast('Error clearing wishlist', 'error');
+                btnIcon.className = 'fas fa-trash me-1';
+                this.disabled = false;
+            });
+        });
+    }
+
+    // Add to Cart from Wishlist with AJAX
+    document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const productId = this.dataset.productId;
+            const btnIcon = this.querySelector('i');
+            const btnText = this;
+
+            // Show loading state
+            btnText.disabled = true;
+            btnIcon.className = 'fas fa-spinner fa-spin me-1';
+
+            fetch('../actions/add_to_cart_action.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `product_id=${productId}&quantity=1`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Show success toast
+                    showToast(data.message, 'success');
+
+                    // Update cart badge
+                    const cartBadge = document.querySelector('.sidebar-nav a[href*="cart.php"] .badge');
+                    if (cartBadge && data.cart_count) {
+                        cartBadge.textContent = data.cart_count;
+                    }
+
+                    // Reset button
+                    btnIcon.className = 'fas fa-check me-1';
+                    setTimeout(() => {
+                        btnIcon.className = 'fas fa-shopping-cart me-1';
+                        btnText.disabled = false;
+                    }, 2000);
+                } else {
+                    showToast(data.message || 'Failed to add to cart', 'error');
+                    btnIcon.className = 'fas fa-shopping-cart me-1';
+                    btnText.disabled = false;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showToast('Error adding to cart', 'error');
+                btnIcon.className = 'fas fa-shopping-cart me-1';
+                btnText.disabled = false;
+            });
+        });
+    });
+
+    // Remove from Wishlist with AJAX
+    document.querySelectorAll('.remove-from-wishlist-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            if (!confirm('Remove this item from your wishlist?')) return;
+
+            const productId = this.dataset.productId;
+            const wishlistItem = this.closest('.wishlist-item');
+
+            fetch('../actions/wishlist_actions.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `action=remove&product_id=${productId}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Animate and remove item
+                    wishlistItem.style.transition = 'opacity 0.3s, transform 0.3s';
+                    wishlistItem.style.opacity = '0';
+                    wishlistItem.style.transform = 'translateX(-20px)';
+
+                    setTimeout(() => {
+                        wishlistItem.remove();
+
+                        // Update wishlist badge
+                        const wishlistBadge = document.querySelector('.sidebar-nav a[href*="wishlist.php"] .badge');
+                        if (wishlistBadge && data.wishlist_count !== undefined) {
+                            wishlistBadge.textContent = data.wishlist_count;
+                        }
+
+                        // Check if wishlist is now empty
+                        const remainingItems = document.querySelectorAll('.wishlist-item');
+                        if (remainingItems.length === 0) {
+                            location.reload();
+                        }
+                    }, 300);
+
+                    showToast('Item removed from wishlist', 'success');
+                } else {
+                    showToast(data.message || 'Failed to remove item', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showToast('Error removing item', 'error');
+            });
+        });
+    });
+
+    // Toast notification function
+    function showToast(message, type = 'success') {
+        const toast = document.createElement('div');
+        toast.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: ${type === 'success' ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)' : 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)'};
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            z-index: 10000;
+            animation: slideIn 0.3s ease;
+            max-width: 350px;
+            font-weight: 500;
+        `;
+        toast.innerHTML = `
+            <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'} me-2"></i>
+            ${message}
+        `;
+
+        document.body.appendChild(toast);
+
+        setTimeout(() => {
+            toast.style.animation = 'slideOut 0.3s ease';
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    }
+
+    // Add CSS animations
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+        }
+    `;
+    document.head.appendChild(style);
+    </script>
 </body>
 </html>

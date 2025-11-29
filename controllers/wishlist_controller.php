@@ -53,4 +53,20 @@ function clear_wishlist_ctr($customer_id) {
     $wishlist = new Wishlist();
     return $wishlist->clear_wishlist($customer_id);
 }
+
+/**
+ * Move all wishlist items to cart
+ */
+function move_wishlist_to_cart_ctr($customer_id) {
+    $wishlist = new Wishlist();
+    return $wishlist->move_wishlist_to_cart($customer_id);
+}
+
+/**
+ * Get popular wishlist products
+ */
+function get_popular_wishlist_products_ctr($limit = 10) {
+    $wishlist = new Wishlist();
+    return $wishlist->get_popular_wishlist_products($limit);
+}
 ?>

@@ -375,8 +375,12 @@ $grand_total = $cart_total + $delivery_fee;
                     <span id="grand-total">GH₵ <?php echo number_format($grand_total, 2); ?></span>
                 </div>
 
-                <button class="btn-pay" id="btn-simulate-payment">
-                    <i class="fas fa-lock me-2"></i>Simulate Payment
+                <button class="btn-pay" id="btn-proceed-payment"
+                        data-amount="<?php echo $grand_total; ?>"
+                        data-email="<?php echo htmlspecialchars($_SESSION['user_email']); ?>"
+                        data-customer-id="<?php echo $customer_id; ?>"
+                        data-customer-name="<?php echo htmlspecialchars($_SESSION['user_name']); ?>">
+                    <i class="fas fa-lock me-2"></i>Proceed to Payment
                 </button>
 
                 <a href="../admin/cart.php" class="btn btn-outline-secondary w-100 mt-3">
@@ -386,32 +390,17 @@ $grand_total = $cart_total + $delivery_fee;
         </div>
     </div>
 
-    <!-- Payment Modal -->
-    <div class="payment-modal" id="payment-modal">
-        <div class="payment-modal-content">
-            <div class="payment-icon">
-                <i class="fas fa-mobile-alt"></i>
-            </div>
-            <h3>Simulated Payment</h3>
-            <p class="text-muted">Confirm your payment of:</p>
-            <div class="payment-amount">GH₵ <?php echo number_format($grand_total, 2); ?></div>
-            <p class="text-muted">This is a simulated payment. No real transaction will occur.</p>
-
-            <div class="payment-buttons">
-                <button class="btn-cancel-payment" id="btn-cancel">
-                    <i class="fas fa-times me-2"></i>Cancel
-                </button>
-                <button class="btn-confirm-payment" id="btn-confirm">
-                    <i class="fas fa-check me-2"></i>Yes, I've Paid
-                </button>
-            </div>
-        </div>
-    </div>
+    <!-- Hidden inputs for Paystack -->
+    <input type="hidden" id="paystack-public-key" value="<?php require_once('../settings/paystack_config.php'); echo PAYSTACK_PUBLIC_KEY; ?>">
+    <input type="hidden" id="cart-total" value="<?php echo $grand_total; ?>">
+    <input type="hidden" id="customer-email" value="<?php echo htmlspecialchars($_SESSION['user_email']); ?>">
 
     <!-- Sidebar JS -->
     <script src="../js/sidebar.js"></script>
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Paystack Inline JS -->
+    <script src="https://js.paystack.co/v1/inline.js"></script>
     <!-- Checkout JS -->
     <script src="../js/checkout.js"></script>
 </body>

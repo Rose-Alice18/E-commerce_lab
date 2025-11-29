@@ -84,5 +84,88 @@ class Wishlist extends db_connection {
         $stmt->bind_param("i", $customer_id);
         return $stmt->execute();
     }
+
+    /**
+     * Move all wishlist items to cart
+     *
+     * @param int $customer_id Customer ID
+     * @return array Result with status and message
+     */
+    public function move_wishlist_to_cart($customer_id) {
+        // Get wishlist items
+        $wishlist_items = $this->get_wishlist_items($customer_id);
+
+        if (empty($wishlist_items)) {
+            return [
+                'status' => 'info',
+                'message' => 'Wishlist is empty',
+                'moved_count' => 0
+            ];
+        }
+
+        $moved_count = 0;
+        $errors = [];
+
+        foreach ($wishlist_items as $item) {
+            // Check if product is in stock
+            if ($item['product_stock'] <= 0) {
+                $errors[] = $item['product_title'] . ' is out of stock';
+                continue;
+            }
+
+            // Add to cart (use INSERT IGNORE to avoid duplicates)
+            $cart_sql = "INSERT INTO cart (p_id, c_id, qty)
+                        VALUES (?, ?, 1)
+                        ON DUPLICATE KEY UPDATE qty = qty + 1";
+
+            $stmt = $this->db_conn()->prepare($cart_sql);
+
+            if ($stmt) {
+                $stmt->bind_param("ii", $item['product_id'], $customer_id);
+                if ($stmt->execute()) {
+                    $moved_count++;
+                }
+                $stmt->close();
+            }
+        }
+
+        // Clear wishlist after moving
+        if ($moved_count > 0) {
+            $this->clear_wishlist($customer_id);
+        }
+
+        return [
+            'status' => 'success',
+            'message' => "$moved_count items moved to cart",
+            'moved_count' => $moved_count,
+            'errors' => $errors
+        ];
+    }
+
+    /**
+     * Get popular wishlist products (for recommendations)
+     *
+     * @param int $limit Number of products to return
+     * @return array Array of popular products
+     */
+    public function get_popular_wishlist_products($limit = 10) {
+        $sql = "SELECT
+                    p.product_id,
+                    p.product_title,
+                    p.product_price,
+                    p.product_image,
+                    COUNT(w.wishlist_id) as wishlist_count
+                FROM products p
+                INNER JOIN wishlist w ON p.product_id = w.product_id
+                GROUP BY p.product_id
+                ORDER BY wishlist_count DESC
+                LIMIT ?";
+
+        $stmt = $this->db_conn()->prepare($sql);
+        $stmt->bind_param("i", $limit);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
 }
 ?>
