@@ -1,17 +1,21 @@
 # UPLOAD TO LIVE SERVER - URGENT FIX
-**Error:** Unknown column 'cu.customer_address' in product_class.php:98
-**Status:** ✅ Fixed locally, ⏳ Waiting for upload to live server
+**Errors Fixed:**
+1. ❌ Unknown column 'cu.customer_address' in product_class.php:98
+2. ❌ HTTP ERROR 500 on medicine_availability.php (duplicate closing body tag)
+3. ❌ Blank product page (caused by error #1)
+
+**Status:** ✅ All fixed locally, ⏳ Waiting for upload to live server
 
 ---
 
-## FILES TO UPLOAD (4 FILES)
+## FILES TO UPLOAD (5 FILES)
 
-Upload these **4 fixed files** to your live server at `http://169.239.251.102:442/~roseline.tsatsu/`:
+Upload these **5 fixed files** to your live server at `http://169.239.251.102:442/~roseline.tsatsu/`:
 
 ### 1. classes/product_class.php ⭐ CRITICAL
 **Local path:** `c:\xampp\htdocs\register_sample\classes\product_class.php`
 **Live path:** `/home/roseline.tsatsu/public_html/classes/product_class.php`
-**Why:** This is causing the fatal error on line 98
+**Why:** This is causing the fatal error on line 98 AND the blank product page
 
 ### 2. classes/rider_class.php
 **Local path:** `c:\xampp\htdocs\register_sample\classes\rider_class.php`
@@ -27,6 +31,11 @@ Upload these **4 fixed files** to your live server at `http://169.239.251.102:44
 **Local path:** `c:\xampp\htdocs\register_sample\actions\search_medicine_availability.php`
 **Live path:** `/home/roseline.tsatsu/public_html/actions/search_medicine_availability.php`
 **Why:** Fixes medicine search functionality
+
+### 5. view/medicine_availability.php ⭐ NEW FIX
+**Local path:** `c:\xampp\htdocs\register_sample\view\medicine_availability.php`
+**Live path:** `/home/roseline.tsatsu/public_html/view/medicine_availability.php`
+**Why:** Fixes HTTP ERROR 500 (removed duplicate `</body>` tag)
 
 ---
 
@@ -48,6 +57,7 @@ Upload these **4 fixed files** to your live server at `http://169.239.251.102:44
    - Drag `classes/rider_class.php` from left to right
    - Drag `view/pharmacies.php` from left to right
    - Drag `actions/search_medicine_availability.php` from left to right
+   - Drag `view/medicine_availability.php` from left to right
 
 4. **Overwrite when prompted:** Click "Yes" to replace existing files
 
@@ -71,6 +81,7 @@ Upload these **4 fixed files** to your live server at `http://169.239.251.102:44
      - `classes/rider_class.php` → upload to `public_html/classes/`
      - `view/pharmacies.php` → upload to `public_html/view/`
      - `actions/search_medicine_availability.php` → upload to `public_html/actions/`
+     - `view/medicine_availability.php` → upload to `public_html/view/`
 
 5. **Overwrite existing files:** Click "Overwrite" when prompted
 
@@ -109,6 +120,7 @@ cp classes/product_class.php classes/product_class.php.backup
 cp classes/rider_class.php classes/rider_class.php.backup
 cp view/pharmacies.php view/pharmacies.php.backup
 cp actions/search_medicine_availability.php actions/search_medicine_availability.php.backup
+cp view/medicine_availability.php view/medicine_availability.php.backup
 
 # Now upload the fixed files using your preferred method
 # (you'll need to transfer files from local to server)
@@ -186,6 +198,7 @@ ls -lh /home/roseline.tsatsu/public_html/classes/product_class.php
 ls -lh /home/roseline.tsatsu/public_html/classes/rider_class.php
 ls -lh /home/roseline.tsatsu/public_html/view/pharmacies.php
 ls -lh /home/roseline.tsatsu/public_html/actions/search_medicine_availability.php
+ls -lh /home/roseline.tsatsu/public_html/view/medicine_availability.php
 
 # Check if 'customer_address' exists in file (should return nothing)
 grep -n "customer_address" /home/roseline.tsatsu/public_html/classes/product_class.php
@@ -206,6 +219,7 @@ certutil -hashfile classes\product_class.php MD5
 certutil -hashfile classes\rider_class.php MD5
 certutil -hashfile view\pharmacies.php MD5
 certutil -hashfile actions\search_medicine_availability.php MD5
+certutil -hashfile view\medicine_availability.php MD5
 ```
 
 ### On Linux (server):
@@ -215,6 +229,7 @@ md5sum classes/product_class.php
 md5sum classes/rider_class.php
 md5sum view/pharmacies.php
 md5sum actions/search_medicine_availability.php
+md5sum view/medicine_availability.php
 ```
 
 **Compare:** Checksums should match between local and live files.
@@ -245,6 +260,7 @@ chmod 644 /home/roseline.tsatsu/public_html/classes/product_class.php
 chmod 644 /home/roseline.tsatsu/public_html/classes/rider_class.php
 chmod 644 /home/roseline.tsatsu/public_html/view/pharmacies.php
 chmod 644 /home/roseline.tsatsu/public_html/actions/search_medicine_availability.php
+chmod 644 /home/roseline.tsatsu/public_html/view/medicine_availability.php
 ```
 
 ---
@@ -289,23 +305,30 @@ Mark off as you complete:
 - [ ] ✅ **Step 3:** Upload `classes/rider_class.php` to `/home/roseline.tsatsu/public_html/classes/`
 - [ ] ✅ **Step 4:** Upload `view/pharmacies.php` to `/home/roseline.tsatsu/public_html/view/`
 - [ ] ✅ **Step 5:** Upload `actions/search_medicine_availability.php` to `/home/roseline.tsatsu/public_html/actions/`
-- [ ] ✅ **Step 6:** Verify files uploaded (check timestamps)
-- [ ] ✅ **Step 7:** Clear server cache (if needed)
-- [ ] ✅ **Step 8:** Test customer dashboard page
-- [ ] ✅ **Step 9:** Verify no errors in browser
-- [ ] ✅ **Step 10:** Test other affected pages
+- [ ] ✅ **Step 6:** Upload `view/medicine_availability.php` to `/home/roseline.tsatsu/public_html/view/`
+- [ ] ✅ **Step 7:** Verify files uploaded (check timestamps)
+- [ ] ✅ **Step 8:** Clear server cache (if needed)
+- [ ] ✅ **Step 9:** Test customer dashboard page
+- [ ] ✅ **Step 10:** Test product page (should no longer be blank)
+- [ ] ✅ **Step 11:** Test medicine availability page (should no longer show HTTP 500)
+- [ ] ✅ **Step 12:** Verify no errors in browser
 
 ---
 
 ## SUMMARY
 
-**Problem:** Live server has fatal error due to `customer_address` column that doesn't exist
+**Problems Fixed:**
+1. Live server fatal error due to `customer_address` column that doesn't exist
+2. Blank product page (caused by error #1)
+3. HTTP ERROR 500 on medicine_availability.php (duplicate `</body>` tag)
 
-**Solution:** Upload 4 fixed files that use correct column names (`latitude` and `longitude`)
+**Solution:** Upload 5 fixed files that use correct column names and proper HTML structure
 
-**Critical file:** `classes/product_class.php` (this is causing the error on line 98)
+**Critical files:**
+- `classes/product_class.php` (causing error on line 98 AND blank product page)
+- `view/medicine_availability.php` (causing HTTP 500 error)
 
-**Next step:** Upload the 4 files using one of the methods above
+**Next step:** Upload the 5 files using one of the methods above
 
 ---
 

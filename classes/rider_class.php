@@ -169,9 +169,9 @@ class Rider extends db_connection {
     public function get_deliveries_by_rider($rider_id) {
         $sql = "SELECT
                     da.*,
-                    c.customer_name, c.customer_contact as customer_phone,
+                    c.customer_name, c.customer_phone, c.customer_address,
                     p.customer_name as pharmacy_name,
-                    o.order_status, o.total_amount as order_total
+                    o.order_status, o.order_total
                 FROM delivery_assignments da
                 INNER JOIN customer c ON da.customer_id = c.customer_id
                 LEFT JOIN customer p ON da.pharmacy_id = p.customer_id

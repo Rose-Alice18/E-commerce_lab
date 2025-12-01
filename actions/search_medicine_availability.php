@@ -37,8 +37,9 @@ try {
                 c.customer_contact as pharmacy_contact,
                 c.customer_city,
                 c.customer_country,
-                c.latitude,
-                c.longitude
+                c.customer_address,
+                c.customer_latitude,
+                c.customer_longitude
             FROM products p
             INNER JOIN customer c ON p.pharmacy_id = c.customer_id
             WHERE c.user_role = 1
@@ -64,12 +65,12 @@ try {
         // Calculate distance if user location is provided
         $distance = null;
         if ($user_lat !== null && $user_lng !== null &&
-            $row['latitude'] !== null && $row['longitude'] !== null) {
+            $row['customer_latitude'] !== null && $row['customer_longitude'] !== null) {
             $distance = calculateDistance(
                 $user_lat,
                 $user_lng,
-                floatval($row['latitude']),
-                floatval($row['longitude'])
+                floatval($row['customer_latitude']),
+                floatval($row['customer_longitude'])
             );
         }
 
@@ -85,9 +86,10 @@ try {
                 'name' => $row['pharmacy_name'],
                 'email' => $row['pharmacy_email'],
                 'contact' => $row['pharmacy_contact'],
+                'address' => $row['customer_address'],
                 'location' => $row['customer_city'] . ', ' . $row['customer_country'],
-                'latitude' => $row['latitude'],
-                'longitude' => $row['longitude']
+                'latitude' => $row['customer_latitude'],
+                'longitude' => $row['customer_longitude']
             ],
             'distance_km' => $distance
         ];

@@ -81,8 +81,9 @@ class Product extends db_connection {
                        cu.customer_name as pharmacy_name,
                        cu.customer_city as pharmacy_city,
                        cu.customer_country as pharmacy_country,
-                       cu.latitude as pharmacy_latitude,
-                       cu.longitude as pharmacy_longitude,
+                       cu.customer_address as pharmacy_address,
+                       cu.customer_latitude as pharmacy_latitude,
+                       cu.customer_longitude as pharmacy_longitude,
                        cu.customer_contact as pharmacy_contact
                 FROM products p
                 INNER JOIN categories c ON p.product_cat = c.cat_id
@@ -266,8 +267,9 @@ class Product extends db_connection {
                        cu.customer_name as pharmacy_name,
                        cu.customer_city as pharmacy_city,
                        cu.customer_country as pharmacy_country,
-                       cu.latitude as pharmacy_latitude,
-                       cu.longitude as pharmacy_longitude,
+                       cu.customer_address as pharmacy_address,
+                       cu.customer_latitude as pharmacy_latitude,
+                       cu.customer_longitude as pharmacy_longitude,
                        cu.customer_contact as pharmacy_contact
                 FROM products p
                 INNER JOIN categories c ON p.product_cat = c.cat_id
@@ -300,8 +302,9 @@ class Product extends db_connection {
                        cu.customer_name as pharmacy_name,
                        cu.customer_city as pharmacy_city,
                        cu.customer_country as pharmacy_country,
-                       cu.latitude as pharmacy_latitude,
-                       cu.longitude as pharmacy_longitude,
+                       cu.customer_address as pharmacy_address,
+                       cu.customer_latitude as pharmacy_latitude,
+                       cu.customer_longitude as pharmacy_longitude,
                        cu.customer_contact as pharmacy_contact
                 FROM products p
                 INNER JOIN categories c ON p.product_cat = c.cat_id
@@ -335,8 +338,9 @@ class Product extends db_connection {
                        cu.customer_name as pharmacy_name,
                        cu.customer_city as pharmacy_city,
                        cu.customer_country as pharmacy_country,
-                       cu.latitude as pharmacy_latitude,
-                       cu.longitude as pharmacy_longitude,
+                       cu.customer_address as pharmacy_address,
+                       cu.customer_latitude as pharmacy_latitude,
+                       cu.customer_longitude as pharmacy_longitude,
                        cu.customer_contact as pharmacy_contact
                 FROM products p
                 INNER JOIN categories c ON p.product_cat = c.cat_id
