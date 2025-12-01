@@ -443,6 +443,94 @@ ALTER TABLE `product_images`
   ADD CONSTRAINT `product_images_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `products` (`product_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
+
+-- Add delivery columns to customer table
+ALTER TABLE `customer`
+ADD COLUMN `offers_delivery` TINYINT(1) DEFAULT 0,
+ADD COLUMN `delivery_fee` DECIMAL(10,2) DEFAULT 0.00,
+ADD COLUMN `delivery_radius_km` DECIMAL(6,2) DEFAULT 10.00,
+ADD COLUMN `min_order_for_delivery` DECIMAL(10,2) DEFAULT 0.00;
+
+-- Update existing pharmacies to have default values
+UPDATE `customer` SET offers_delivery = 0 WHERE user_role = 1;
+
+SELECT 'Pharmacy delivery settings added successfully!' AS status;
+
+
+
+-- ============================================
+-- Riders and Delivery Assignment System
+-- Allows super admin to manage motorcycle riders and assign deliveries
+-- ============================================
+
+USE pharmavault_db;
+
+-- Create riders table
+CREATE TABLE IF NOT EXISTS `riders` (
+  `rider_id` INT(11) NOT NULL AUTO_INCREMENT,
+  `rider_name` VARCHAR(200) NOT NULL,
+  `rider_phone` VARCHAR(20) NOT NULL,
+  `rider_email` VARCHAR(100),
+  `rider_license` VARCHAR(50),
+  `vehicle_number` VARCHAR(50),
+  `rider_address` TEXT,
+  `rider_latitude` DECIMAL(10,8),
+  `rider_longitude` DECIMAL(11,8),
+  `status` ENUM('active', 'inactive', 'busy') DEFAULT 'active',
+  `total_deliveries` INT(11) DEFAULT 0,
+  `rating` DECIMAL(3,2) DEFAULT 5.00,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`rider_id`),
+  UNIQUE KEY `rider_phone` (`rider_phone`),
+  INDEX `idx_status` (`status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Motorcycle riders for delivery service';
+
+-- Create delivery_assignments table
+CREATE TABLE IF NOT EXISTS `delivery_assignments` (
+  `assignment_id` INT(11) NOT NULL AUTO_INCREMENT,
+  `order_id` INT(11) NOT NULL,
+  `rider_id` INT(11) NOT NULL,
+  `customer_id` INT(11) NOT NULL,
+  `pharmacy_id` INT(11),
+  `pickup_address` TEXT NOT NULL,
+  `delivery_address` TEXT NOT NULL,
+  `delivery_latitude` DECIMAL(10,8),
+  `delivery_longitude` DECIMAL(11,8),
+  `distance_km` DECIMAL(6,2),
+  `delivery_fee` DECIMAL(10,2) DEFAULT 0.00,
+  `status` ENUM('assigned', 'picked_up', 'in_transit', 'delivered', 'cancelled') DEFAULT 'assigned',
+  `assigned_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `picked_up_at` TIMESTAMP NULL,
+  `delivered_at` TIMESTAMP NULL,
+  `cancelled_at` TIMESTAMP NULL,
+  `cancellation_reason` TEXT,
+  `customer_rating` INT(1),
+  `customer_feedback` TEXT,
+  PRIMARY KEY (`assignment_id`),
+  FOREIGN KEY (`order_id`) REFERENCES `orders`(`order_id`) ON DELETE CASCADE,
+  FOREIGN KEY (`rider_id`) REFERENCES `riders`(`rider_id`) ON DELETE RESTRICT,
+  FOREIGN KEY (`customer_id`) REFERENCES `customer`(`customer_id`) ON DELETE CASCADE,
+  FOREIGN KEY (`pharmacy_id`) REFERENCES `customer`(`customer_id`) ON DELETE SET NULL,
+  INDEX `idx_status` (`status`),
+  INDEX `idx_rider` (`rider_id`),
+  INDEX `idx_order` (`order_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Delivery assignments to riders';
+
+-- Add delivery_method column to orders table if it doesn't exist
+ALTER TABLE `orders`
+ADD COLUMN IF NOT EXISTS `delivery_method` ENUM('pharmacy', 'platform_rider', 'pickup') DEFAULT 'pharmacy' AFTER `order_status`,
+ADD COLUMN IF NOT EXISTS `delivery_notes` TEXT AFTER `delivery_method`;
+
+-- Insert sample riders
+INSERT INTO `riders` (`rider_name`, `rider_phone`, `rider_email`, `rider_license`, `vehicle_number`, `rider_address`, `status`) VALUES
+('Kwame Mensah', '0244123456', 'kwame.rider@piharma.com', 'DL-123456', 'GR-2456-20', 'East Legon, Accra', 'active'),
+('Kofi Owusu', '0554234567', 'kofi.rider@piharma.com', 'DL-234567', 'GR-3567-21', 'Osu, Accra', 'active'),
+('Ama Asante', '0203345678', 'ama.rider@piharma.com', 'DL-345678', 'GR-4678-21', 'Tema, Greater Accra', 'active');
+
+SELECT 'Riders system tables created successfully!' AS status;
+
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

@@ -57,40 +57,14 @@ $current_page = basename($_SERVER['PHP_SELF']);
             </li>
 
             <li class="nav-section-title">
-                <span>MANAGEMENT</span>
-            </li>
-
-            <li class="nav-item <?php echo $current_page == 'categories.php' ? 'active' : ''; ?>">
-                <a href="categories.php">
-                    <i class="fas fa-tags"></i>
-                    <span>Categories</span>
-                </a>
-            </li>
-
-            <li class="nav-item <?php echo $current_page == '.../admin/brand.php' ? 'active' : ''; ?>">
-                <a href="brand.php">
-                    <i class="fas fa-copyright"></i>
-                    <span>Brands</span>
-                </a>
-            </li>
-
-            <li class="nav-item <?php echo $current_page == 'products.php' ? 'active' : ''; ?>">
-                <a href="products.php">
-                    <i class="fas fa-pills"></i>
-                    <span>Products</span>
-                </a>
-            </li>
-
-            <li class="nav-item <?php echo $current_page == 'suggestions_review.php' ? 'active' : ''; ?>">
-                <a href="suggestions_review.php">
-                    <i class="fas fa-lightbulb"></i>
-                    <span>Review Suggestions</span>
-                    <span class="badge" id="pendingSuggestionCount">0</span>
-                </a>
-            </li>
-
-            <li class="nav-section-title">
                 <span>USER MANAGEMENT</span>
+            </li>
+
+            <li class="nav-item <?php echo $current_page == 'users.php' ? 'active' : ''; ?>">
+                <a href="users.php">
+                    <i class="fas fa-users-cog"></i>
+                    <span>All Users</span>
+                </a>
             </li>
 
             <li class="nav-item <?php echo $current_page == 'pharmacies.php' ? 'active' : ''; ?>">
@@ -108,7 +82,136 @@ $current_page = basename($_SERVER['PHP_SELF']);
             </li>
 
             <li class="nav-section-title">
-                <span>REPORTS</span>
+                <span>CATALOG MANAGEMENT</span>
+            </li>
+
+            <li class="nav-item <?php echo $current_page == 'categories.php' ? 'active' : ''; ?>">
+                <a href="categories.php">
+                    <i class="fas fa-tags"></i>
+                    <span>Categories</span>
+                </a>
+            </li>
+
+            <li class="nav-item <?php echo $current_page == 'brand.php' ? 'active' : ''; ?>">
+                <a href="brand.php">
+                    <i class="fas fa-copyright"></i>
+                    <span>Brands</span>
+                </a>
+            </li>
+
+            <li class="nav-item <?php echo $current_page == 'products.php' ? 'active' : ''; ?>">
+                <a href="products.php">
+                    <i class="fas fa-pills"></i>
+                    <span>All Products</span>
+                </a>
+            </li>
+
+            <li class="nav-item <?php echo $current_page == 'suggestions_review.php' ? 'active' : ''; ?>">
+                <a href="suggestions_review.php">
+                    <i class="fas fa-lightbulb"></i>
+                    <span>Review Suggestions</span>
+                    <span class="badge" id="pendingSuggestionCount">0</span>
+                </a>
+            </li>
+
+            <li class="nav-section-title">
+                <span>HEALTHCARE</span>
+            </li>
+
+            <li class="nav-item <?php echo $current_page == 'prescriptions.php' ? 'active' : ''; ?>">
+                <a href="prescriptions.php">
+                    <i class="fas fa-prescription"></i>
+                    <span>Prescriptions</span>
+                </a>
+            </li>
+
+            <li class="nav-item <?php echo $current_page == 'prescription_verification.php' ? 'active' : ''; ?>">
+                <a href="prescription_verification.php">
+                    <i class="fas fa-file-medical"></i>
+                    <span>Pending Verifications</span>
+                    <span class="badge badge-warning" id="pendingPrescriptionCount">0</span>
+                </a>
+            </li>
+
+            <li class="nav-section-title">
+                <span>ORDER MANAGEMENT</span>
+            </li>
+
+            <li class="nav-item <?php echo $current_page == 'orders.php' ? 'active' : ''; ?>">
+                <a href="orders.php">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>All Orders</span>
+                </a>
+            </li>
+
+            <li class="nav-item <?php echo $current_page == 'order_history.php' ? 'active' : ''; ?>">
+                <a href="order_history.php">
+                    <i class="fas fa-history"></i>
+                    <span>Order History</span>
+                </a>
+            </li>
+
+            <li class="nav-item <?php echo $current_page == 'payments.php' ? 'active' : ''; ?>">
+                <a href="payments.php">
+                    <i class="fas fa-credit-card"></i>
+                    <span>Payments</span>
+                </a>
+            </li>
+
+            <li class="nav-section-title">
+                <span>DELIVERY MANAGEMENT</span>
+            </li>
+
+            <li class="nav-item <?php echo $current_page == 'rider_management.php' ? 'active' : ''; ?>">
+                <a href="rider_management.php">
+                    <i class="fas fa-motorcycle"></i>
+                    <span>Riders</span>
+                </a>
+            </li>
+
+            <li class="nav-item <?php echo $current_page == 'delivery_assignments.php' ? 'active' : ''; ?>">
+                <a href="delivery_assignments.php">
+                    <i class="fas fa-shipping-fast"></i>
+                    <span>Deliveries</span>
+                </a>
+            </li>
+
+            <li class="nav-item <?php echo $current_page == 'delivery_tracking.php' ? 'active' : ''; ?>">
+                <a href="delivery_tracking.php">
+                    <i class="fas fa-map-marked-alt"></i>
+                    <span>Track Deliveries</span>
+                </a>
+            </li>
+
+            <li class="nav-section-title">
+                <span>COMMUNICATION</span>
+            </li>
+
+            <li class="nav-item <?php echo $current_page == 'messages.php' ? 'active' : ''; ?>">
+                <a href="messages.php">
+                    <i class="fas fa-comments"></i>
+                    <span>Messages</span>
+                    <span class="badge badge-danger" id="unreadMessagesCount">0</span>
+                </a>
+            </li>
+
+            <li class="nav-item <?php echo $current_page == 'tickets.php' ? 'active' : ''; ?>">
+                <a href="tickets.php">
+                    <i class="fas fa-ticket-alt"></i>
+                    <span>Support Tickets</span>
+                    <span class="badge badge-warning" id="openTicketsCount">0</span>
+                </a>
+            </li>
+
+            <li class="nav-item <?php echo $current_page == 'announcements.php' ? 'active' : ''; ?>">
+                <a href="announcements.php">
+                    <i class="fas fa-bullhorn"></i>
+                    <span>Announcements</span>
+                </a>
+            </li>
+
+            <li class="nav-section-title">
+                <span>REPORTS & ANALYTICS</span>
             </li>
 
             <li class="nav-item <?php echo $current_page == 'analytics.php' ? 'active' : ''; ?>">
@@ -118,10 +221,42 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 </a>
             </li>
 
+            <li class="nav-item <?php echo $current_page == 'sales_report.php' ? 'active' : ''; ?>">
+                <a href="sales_report.php">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Sales Reports</span>
+                </a>
+            </li>
+
+            <li class="nav-item <?php echo $current_page == 'revenue_analytics.php' ? 'active' : ''; ?>">
+                <a href="revenue_analytics.php">
+                    <i class="fas fa-dollar-sign"></i>
+                    <span>Revenue</span>
+                </a>
+            </li>
+
             <li class="nav-item <?php echo $current_page == 'reports.php' ? 'active' : ''; ?>">
                 <a href="reports.php">
                     <i class="fas fa-file-alt"></i>
-                    <span>Reports</span>
+                    <span>Custom Reports</span>
+                </a>
+            </li>
+
+            <li class="nav-section-title">
+                <span>REVIEWS & FEEDBACK</span>
+            </li>
+
+            <li class="nav-item <?php echo $current_page == 'reviews.php' ? 'active' : ''; ?>">
+                <a href="reviews.php">
+                    <i class="fas fa-star"></i>
+                    <span>Product Reviews</span>
+                </a>
+            </li>
+
+            <li class="nav-item <?php echo $current_page == 'feedback.php' ? 'active' : ''; ?>">
+                <a href="feedback.php">
+                    <i class="fas fa-comment-dots"></i>
+                    <span>Customer Feedback</span>
                 </a>
             </li>
 
@@ -143,7 +278,14 @@ $current_page = basename($_SERVER['PHP_SELF']);
             <li class="nav-item <?php echo $current_page == 'settings.php' ? 'active' : ''; ?>">
                 <a href="settings.php">
                     <i class="fas fa-cog"></i>
-                    <span>Settings</span>
+                    <span>System Settings</span>
+                </a>
+            </li>
+
+            <li class="nav-item <?php echo $current_page == 'logs.php' ? 'active' : ''; ?>">
+                <a href="logs.php">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>System Logs</span>
                 </a>
             </li>
         </ul>

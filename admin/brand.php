@@ -8,6 +8,8 @@ if (session_status() === PHP_SESSION_NONE) {
 require_once('../settings/core.php');
 require_once('../controllers/brand_controller.php');
 require_once('../controllers/category_controller.php');
+require_once('../controllers/suggestion_controller.php');
+require_once('../controllers/customer_controller.php');
 
 // Check if user is logged in
 if (!isLoggedIn()) {
@@ -31,6 +33,14 @@ $brands = $brands_result['data'] ?? [];
 // Get all platform categories (both super admin and pharmacy admin see all platform categories)
 $categories_result = fetch_all_categories_ctr();
 $categories = $categories_result['data'] ?? [];
+
+// Get user details for pharmacy name (if pharmacy admin)
+$pharmacy_name = '';
+if (isPharmacyAdmin()) {
+    $user_result = get_customer_by_id_ctr($user_id);
+    $user = $user_result['data'] ?? null;
+    $pharmacy_name = $user['customer_name'] ?? '';
+}
 ?>
 
 <!DOCTYPE html>
@@ -396,6 +406,28 @@ $categories = $categories_result['data'] ?? [];
             }
         }
 
+        /* Suggestion Styles */
+        .suggestion-item {
+            background: white;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            border-left: 4px solid #667eea;
+        }
+
+        .suggestion-item.pending {
+            border-left-color: #f59e0b;
+        }
+
+        .suggestion-item.approved {
+            border-left-color: #10b981;
+        }
+
+        .suggestion-item.rejected {
+            border-left-color: #ef4444;
+        }
+
         @media (max-width: 992px) {
             .content-wrapper {
                 grid-template-columns: 1fr;
@@ -610,6 +642,59 @@ $categories = $categories_result['data'] ?? [];
                     ?>
                 </div>
             </div>
+
+            <?php if (isPharmacyAdmin()): ?>
+            <!-- Suggest Brand Section (Pharmacy Admin Only) -->
+            <div class="brands-section mt-4">
+                <h3>
+                    <i class="fas fa-lightbulb me-2"></i>Suggest New Brand
+                </h3>
+                <p class="text-muted mb-3">Suggest new brands for super admin approval</p>
+
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>Note:</strong> As a pharmacy admin, you can suggest new brands. Your suggestions will be reviewed by the super administrator before being added to the system.
+                </div>
+
+                <div class="row g-4">
+                    <!-- Suggest Form -->
+                    <div class="col-lg-6">
+                        <div class="add-brand-card">
+                            <h4><i class="fas fa-paper-plane me-2"></i>Submit Suggestion</h4>
+                            <form id="suggestBrandForm">
+                                <div class="form-group">
+                                    <label class="form-label fw-bold">Brand Name</label>
+                                    <input type="text" class="form-control" name="brand_name" required
+                                           placeholder="e.g., Pfizer, Johnson & Johnson, etc.">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label fw-bold">Reason for Suggestion</label>
+                                    <textarea class="form-control" name="brand_reason" rows="3"
+                                              placeholder="Explain why this brand is needed..."></textarea>
+                                </div>
+                                <button type="submit" class="btn-add-brand">
+                                    <i class="fas fa-paper-plane me-2"></i>Submit Suggestion
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- My Suggestions -->
+                    <div class="col-lg-6">
+                        <div class="add-brand-card">
+                            <h4><i class="fas fa-history me-2"></i>My Brand Suggestions</h4>
+                            <div id="myBrandSuggestions" style="max-height: 400px; overflow-y: auto;">
+                                <div class="text-center py-3">
+                                    <div class="spinner-border spinner-border-sm text-primary" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <?php endif; ?>
         </div>
     </div>
 
@@ -670,5 +755,116 @@ $categories = $categories_result['data'] ?? [];
 
     <!-- Custom JS -->
     <script src="../js/brand.js"></script>
+
+    <?php if (isPharmacyAdmin()): ?>
+    <!-- Suggestion Functionality -->
+    <script>
+        // Load pharmacy's brand suggestions on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadMyBrandSuggestions();
+        });
+
+        // Suggest Brand
+        document.getElementById('suggestBrandForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const formData = new FormData();
+            formData.append('action', 'suggest_brand');
+            formData.append('suggested_name', this.brand_name.value);
+            formData.append('pharmacy_name', '<?php echo addslashes($pharmacy_name); ?>');
+            formData.append('reason', this.brand_reason.value);
+
+            fetch('../actions/suggestion_actions.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: data.message,
+                        confirmButtonColor: '<?php echo isPharmacyAdmin() ? "#059669" : "#667eea"; ?>'
+                    }).then(() => {
+                        this.reset();
+                        loadMyBrandSuggestions();
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message,
+                        confirmButtonColor: '#ef4444'
+                    });
+                }
+            })
+            .catch(error => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'An error occurred. Please try again.',
+                    confirmButtonColor: '#ef4444'
+                });
+            });
+        });
+
+        // Load My Brand Suggestions
+        function loadMyBrandSuggestions() {
+            fetch('../actions/get_suggestions.php?type=brand&pharmacy_id=<?php echo $user_id; ?>')
+                .then(response => response.json())
+                .then(data => {
+                    const container = document.getElementById('myBrandSuggestions');
+
+                    if (data.success && data.suggestions && data.suggestions.length > 0) {
+                        container.innerHTML = data.suggestions.map(suggestion => `
+                            <div class="suggestion-item ${suggestion.status}">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h6 class="mb-1">${escapeHtml(suggestion.suggested_name)}</h6>
+                                        <small class="text-muted">
+                                            Suggested ${new Date(suggestion.created_at).toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric'})}
+                                        </small>
+                                        ${suggestion.review_comment ? `
+                                            <div class="alert alert-info mt-2 mb-0">
+                                                <strong>Admin Response:</strong> ${escapeHtml(suggestion.review_comment)}
+                                            </div>
+                                        ` : ''}
+                                    </div>
+                                    <span class="badge ${
+                                        suggestion.status === 'pending' ? 'bg-warning' :
+                                        suggestion.status === 'approved' ? 'bg-success' : 'bg-danger'
+                                    }">
+                                        ${suggestion.status.charAt(0).toUpperCase() + suggestion.status.slice(1)}
+                                    </span>
+                                </div>
+                            </div>
+                        `).join('');
+                    } else {
+                        container.innerHTML = `
+                            <div class="text-center py-4 text-muted">
+                                <i class="fas fa-inbox" style="font-size: 3rem; color: #cbd5e1;"></i>
+                                <p class="mb-0 mt-2">No brand suggestions yet</p>
+                            </div>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('myBrandSuggestions').innerHTML = `
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            Error loading suggestions
+                        </div>
+                    `;
+                });
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+    <?php endif; ?>
 </body>
 </html>

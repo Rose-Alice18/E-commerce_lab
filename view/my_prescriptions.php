@@ -363,8 +363,8 @@ $prescriptions = get_customer_prescriptions_ctr($customer_id);
 
     <div class="main-content">
         <!-- Back Button -->
-        <a href="../admin/customer_dashboard.php" class="back-btn">
-            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        <a href="../admin/customer_dashboard.php" class="back-btn" >
+            <!--i class="fas fa-arrow-left">Back to Dashboard</i--> 
         </a>
 
         <div class="prescriptions-container">
@@ -469,6 +469,20 @@ $prescriptions = get_customer_prescriptions_ctr($customer_id);
                                 </div>
                             <?php endif; ?>
 
+                            <!-- Privacy Setting Display -->
+                            <div class="detail-row" style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e5e7eb;">
+                                <span class="detail-label"><i class="fas fa-shield-alt"></i> Privacy:</span>
+                                <?php if (isset($prescription['allow_pharmacy_access']) && $prescription['allow_pharmacy_access'] == 0): ?>
+                                    <span style="color: var(--danger); font-weight: 600;">
+                                        <i class="fas fa-lock"></i> Private (Only you can view)
+                                    </span>
+                                <?php else: ?>
+                                    <span style="color: var(--success); font-weight: 600;">
+                                        <i class="fas fa-unlock"></i> Public (Pharmacies can view)
+                                    </span>
+                                <?php endif; ?>
+                            </div>
+
                             <!-- Prescription Images -->
                             <?php if ($prescription['prescription_image']): ?>
                                 <div class="detail-row">
@@ -503,7 +517,7 @@ $prescriptions = get_customer_prescriptions_ctr($customer_id);
 
                         <!-- Card Actions -->
                         <div class="prescription-actions">
-                            <a href="view_prescription.php?id=<?= $prescription['prescription_id'] ?>" class="btn-action btn-view">
+                            <a href="prescription_details.php?id=<?= $prescription['prescription_id'] ?>" class="btn-action btn-view">
                                 <i class="fas fa-eye"></i> View Details
                             </a>
                             <?php if ($prescription['prescription_image']): ?>

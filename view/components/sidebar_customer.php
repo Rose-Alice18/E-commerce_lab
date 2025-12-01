@@ -52,7 +52,17 @@ if ($is_in_admin) {
 <div class="sidebar customer-theme" id="sidebar">
     <div class="sidebar-header">
         <div class="logo-container">
-            <img src="../../Piharma1.png" alt="Piharma Logo" style="max-width: 100%; height: auto; max-height: 50px; object-fit: contain;">
+            <?php
+            // Determine logo path based on current directory
+            if ($is_in_admin) {
+                $logo_path = '../Piharma1.png';
+            } elseif ($is_in_view) {
+                $logo_path = '../Piharma1.png';
+            } else {
+                $logo_path = './Piharma1.png';
+            }
+            ?>
+            <img src="<?php echo $logo_path; ?>" alt="Piharma Logo" style="max-width: 100%; height: auto; max-height: 50px; object-fit: contain;">
         </div>
         <span class="role-badge customer">Customer</span>
     </div>
@@ -172,3 +182,45 @@ if ($is_in_admin) {
 
 <!-- Sidebar Overlay for Mobile -->
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- Update Cart and Wishlist Counts -->
+<script>
+// Function to update cart and wishlist badge counts
+function updateSidebarCounts() {
+    // Get cart count from localStorage
+    const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+    const cartCount = cartItems.length;
+
+    // Get wishlist count from localStorage
+    const wishlistItems = JSON.parse(localStorage.getItem('wishlist')) || [];
+    const wishlistCount = wishlistItems.length;
+
+    // Update cart badge
+    const cartBadge = document.getElementById('cartCount');
+    if (cartBadge) {
+        cartBadge.textContent = cartCount;
+        cartBadge.style.display = cartCount > 0 ? 'inline-block' : 'none';
+    }
+
+    // Update wishlist badge
+    const wishlistBadge = document.getElementById('wishlistCount');
+    if (wishlistBadge) {
+        wishlistBadge.textContent = wishlistCount;
+        wishlistBadge.style.display = wishlistCount > 0 ? 'inline-block' : 'none';
+    }
+}
+
+// Update counts on page load
+document.addEventListener('DOMContentLoaded', updateSidebarCounts);
+
+// Listen for storage changes (when cart/wishlist is updated in another tab)
+window.addEventListener('storage', function(e) {
+    if (e.key === 'cart' || e.key === 'wishlist') {
+        updateSidebarCounts();
+    }
+});
+
+// Listen for custom events (when cart/wishlist is updated in same tab)
+window.addEventListener('cartUpdated', updateSidebarCounts);
+window.addEventListener('wishlistUpdated', updateSidebarCounts);
+</script>

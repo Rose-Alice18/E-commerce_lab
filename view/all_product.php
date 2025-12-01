@@ -775,4 +775,11 @@ $products_to_display = array_slice($all_products, $offset, $products_per_page);
         });
     </script>
 </body>
+
+</body>:
+<?php
+// Include chatbot for customer support
+include 'components/chatbot.php';
+?>
+
 </html>

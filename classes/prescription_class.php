@@ -198,6 +198,65 @@ class Prescription extends db_connection {
     }
 
     /**
+     * Get prescriptions accessible by pharmacy (only those with allow_pharmacy_access = 1)
+     * Super admins (role 0/7) can see all prescriptions
+     */
+    public function get_pharmacy_accessible_prescriptions($user_role, $status = null) {
+        // Super admins can see all prescriptions
+        if ($user_role == 0 || $user_role == 7) {
+            return $this->get_all_prescriptions($status);
+        }
+
+        // Pharmacy admins can only see prescriptions where allow_pharmacy_access = 1
+        $sql = "SELECT p.*,
+                       c.customer_name,
+                       c.customer_email,
+                       c.customer_contact,
+                       COUNT(pi.prescription_item_id) as item_count
+                FROM prescriptions p
+                INNER JOIN customer c ON p.customer_id = c.customer_id
+                LEFT JOIN prescription_items pi ON p.prescription_id = pi.prescription_id
+                WHERE p.allow_pharmacy_access = 1";
+
+        if ($status) {
+            $sql .= " AND p.status = ?";
+        }
+
+        $sql .= " GROUP BY p.prescription_id ORDER BY p.uploaded_at DESC";
+
+        if ($status) {
+            $stmt = $this->db_conn()->prepare($sql);
+            $stmt->bind_param("s", $status);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            return $result->fetch_all(MYSQLI_ASSOC);
+        } else {
+            $result = $this->db_conn()->query($sql);
+            return $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
+        }
+    }
+
+    /**
+     * Check if pharmacy can access prescription
+     */
+    public function can_pharmacy_access($prescription_id, $user_role) {
+        // Super admins can access all prescriptions
+        if ($user_role == 0 || $user_role == 7) {
+            return true;
+        }
+
+        // Pharmacy admins can only access if allow_pharmacy_access = 1
+        $sql = "SELECT allow_pharmacy_access FROM prescriptions WHERE prescription_id = ?";
+        $stmt = $this->db_conn()->prepare($sql);
+        $stmt->bind_param("i", $prescription_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+
+        return $row ? (bool)$row['allow_pharmacy_access'] : false;
+    }
+
+    /**
      * Get all prescriptions (for admin overview)
      */
     public function get_all_prescriptions($status = null, $limit = null) {

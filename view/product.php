@@ -517,52 +517,50 @@ if (!empty($search_query)) {
 
         /* Pharmacy Information Styles */
         .pharmacy-info {
-            background: #f8fafc;
-            border-radius: 8px;
-            padding: 0.5rem;
-            margin-bottom: 0.75rem;
-            font-size: 0.8rem;
+            padding: 0;
+            margin-bottom: 0.5rem;
+            font-size: 0.75rem;
         }
 
         .pharmacy-name {
-            font-weight: 700;
+            font-weight: 600;
             color: var(--primary-color);
-            margin-bottom: 0.15rem;
-            display: flex;
-            align-items: center;
-            gap: 0.35rem;
-            font-size: 0.85rem;
-        }
-
-        .pharmacy-location {
-            color: #64748b;
             margin-bottom: 0.1rem;
             display: flex;
             align-items: center;
             gap: 0.25rem;
-            font-size: 0.75rem;
+            font-size: 0.8rem;
+        }
+
+        .pharmacy-location {
+            color: #64748b;
+            margin-bottom: 0.05rem;
+            display: flex;
+            align-items: center;
+            gap: 0.2rem;
+            font-size: 0.7rem;
         }
 
         .pharmacy-distance {
             background: linear-gradient(135deg, var(--success-color), #059669);
             color: white;
-            padding: 0.25rem 0.6rem;
+            padding: 0.2rem 0.5rem;
             border-radius: 20px;
             font-weight: 600;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             display: inline-flex;
             align-items: center;
-            gap: 0.25rem;
-            margin-top: 0.35rem;
+            gap: 0.2rem;
+            margin-top: 0.25rem;
         }
 
         .pharmacy-contact {
             color: #64748b;
             display: flex;
             align-items: center;
-            gap: 0.25rem;
-            margin-top: 0.1rem;
-            font-size: 0.75rem;
+            gap: 0.2rem;
+            margin-top: 0.05rem;
+            font-size: 0.7rem;
         }
 
         .location-btn {
@@ -928,12 +926,13 @@ if (!empty($search_query)) {
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Getting location...';
             btn.disabled = true;
 
-            // Get user location using the Google Maps utility
-            getUserLocation()
-                .then(position => {
+            // Get user location using the Google Maps utility (callback-based)
+            getUserLocation(
+                // Success callback
+                function(lat, lng) {
                     userLocation = {
-                        lat: position.coords.latitude,
-                        lng: position.coords.longitude
+                        lat: lat,
+                        lng: lng
                     };
 
                     // Update UI
@@ -943,8 +942,9 @@ if (!empty($search_query)) {
 
                     // Calculate and display distances
                     calculateAllDistances();
-                })
-                .catch(error => {
+                },
+                // Error callback
+                function(error) {
                     console.error('Error getting location:', error);
 
                     // Reset button
@@ -953,7 +953,8 @@ if (!empty($search_query)) {
 
                     // Show error message
                     alert('Unable to get your location. Please check your browser permissions.');
-                });
+                }
+            );
         }
 
         // Function to calculate distances for all products
@@ -1012,5 +1013,10 @@ if (!empty($search_query)) {
             }
         });
     </script>
+
+    <?php
+    // Include chatbot for customer support
+    include 'components/chatbot.php';
+    ?>
 </body>
 </html>

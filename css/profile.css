@@ -781,3 +781,204 @@
         transform: rotate(360deg);
     }
 }
+
+/* ========================================
+   TOGGLE SWITCH FOR DELIVERY SETTINGS
+======================================== */
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 30px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #cbd5e1;
+    transition: 0.4s;
+    border-radius: 30px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 22px;
+    width: 22px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+input:checked + .slider {
+    background-color: #10b981;
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px #10b981;
+}
+
+input:checked + .slider:before {
+    transform: translateX(30px);
+}
+
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+/* ========================================
+   PHARMACY ADMIN GREEN THEME
+======================================== */
+
+/* Apply green theme for pharmacy admin pages */
+body.pharmacy-admin .profile-cover,
+.pharmacy-admin .profile-cover {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+}
+
+.pharmacy-admin .avatar-edit-btn {
+    background: linear-gradient(135deg, #11998e, #38ef7d);
+}
+
+.pharmacy-admin .profile-badge {
+    background: linear-gradient(135deg, #11998e, #38ef7d);
+}
+
+.pharmacy-admin .stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(17, 153, 142, 0.2);
+}
+
+.pharmacy-admin .stat-icon {
+    background: linear-gradient(135deg, #11998e, #38ef7d);
+}
+
+.pharmacy-admin .info-card-header {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+}
+
+.pharmacy-admin .btn-primary,
+.pharmacy-admin .save-btn {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    border: none;
+}
+
+.pharmacy-admin .btn-primary:hover,
+.pharmacy-admin .save-btn:hover {
+    background: linear-gradient(135deg, #0d7a6f 0%, #2dd46d 100%);
+    box-shadow: 0 4px 15px rgba(17, 153, 142, 0.3);
+}
+
+.pharmacy-admin .form-control:focus {
+    border-color: #11998e;
+    box-shadow: 0 0 0 0.2rem rgba(17, 153, 142, 0.25);
+}
+
+.pharmacy-admin .nav-pills .nav-link.active {
+    background: linear-gradient(135deg, #11998e, #38ef7d);
+}
+
+.pharmacy-admin .badge-primary {
+    background: linear-gradient(135deg, #11998e, #38ef7d);
+}
+
+/* Green accents */
+.pharmacy-admin h1,
+.pharmacy-admin h2,
+.pharmacy-admin .section-title {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.pharmacy-admin .icon-wrapper {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+}
+
+.pharmacy-admin input:checked + .slider {
+    background-color: #11998e;
+}
+
+.pharmacy-admin .activity-icon {
+    background: linear-gradient(135deg, #11998e, #38ef7d);
+}
+
+/* Update card borders on hover for pharmacy admin */
+.pharmacy-admin .info-card:hover {
+    border-left-color: #11998e;
+    box-shadow: 0 4px 20px rgba(17, 153, 142, 0.1);
+}
+
+.pharmacy-admin .stat-number {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Green progress bars */
+.pharmacy-admin .progress-bar {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+}
+
+/* Link colors for pharmacy admin */
+.pharmacy-admin a {
+    color: #11998e;
+}
+
+.pharmacy-admin a:hover {
+    color: #0d7a6f;
+}
+
+/* Tab active state */
+.pharmacy-admin .tab-link.active {
+    color: #11998e;
+    border-bottom-color: #11998e;
+}
+
+/* Success messages in green */
+.pharmacy-admin .alert-success {
+    background-color: #e8f8f5;
+    border-color: #11998e;
+    color: #0d7a6f;
+}
+
+/* File upload button */
+.pharmacy-admin .file-upload-btn {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+}
+
+.pharmacy-admin .file-upload-btn:hover {
+    background: linear-gradient(135deg, #0d7a6f 0%, #2dd46d 100%);
+}
+
+/* Quick actions for pharmacy */
+.pharmacy-admin .quick-action {
+    border-color: #11998e;
+    color: #11998e;
+}
+
+.pharmacy-admin .quick-action:hover {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    color: white;
+    border-color: transparent;
+}

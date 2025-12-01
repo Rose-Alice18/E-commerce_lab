@@ -88,7 +88,7 @@ $categories = $category_obj->fetch_all_categories();
     <!-- Profile CSS -->
     <link rel="stylesheet" href="../css/profile.css">
 </head>
-<body>
+<body<?php if ($user_role == 1) echo ' class="pharmacy-admin"'; ?>>
     <!-- Include Appropriate Sidebar -->
     <?php include('../view/components/' . $sidebar_file); ?>
 
@@ -455,6 +455,82 @@ $categories = $category_obj->fetch_all_categories();
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Delivery Settings Section -->
+                    <div class="form-card" style="margin-top: 2rem;">
+                        <div class="card-header">
+                            <h3><i class="fas fa-truck"></i> Delivery Settings</h3>
+                            <p>Configure your pharmacy's delivery options for customers</p>
+                        </div>
+                        <div class="card-body">
+                            <form id="deliverySettingsForm">
+                                <div class="form-group">
+                                    <div class="delivery-toggle-section" style="background: #f0f9ff; padding: 1.5rem; border-radius: 10px; border-left: 4px solid #38bdf8; margin-bottom: 1.5rem;">
+                                        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+                                            <div style="flex: 1;">
+                                                <h4 style="margin: 0 0 0.5rem 0; color: #0c4a6e; font-size: 1.1rem;">
+                                                    <i class="fas fa-shipping-fast"></i> Offer Delivery Service
+                                                </h4>
+                                                <p style="margin: 0; font-size: 0.875rem; color: #075985;">
+                                                    Enable this if your pharmacy provides delivery service. Customers will see this option during checkout.
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <label class="switch">
+                                                    <input type="checkbox" name="offers_delivery" id="offersDelivery"
+                                                           <?php echo ($user['offers_delivery'] ?? 0) == 1 ? 'checked' : ''; ?>>
+                                                    <span class="slider round"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="deliveryDetails" style="<?php echo ($user['offers_delivery'] ?? 0) == 0 ? 'display: none;' : ''; ?>">
+                                    <div class="form-grid">
+                                        <div class="form-group">
+                                            <label class="form-label">
+                                                <i class="fas fa-money-bill-wave"></i> Delivery Fee (GHS)
+                                            </label>
+                                            <input type="number" step="0.01" class="form-control" name="delivery_fee"
+                                                   value="<?php echo number_format($user['delivery_fee'] ?? 0, 2, '.', ''); ?>"
+                                                   placeholder="0.00" min="0">
+                                            <small class="form-text text-muted">Fixed delivery charge per order</small>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="form-label">
+                                                <i class="fas fa-map-marker-alt"></i> Delivery Radius (km)
+                                            </label>
+                                            <input type="number" step="0.5" class="form-control" name="delivery_radius_km"
+                                                   value="<?php echo number_format($user['delivery_radius_km'] ?? 10, 1, '.', ''); ?>"
+                                                   placeholder="10.0" min="0">
+                                            <small class="form-text text-muted">Maximum distance you deliver to</small>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="form-label">
+                                                <i class="fas fa-shopping-basket"></i> Minimum Order for Delivery (GHS)
+                                            </label>
+                                            <input type="number" step="0.01" class="form-control" name="min_order_for_delivery"
+                                                   value="<?php echo number_format($user['min_order_for_delivery'] ?? 0, 2, '.', ''); ?>"
+                                                   placeholder="0.00" min="0">
+                                            <small class="form-text text-muted">Minimum order value required for delivery (0 for no minimum)</small>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-actions" style="margin-top: 1.5rem;">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save"></i> Save Delivery Settings
+                                    </button>
+                                    <button type="button" class="btn btn-secondary" onclick="switchTab('overview')">
+                                        <i class="fas fa-times"></i> Cancel
+                                    </button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>

@@ -18,7 +18,7 @@ $location_filter = isset($_GET['location']) ? trim($_GET['location']) : '';
 // Build query - include location fields
 $sql = "SELECT customer_id, customer_name, customer_email, customer_contact,
                customer_country, customer_city, customer_image,
-               customer_address, customer_latitude, customer_longitude
+               latitude, longitude
         FROM customer
         WHERE user_role = 1";
 
@@ -480,15 +480,15 @@ $locations = $locations_result->fetch_all(MYSQLI_ASSOC);
         // Initialize the map when Google Maps API is loaded
         function initPharmacyMap() {
             // Check if there are pharmacies with valid coordinates
-            const pharmaciesWithCoords = pharmacies.filter(p => p.customer_latitude && p.customer_longitude);
+            const pharmaciesWithCoords = pharmacies.filter(p => p.latitude && p.longitude);
 
             let centerLat = <?php echo DEFAULT_MAP_CENTER_LAT; ?>;
             let centerLng = <?php echo DEFAULT_MAP_CENTER_LNG; ?>;
 
             // If we have pharmacies with coordinates, center on the first one
             if (pharmaciesWithCoords.length > 0) {
-                centerLat = parseFloat(pharmaciesWithCoords[0].customer_latitude);
-                centerLng = parseFloat(pharmaciesWithCoords[0].customer_longitude);
+                centerLat = parseFloat(pharmaciesWithCoords[0].latitude);
+                centerLng = parseFloat(pharmaciesWithCoords[0].longitude);
             }
 
             // Initialize map
@@ -499,13 +499,13 @@ $locations = $locations_result->fetch_all(MYSQLI_ASSOC);
 
             // Add markers for all pharmacies
             pharmacies.forEach(pharmacy => {
-                if (pharmacy.customer_latitude && pharmacy.customer_longitude) {
+                if (pharmacy.latitude && pharmacy.longitude) {
                     addPharmacyMarker({
                         id: pharmacy.customer_id,
                         name: pharmacy.customer_name,
-                        lat: parseFloat(pharmacy.customer_latitude),
-                        lng: parseFloat(pharmacy.customer_longitude),
-                        address: pharmacy.customer_address || `${pharmacy.customer_city}, ${pharmacy.customer_country}`,
+                        lat: parseFloat(pharmacy.latitude),
+                        lng: parseFloat(pharmacy.longitude),
+                        address: `${pharmacy.customer_city}, ${pharmacy.customer_country}`,
                         phone: pharmacy.customer_contact,
                         email: pharmacy.customer_email
                     });
@@ -527,11 +527,11 @@ $locations = $locations_result->fetch_all(MYSQLI_ASSOC);
 
                     // Update distance for all pharmacies
                     pharmacies.forEach(pharmacy => {
-                        if (pharmacy.customer_latitude && pharmacy.customer_longitude) {
+                        if (pharmacy.latitude && pharmacy.longitude) {
                             updatePharmacyDistance(
                                 pharmacy.customer_id,
-                                parseFloat(pharmacy.customer_latitude),
-                                parseFloat(pharmacy.customer_longitude)
+                                parseFloat(pharmacy.latitude),
+                                parseFloat(pharmacy.longitude)
                             );
                         }
                     });
@@ -539,13 +539,13 @@ $locations = $locations_result->fetch_all(MYSQLI_ASSOC);
                     // Re-add all markers to update info windows with distance
                     clearMarkers();
                     pharmacies.forEach(pharmacy => {
-                        if (pharmacy.customer_latitude && pharmacy.customer_longitude) {
+                        if (pharmacy.latitude && pharmacy.longitude) {
                             addPharmacyMarker({
                                 id: pharmacy.customer_id,
                                 name: pharmacy.customer_name,
-                                lat: parseFloat(pharmacy.customer_latitude),
-                                lng: parseFloat(pharmacy.customer_longitude),
-                                address: pharmacy.customer_address || `${pharmacy.customer_city}, ${pharmacy.customer_country}`,
+                                lat: parseFloat(pharmacy.latitude),
+                                lng: parseFloat(pharmacy.longitude),
+                                address: `${pharmacy.customer_city}, ${pharmacy.customer_country}`,
                                 phone: pharmacy.customer_contact,
                                 email: pharmacy.customer_email
                             });
@@ -567,4 +567,10 @@ $locations = $locations_result->fetch_all(MYSQLI_ASSOC);
         }
     </script>
 </body>
+
+</body>:
+<?php
+// Include chatbot for customer support
+include 'components/chatbot.php';
+?>
 </html>

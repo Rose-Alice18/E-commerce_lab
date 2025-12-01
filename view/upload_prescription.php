@@ -247,6 +247,28 @@ $customer_name = $_SESSION['user_name'];
             }
         }
 
+        .btn-view-prescriptions {
+            background: linear-gradient(135deg, var(--success), #059669);
+            color: white;
+            border: none;
+            padding: 1rem 3rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-view-prescriptions:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(16, 185, 129, 0.4);
+            color: white;
+        }
+
         .file-count {
             background: var(--primary);
             color: white;
@@ -501,17 +523,22 @@ $customer_name = $_SESSION['user_name'];
                                     <small class="text-muted">
                                         <i class="fas fa-info-circle"></i>
                                         Pharmacies can use your prescription to recommend products and fulfill orders.
-                                        Superadmin can always view for verification purposes.
+                            
                                     </small>
                                 </label>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Submit Button -->
-                    <button type="submit" class="btn-submit" id="submitBtn">
-                        <i class="fas fa-paper-plane"></i> Submit Prescription
-                    </button>
+                    <!-- Action Buttons -->
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                        <button type="submit" class="btn-submit" id="submitBtn" style="flex: 1; min-width: 200px;">
+                            <i class="fas fa-paper-plane"></i> Submit Prescription
+                        </button>
+                        <a href="my_prescriptions.php" class="btn-view-prescriptions" style="flex: 1; min-width: 200px; text-decoration: none;">
+                            <i class="fas fa-file-medical"></i> View My Prescriptions
+                        </a>
+                    </div>
                 </div>
             </form>
         </div>
@@ -772,4 +799,11 @@ $customer_name = $_SESSION['user_name'];
         });
     </script>
 </body>
+
+</body>:
+<?php
+// Include chatbot for customer support
+include 'components/chatbot.php';
+?>
+
 </html>

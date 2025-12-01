@@ -96,6 +96,17 @@ $current_page = basename($_SERVER['PHP_SELF']);
             </li>
 
             <li class="nav-section-title">
+                <span>HEALTHCARE</span>
+            </li>
+
+            <li class="nav-item <?php echo $current_page == 'prescriptions.php' ? 'active' : ''; ?>">
+                <a href="prescriptions.php">
+                    <i class="fas fa-prescription"></i>
+                    <span>Prescriptions</span>
+                </a>
+            </li>
+
+            <li class="nav-section-title">
                 <span>ORDERS</span>
             </li>
 
@@ -110,6 +121,18 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 <a href="order_history.php">
                     <i class="fas fa-history"></i>
                     <span>Order History</span>
+                </a>
+            </li>
+
+            <li class="nav-section-title">
+                <span>COMMUNICATION</span>
+            </li>
+
+            <li class="nav-item <?php echo $current_page == 'messages.php' ? 'active' : ''; ?>">
+                <a href="messages.php">
+                    <i class="fas fa-comments"></i>
+                    <span>Messages</span>
+                    <span class="badge badge-danger" id="unreadMessagesCount" style="display:none;">0</span>
                 </a>
             </li>
 

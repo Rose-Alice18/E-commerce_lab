@@ -835,5 +835,10 @@ $stats = get_formatted_stats_ctr();
             });
         });
     </script>
+
+    <?php
+    // Include chatbot for customer support
+    include 'view/components/chatbot.php';
+    ?>
 </body>
 </html>

@@ -15,6 +15,9 @@ if (!isLoggedIn() || !isSuperAdmin()) {
 
 // Get all products from all pharmacies
 $all_products = get_all_products_ctr();
+if (!$all_products || !is_array($all_products)) {
+    $all_products = [];
+}
 ?>
 
 <!DOCTYPE html>
@@ -109,21 +112,30 @@ $all_products = get_all_products_ctr();
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($all_products as $product): ?>
+                    <?php if (!empty($all_products)): ?>
+                        <?php foreach ($all_products as $product): ?>
+                            <tr>
+                                <td>
+                                    <img src="<?php echo !empty($product['product_image']) ? '../' . $product['product_image'] : '../uploads/placeholder.jpg'; ?>"
+                                         alt="<?php echo htmlspecialchars($product['product_title'] ?? ''); ?>"
+                                         class="product-image">
+                                </td>
+                                <td><?php echo htmlspecialchars($product['product_title'] ?? ''); ?></td>
+                                <td><?php echo htmlspecialchars($product['pharmacy_name'] ?? 'N/A'); ?></td>
+                                <td><?php echo htmlspecialchars($product['cat_name'] ?? 'N/A'); ?></td>
+                                <td><?php echo htmlspecialchars($product['brand_name'] ?? 'N/A'); ?></td>
+                                <td>GH₵ <?php echo number_format($product['product_price'] ?? 0, 2); ?></td>
+                                <td><?php echo $product['product_stock'] ?? 0; ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php else: ?>
                         <tr>
-                            <td>
-                                <img src="<?php echo !empty($product['product_image']) ? '../' . $product['product_image'] : '../uploads/placeholder.jpg'; ?>"
-                                     alt="<?php echo htmlspecialchars($product['product_title']); ?>"
-                                     class="product-image">
+                            <td colspan="7" class="text-center py-4">
+                                <i class="fas fa-box-open" style="font-size: 3rem; color: #ddd;"></i>
+                                <p class="mt-2 text-muted">No products found</p>
                             </td>
-                            <td><?php echo htmlspecialchars($product['product_title']); ?></td>
-                            <td><?php echo htmlspecialchars($product['pharmacy_name'] ?? 'N/A'); ?></td>
-                            <td><?php echo htmlspecialchars($product['cat_name'] ?? 'N/A'); ?></td>
-                            <td><?php echo htmlspecialchars($product['brand_name'] ?? 'N/A'); ?></td>
-                            <td>GH₵ <?php echo number_format($product['product_price'], 2); ?></td>
-                            <td><?php echo $product['product_stock']; ?></td>
                         </tr>
-                    <?php endforeach; ?>
+                    <?php endif; ?>
                 </tbody>
             </table>
         </div>

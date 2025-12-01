@@ -567,3 +567,84 @@ document.addEventListener('DOMContentLoaded', function() {
 // Make switchTab function global so it can be called from onclick handlers
 window.switchTab = switchTab;
 window.togglePasswordVisibility = togglePasswordVisibility;
+
+// ========================================
+// DELIVERY SETTINGS (Pharmacy Only)
+// ========================================
+
+/**
+ * Initialize delivery settings functionality
+ */
+function initializeDeliverySettings() {
+    const deliveryToggle = document.getElementById('offersDelivery');
+    const deliveryDetails = document.getElementById('deliveryDetails');
+    const deliveryForm = document.getElementById('deliverySettingsForm');
+
+    // Toggle delivery details visibility
+    if (deliveryToggle && deliveryDetails) {
+        deliveryToggle.addEventListener('change', function() {
+            if (this.checked) {
+                deliveryDetails.style.display = 'block';
+            } else {
+                deliveryDetails.style.display = 'none';
+            }
+        });
+    }
+
+    // Handle delivery settings form submission
+    if (deliveryForm) {
+        deliveryForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+
+            try {
+                Swal.fire({
+                    title: 'Updating...',
+                    text: 'Saving your delivery settings',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                const response = await fetch('../actions/update_delivery_settings.php', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: result.message,
+                        confirmButtonColor: '#667eea',
+                        timer: 2000
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: result.message,
+                        confirmButtonColor: '#667eea'
+                    });
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'An error occurred while updating delivery settings',
+                    confirmButtonColor: '#667eea'
+                });
+            }
+        });
+    }
+}
+
+// Initialize delivery settings when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    initializeDeliverySettings();
+});

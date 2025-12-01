@@ -574,4 +574,11 @@ require_once('../settings/google_maps_config.php');
         }
     </script>
 </body>
+
+</body>:
+<?php
+// Include chatbot for customer support
+include 'components/chatbot.php';
+?>
+
 </html>
