@@ -573,12 +573,11 @@ require_once('../settings/google_maps_config.php');
             initialState.style.display = 'block';
         }
     </script>
-</body>
 
-</body>:
 <?php
 // Include chatbot for customer support
 include 'components/chatbot.php';
 ?>
 
+</body>
 </html>
