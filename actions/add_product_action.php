@@ -82,57 +82,79 @@ try {
         exit();
     }
 
-    // Store uploaded file temporarily if provided
-    $temp_file_data = null;
-    if (isset($_FILES['product_image']) && $_FILES['product_image']['error'] === UPLOAD_ERR_OK) {
-        $file = $_FILES['product_image'];
+    // Store uploaded files temporarily if provided (multiple images)
+    $temp_files_data = [];
+    if (isset($_FILES['product_images']) && is_array($_FILES['product_images']['name'])) {
+        $file_count = count($_FILES['product_images']['name']);
         $allowed_types = ['image/jpeg', 'image/jpg', 'image/png'];
         $max_size = 5 * 1024 * 1024; // 5MB
 
-        // Validate file type
-        if (!in_array($file['type'], $allowed_types)) {
-            $response['message'] = 'Invalid file type. Only JPG, JPEG, and PNG are allowed';
+        for ($i = 0; $i < $file_count; $i++) {
+            // Check if file was uploaded successfully
+            if ($_FILES['product_images']['error'][$i] === UPLOAD_ERR_OK) {
+                $file_tmp = $_FILES['product_images']['tmp_name'][$i];
+                $file_name = $_FILES['product_images']['name'][$i];
+                $file_size = $_FILES['product_images']['size'][$i];
+                $file_type = $_FILES['product_images']['type'][$i];
+
+                // Validate file type
+                if (!in_array($file_type, $allowed_types)) {
+                    $response['message'] = "Invalid file type for $file_name. Only JPG, JPEG, and PNG are allowed";
+                    echo json_encode($response);
+                    exit();
+                }
+
+                // Validate file size
+                if ($file_size > $max_size) {
+                    $response['message'] = "File size too large for $file_name. Maximum 5MB allowed";
+                    echo json_encode($response);
+                    exit();
+                }
+
+                // Additional security: Verify it's actually an image
+                $image_info = @getimagesize($file_tmp);
+                if ($image_info === false) {
+                    error_log("Image validation failed for file: $file_name");
+                    $response['message'] = "File $file_name is not a valid image";
+                    echo json_encode($response);
+                    exit();
+                }
+
+                // Store file info for later processing (after we get product_id)
+                $temp_files_data[] = [
+                    'tmp_name' => $file_tmp,
+                    'name' => $file_name,
+                    'size' => $file_size,
+                    'type' => $file_type,
+                    'is_primary' => ($i === 0) // First image is primary
+                ];
+            } elseif ($_FILES['product_images']['error'][$i] !== UPLOAD_ERR_NO_FILE) {
+                // Log the upload error
+                $upload_errors = [
+                    UPLOAD_ERR_INI_SIZE => 'File exceeds upload_max_filesize',
+                    UPLOAD_ERR_FORM_SIZE => 'File exceeds MAX_FILE_SIZE',
+                    UPLOAD_ERR_PARTIAL => 'File was only partially uploaded',
+                    UPLOAD_ERR_NO_TMP_DIR => 'Missing temporary folder',
+                    UPLOAD_ERR_CANT_WRITE => 'Failed to write file to disk',
+                    UPLOAD_ERR_EXTENSION => 'Upload stopped by extension'
+                ];
+                $error_code = $_FILES['product_images']['error'][$i];
+                $error_msg = isset($upload_errors[$error_code]) ? $upload_errors[$error_code] : 'Unknown error';
+                error_log("File upload error for $file_name: $error_msg (Code: $error_code)");
+                $response['message'] = "File upload error for $file_name: $error_msg";
+                echo json_encode($response);
+                exit();
+            }
+        }
+
+        // Require at least one image
+        if (empty($temp_files_data)) {
+            $response['message'] = 'At least one product image is required';
             echo json_encode($response);
             exit();
         }
-
-        // Validate file size
-        if ($file['size'] > $max_size) {
-            $response['message'] = 'File size too large. Maximum 5MB allowed';
-            echo json_encode($response);
-            exit();
-        }
-
-        // Additional security: Verify it's actually an image
-        $image_info = @getimagesize($file['tmp_name']);
-        if ($image_info === false) {
-            error_log("Image validation failed for file: " . $file['name']);
-            $response['message'] = 'File is not a valid image';
-            echo json_encode($response);
-            exit();
-        }
-
-        // Store file info for later processing (after we get product_id)
-        $temp_file_data = [
-            'tmp_name' => $file['tmp_name'],
-            'name' => $file['name'],
-            'size' => $file['size'],
-            'type' => $file['type']
-        ];
-    } elseif (isset($_FILES['product_image']) && $_FILES['product_image']['error'] !== UPLOAD_ERR_NO_FILE) {
-        // Log the upload error
-        $upload_errors = [
-            UPLOAD_ERR_INI_SIZE => 'File exceeds upload_max_filesize',
-            UPLOAD_ERR_FORM_SIZE => 'File exceeds MAX_FILE_SIZE',
-            UPLOAD_ERR_PARTIAL => 'File was only partially uploaded',
-            UPLOAD_ERR_NO_TMP_DIR => 'Missing temporary folder',
-            UPLOAD_ERR_CANT_WRITE => 'Failed to write file to disk',
-            UPLOAD_ERR_EXTENSION => 'Upload stopped by extension'
-        ];
-        $error_code = $_FILES['product_image']['error'];
-        $error_msg = isset($upload_errors[$error_code]) ? $upload_errors[$error_code] : 'Unknown error';
-        error_log("File upload error: " . $error_msg . " (Code: $error_code)");
-        $response['message'] = 'File upload error: ' . $error_msg;
+    } else {
+        $response['message'] = 'At least one product image is required';
         echo json_encode($response);
         exit();
     }
@@ -143,8 +165,8 @@ try {
     if ($result['success']) {
         $product_id = $result['product_id'];
 
-        // Now handle image upload if provided
-        if ($temp_file_data !== null) {
+        // Now handle multiple image uploads if provided
+        if (!empty($temp_files_data)) {
             // Create directory structure: uploads/u{user_id}/p{product_id}/
             $base_upload_dir = '../uploads/';
             $user_dir = $base_upload_dir . 'u' . $pharmacy_id . '/';
@@ -172,38 +194,54 @@ try {
             $real_base_dir = realpath($base_upload_dir);
 
             if (strpos($real_product_dir, $real_base_dir) === 0) {
-                // Generate unique filename
-                $file_extension = pathinfo($temp_file_data['name'], PATHINFO_EXTENSION);
-                $unique_filename = 'image_' . time() . '_' . uniqid() . '.' . $file_extension;
-                $upload_path = $product_dir . $unique_filename;
+                $uploaded_images = [];
+                $primary_image_path = '';
 
-                // Move uploaded file
-                if (move_uploaded_file($temp_file_data['tmp_name'], $upload_path)) {
-                    // Store relative path
-                    $relative_path = 'uploads/u' . $pharmacy_id . '/p' . $product_id . '/' . $unique_filename;
+                // Process each uploaded image
+                foreach ($temp_files_data as $index => $file_data) {
+                    // Generate unique filename
+                    $file_extension = pathinfo($file_data['name'], PATHINFO_EXTENSION);
+                    $unique_filename = 'image_' . time() . '_' . uniqid() . '_' . $index . '.' . $file_extension;
+                    $upload_path = $product_dir . $unique_filename;
 
-                    // Try to add to product_images table (if table exists)
-                    try {
-                        $image_data = [[
+                    // Move uploaded file
+                    if (move_uploaded_file($file_data['tmp_name'], $upload_path)) {
+                        // Store relative path
+                        $relative_path = 'uploads/u' . $pharmacy_id . '/p' . $product_id . '/' . $unique_filename;
+
+                        // Save the first image as primary
+                        if ($file_data['is_primary']) {
+                            $primary_image_path = $relative_path;
+                        }
+
+                        // Store image data for product_images table
+                        $uploaded_images[] = [
                             'filename' => $unique_filename,
                             'path' => $relative_path,
-                            'size' => $temp_file_data['size'],
-                            'original_name' => $temp_file_data['name']
-                        ]];
+                            'size' => $file_data['size'],
+                            'original_name' => $file_data['name'],
+                            'is_primary' => $file_data['is_primary']
+                        ];
+                    }
+                }
 
-                        // Save to product_images table
-                        save_product_images_ctr($product_id, $image_data);
+                // Save all images to product_images table
+                if (!empty($uploaded_images)) {
+                    try {
+                        require_once('../controllers/product_controller.php');
+                        save_product_images_ctr($product_id, $uploaded_images);
                     } catch (Exception $e) {
                         // Log error but continue
                         error_log("Warning: Could not save to product_images table: " . $e->getMessage());
                     }
 
-                    // Update main product image (this is the important part)
-                    require_once('../classes/product_class.php');
-                    $product_obj = new Product();
-                    // Must pass ALL fields when updating, not just image
-                    $product_data['product_image'] = $relative_path;
-                    $product_obj->update_product($product_id, $product_data, $pharmacy_id);
+                    // Update main product image with the primary image
+                    if (!empty($primary_image_path)) {
+                        require_once('../classes/product_class.php');
+                        $product_obj = new Product();
+                        $product_data['product_image'] = $primary_image_path;
+                        $product_obj->update_product($product_id, $product_data, $pharmacy_id);
+                    }
                 }
             }
         }

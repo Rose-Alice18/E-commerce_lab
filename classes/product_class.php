@@ -485,8 +485,12 @@ class Product extends db_connection {
 
             foreach ($images as $index => $image) {
                 $image_path = $image['path'];
-                // First image is primary (1), rest are additional (0)
-                $is_primary = ($is_first && $index === 0) ? 1 : 0;
+                // Use is_primary from image data if provided, otherwise first image is primary
+                if (isset($image['is_primary'])) {
+                    $is_primary = $image['is_primary'] ? 1 : 0;
+                } else {
+                    $is_primary = ($is_first && $index === 0) ? 1 : 0;
+                }
 
                 $stmt->bind_param("isi", $product_id, $image_path, $is_primary);
 

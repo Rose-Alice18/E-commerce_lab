@@ -467,7 +467,8 @@ $stats = get_formatted_stats_ctr();
     <nav class="modern-navbar navbar navbar-expand-lg">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="index.php">
-                <img src="Piharma1.png" alt="Piharma Logo" style="height: 40px; width: auto; object-fit: contain;">
+                <img src="Pharma1logo.png" alt="PharmaVault Logo" style="height: 50px; width: auto; object-fit: contain; margin-right: 12px;">
+                <span style="font-weight: 800; font-size: 1.5rem; background: var(--primary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">PharmaVault</span>
             </a>
             
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -755,8 +756,9 @@ $stats = get_formatted_stats_ctr();
         <div class="container">
             <div class="row">
                 <div class="col-lg-4 mb-4">
-                    <div class="footer-brand">
-                        <img src="Piharma1.png" alt="Piharma Logo" style="height: 35px; width: auto; object-fit: contain; margin-bottom: 10px;">
+                    <div class="footer-brand d-flex align-items-center" style="gap: 10px;">
+                        <img src="Pharma1logo.png" alt="PharmaVault Logo" style="height: 40px; width: auto; object-fit: contain;">
+                        <span style="font-size: 1.5rem; font-weight: 800; color: white;">PharmaVault</span>
                     </div>
                     <p class="footer-description">
                         Your trusted healthcare marketplace connecting customers with verified pharmacies across Ghana.

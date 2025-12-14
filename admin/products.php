@@ -14,8 +14,10 @@ if (!isLoggedIn() || !isSuperAdmin()) {
 }
 
 // Get all products from all pharmacies
-$all_products = get_all_products_ctr();
-if (!$all_products || !is_array($all_products)) {
+$result = get_all_products_ctr();
+if ($result && isset($result['success']) && $result['success'] && isset($result['data'])) {
+    $all_products = $result['data'];
+} else {
     $all_products = [];
 }
 ?>

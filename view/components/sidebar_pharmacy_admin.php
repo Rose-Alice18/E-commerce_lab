@@ -15,6 +15,11 @@ if (!isPharmacyAdmin()) {
 }
 
 $current_page = basename($_SERVER['PHP_SELF']);
+
+// Determine the base path based on current directory
+$current_dir = dirname($_SERVER['PHP_SELF']);
+$is_in_admin = (strpos($current_dir, '/admin') !== false);
+$is_in_view = (strpos($current_dir, '/view') !== false);
 ?>
 
 <!-- Modern Hamburger Menu -->
@@ -32,7 +37,17 @@ $current_page = basename($_SERVER['PHP_SELF']);
 
     <div class="sidebar-header">
         <div class="logo-container">
-            <img src="../../Piharma1.png" alt="Piharma Logo" style="max-width: 100%; height: auto; max-height: 50px; object-fit: contain;">
+            <?php
+            // Determine logo path based on current directory
+            if ($is_in_admin) {
+                $logo_path = '../Pharma1logo.png';
+            } elseif ($is_in_view) {
+                $logo_path = '../Pharma1logo.png';
+            } else {
+                $logo_path = './Pharma1logo.png';
+            }
+            ?>
+            <img src="<?php echo $logo_path; ?>" alt="PharmaVault Logo" class="sidebar-logo">
         </div>
         <span class="role-badge pharmacy-admin">Pharmacy Admin</span>
     </div>

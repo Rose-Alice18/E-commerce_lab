@@ -15,6 +15,11 @@ if (!isSuperAdmin()) {
 }
 
 $current_page = basename($_SERVER['PHP_SELF']);
+
+// Determine the base path based on current directory
+$current_dir = dirname($_SERVER['PHP_SELF']);
+$is_in_admin = (strpos($current_dir, '/admin') !== false);
+$is_in_view = (strpos($current_dir, '/view') !== false);
 ?>
 
 <!-- Modern Hamburger Menu -->
@@ -32,7 +37,17 @@ $current_page = basename($_SERVER['PHP_SELF']);
 
     <div class="sidebar-header">
         <div class="logo-container">
-            <img src="../../Piharma1.png" alt="Piharma Logo" style="max-width: 100%; height: auto; max-height: 50px; object-fit: contain;">
+            <?php
+            // Determine logo path based on current directory
+            if ($is_in_admin) {
+                $logo_path = '../Pharma1logo.png';
+            } elseif ($is_in_view) {
+                $logo_path = '../Pharma1logo.png';
+            } else {
+                $logo_path = './Pharma1logo.png';
+            }
+            ?>
+            <img src="<?php echo $logo_path; ?>" alt="PharmaVault Logo" class="sidebar-logo">
         </div>
         <span class="role-badge super-admin">Super Admin</span>
     </div>
@@ -125,9 +140,9 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 </a>
             </li>
 
-            <li class="nav-item <?php echo $current_page == 'prescription_verification.php' ? 'active' : ''; ?>">
-                <a href="prescription_verification.php">
-                    <i class="fas fa-file-medical"></i>
+            <li class="nav-item <?php echo $current_page == 'pending_verifications.php' ? 'active' : ''; ?>">
+                <a href="pending_verifications.php">
+                    <i class="fas fa-clipboard-check"></i>
                     <span>Pending Verifications</span>
                     <span class="badge badge-warning" id="pendingPrescriptionCount">0</span>
                 </a>
@@ -137,15 +152,15 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 <span>ORDER MANAGEMENT</span>
             </li>
 
-            <li class="nav-item <?php echo $current_page == 'orders.php' ? 'active' : ''; ?>">
-                <a href="orders.php">
+            <li class="nav-item <?php echo $current_page == 'all_orders.php' ? 'active' : ''; ?>">
+                <a href="all_orders.php">
                     <i class="fas fa-shopping-cart"></i>
                     <span>All Orders</span>
                 </a>
             </li>
 
-            <li class="nav-item <?php echo $current_page == 'order_history.php' ? 'active' : ''; ?>">
-                <a href="order_history.php">
+            <li class="nav-item <?php echo $current_page == 'all_orders.php' ? 'active' : ''; ?>">
+                <a href="all_orders.php">
                     <i class="fas fa-history"></i>
                     <span>Order History</span>
                 </a>
@@ -169,8 +184,8 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 </a>
             </li>
 
-            <li class="nav-item <?php echo $current_page == 'delivery_assignments.php' ? 'active' : ''; ?>">
-                <a href="delivery_assignments.php">
+            <li class="nav-item <?php echo $current_page == 'deliveries.php' ? 'active' : ''; ?>">
+                <a href="deliveries.php">
                     <i class="fas fa-shipping-fast"></i>
                     <span>Deliveries</span>
                 </a>

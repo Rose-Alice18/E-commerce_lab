@@ -250,6 +250,21 @@ body {
     margin-bottom: 0.75rem;
 }
 
+/* Sidebar Logo Styling - Tiny */
+.sidebar-logo {
+    max-width: 60px;
+    height: auto;
+    max-height: 16px;
+    object-fit: contain;
+    transition: all 0.3s ease;
+}
+
+/* Collapsed sidebar - make logo even smaller */
+.sidebar.collapsed .sidebar-logo {
+    max-height: 14px;
+    max-width: 50px;
+}
+
 .logo-container i {
     font-size: 1.75rem;
 }

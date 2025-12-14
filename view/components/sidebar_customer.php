@@ -55,14 +55,14 @@ if ($is_in_admin) {
             <?php
             // Determine logo path based on current directory
             if ($is_in_admin) {
-                $logo_path = '../Piharma1.png';
+                $logo_path = '../Pharma1logo.png';
             } elseif ($is_in_view) {
-                $logo_path = '../Piharma1.png';
+                $logo_path = '../Pharma1logo.png';
             } else {
-                $logo_path = './Piharma1.png';
+                $logo_path = './Pharma1logo.png';
             }
             ?>
-            <img src="<?php echo $logo_path; ?>" alt="Piharma Logo" style="max-width: 100%; height: auto; max-height: 50px; object-fit: contain;">
+            <img src="<?php echo $logo_path; ?>" alt="PharmaVault Logo" class="sidebar-logo">
         </div>
         <span class="role-badge customer">Customer</span>
     </div>

@@ -155,6 +155,73 @@ $brands = $brand_obj->get_all_brands(null);
             border-radius: 10px;
         }
 
+        /* Multiple Image Preview Grid */
+        .image-preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .preview-item {
+            position: relative;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid #e2e8f0;
+            background: #f8fafc;
+        }
+
+        .preview-item img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .preview-item .remove-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .preview-item .remove-btn:hover {
+            background: #dc2626;
+            transform: scale(1.1);
+        }
+
+        .preview-item .primary-badge {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            background: #10b981;
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 5px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .preview-item .image-name {
+            padding: 0.5rem;
+            font-size: 0.75rem;
+            color: #64748b;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
         .btn {
             padding: 0.75rem 2rem;
             border: none;
@@ -341,26 +408,49 @@ $brands = $brand_obj->get_all_brands(null);
                     <small class="form-text">Comma-separated keywords for better search results</small>
                 </div>
 
-                <!-- Image Upload -->
+                <!-- Prescription Required -->
+                <div class="form-group">
+                    <div style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem; background: #f8fafc; border-radius: 10px;">
+                        <input
+                            type="checkbox"
+                            id="prescriptionRequired"
+                            name="prescription_required"
+                            value="1"
+                            style="width: 20px; height: 20px; cursor: pointer;"
+                        >
+                        <label for="prescriptionRequired" style="margin: 0; cursor: pointer; font-weight: 600;">
+                            <i class="fas fa-prescription" style="color: #ef4444; margin-right: 0.5rem;"></i>
+                            This product requires a prescription
+                        </label>
+                    </div>
+                    <small class="form-text">Check this if the product requires a valid prescription to purchase</small>
+                </div>
+
+                <!-- Multiple Image Upload -->
                 <div class="form-group">
                     <label class="form-label">
-                        Product Image
+                        Product Images <span class="required">*</span>
                     </label>
-                    <div class="image-upload-area" id="imageUploadArea" onclick="document.getElementById('productImage').click()">
+                    <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 1rem;">
+                        Upload multiple product images. The first image will be the primary image.
+                    </p>
+                    <div class="image-upload-area" id="imageUploadArea" onclick="document.getElementById('productImages').click()">
                         <i class="fas fa-cloud-upload-alt" style="font-size: 3rem; color: #cbd5e1; margin-bottom: 1rem;"></i>
-                        <p style="margin: 0; color: #64748b;">Click to upload product image</p>
-                        <small style="color: #94a3b8;">PNG, JPG, JPEG (Max 5MB)</small>
+                        <p style="margin: 0; color: #64748b;"><strong>Click to upload product images</strong></p>
+                        <small style="color: #94a3b8;">Select multiple images - PNG, JPG, JPEG (Max 5MB each)</small>
                     </div>
                     <input
                         type="file"
-                        id="productImage"
-                        name="product_image"
+                        id="productImages"
+                        name="product_images[]"
                         accept="image/png, image/jpeg, image/jpg"
                         style="display: none;"
-                        onchange="previewImage(this)"
+                        multiple
+                        onchange="previewMultipleImages(this)"
+                        required
                     >
-                    <div class="image-preview" id="imagePreview">
-                        <img id="previewImg" src="" alt="Preview">
+                    <div id="imagePreviewContainer" class="image-preview-grid" style="display: none;">
+                        <!-- Image previews will be inserted here -->
                     </div>
                 </div>
 
@@ -387,21 +477,64 @@ $brands = $brand_obj->get_all_brands(null);
     <script src="../js/product.js"></script>
 
     <script>
-        function previewImage(input) {
-            const preview = document.getElementById('imagePreview');
-            const previewImg = document.getElementById('previewImg');
+        let selectedFiles = [];
+
+        function previewMultipleImages(input) {
             const uploadArea = document.getElementById('imageUploadArea');
+            const previewContainer = document.getElementById('imagePreviewContainer');
 
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
+            if (input.files && input.files.length > 0) {
+                // Store selected files
+                selectedFiles = Array.from(input.files);
 
-                reader.onload = function(e) {
-                    previewImg.src = e.target.result;
-                    preview.style.display = 'block';
-                    uploadArea.classList.add('active');
-                };
+                // Clear preview container
+                previewContainer.innerHTML = '';
+                previewContainer.style.display = 'grid';
+                uploadArea.classList.add('active');
 
-                reader.readAsDataURL(input.files[0]);
+                // Preview each image
+                selectedFiles.forEach((file, index) => {
+                    const reader = new FileReader();
+
+                    reader.onload = function(e) {
+                        const previewItem = document.createElement('div');
+                        previewItem.className = 'preview-item';
+                        previewItem.innerHTML = `
+                            ${index === 0 ? '<span class="primary-badge">PRIMARY</span>' : ''}
+                            <img src="${e.target.result}" alt="Preview ${index + 1}">
+                            <button type="button" class="remove-btn" onclick="removeImage(${index})">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <div class="image-name">${file.name}</div>
+                        `;
+                        previewContainer.appendChild(previewItem);
+                    };
+
+                    reader.readAsDataURL(file);
+                });
+            }
+        }
+
+        function removeImage(index) {
+            // Remove file from array
+            selectedFiles.splice(index, 1);
+
+            // Update file input
+            const input = document.getElementById('productImages');
+            const dataTransfer = new DataTransfer();
+            selectedFiles.forEach(file => dataTransfer.items.add(file));
+            input.files = dataTransfer.files;
+
+            // Re-render previews
+            if (selectedFiles.length > 0) {
+                previewMultipleImages(input);
+            } else {
+                // Hide preview if no files
+                const previewContainer = document.getElementById('imagePreviewContainer');
+                const uploadArea = document.getElementById('imageUploadArea');
+                previewContainer.style.display = 'none';
+                previewContainer.innerHTML = '';
+                uploadArea.classList.remove('active');
             }
         }
 
